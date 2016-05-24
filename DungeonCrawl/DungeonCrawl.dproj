@@ -4,11 +4,17 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{2B89176E-AE6D-4690-9498-9A85F943B53F}</ProjectGuid>
-    <BaseDirectory>.</BaseDirectory>
     <Compiler>DMD2</Compiler>
     <PreferOneStepBuild>true</PreferOneStepBuild>
     <UseDefaultCompiler>true</UseDefaultCompiler>
     <IncrementalLinking>true</IncrementalLinking>
+    <Includes>
+      <Includes>
+        <Path>../../derelict/derelict-gl3-1.0.18/source</Path>
+        <Path>../../derelict/derelict-sdl2-2.0.0/source</Path>
+        <Path>../../derelict/derelict-util-2.0.6/source</Path>
+      </Includes>
+    </Includes>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -20,6 +26,13 @@
     <Target>Executable</Target>
     <Externalconsole>true</Externalconsole>
     <DebugLevel>0</DebugLevel>
+    <Libs>
+      <Libs>
+        <Lib>../../derelict/derelict-gl3-1.0.18/lib/libDerelictGL3.a</Lib>
+        <Lib>../../derelict/derelict-sdl2-2.0.0/lib/libDerelictSDL2.a</Lib>
+        <Lib>../../derelict/derelict-util-2.0.6/lib/libDerelictUtil.a</Lib>
+      </Libs>
+    </Libs>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>bin\Release</OutputPath>
@@ -43,37 +56,12 @@
     <DebugLevel>0</DebugLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="derelict\opengl3\arb.d" />
-    <Compile Include="derelict\opengl3\cgl.d" />
-    <Compile Include="derelict\opengl3\constants.d" />
-    <Compile Include="derelict\opengl3\deprecatedConstants.d" />
-    <Compile Include="derelict\opengl3\deprecatedFunctions.d" />
-    <Compile Include="derelict\opengl3\ext.d" />
-    <Compile Include="derelict\opengl3\functions.d" />
-    <Compile Include="derelict\opengl3\gl.d" />
-    <Compile Include="derelict\opengl3\gl3.d" />
-    <Compile Include="derelict\opengl3\glx.d" />
-    <Compile Include="derelict\opengl3\glxext.d" />
-    <Compile Include="derelict\opengl3\internal.d" />
-    <Compile Include="derelict\opengl3\types.d" />
-    <Compile Include="derelict\opengl3\wgl.d" />
-    <Compile Include="derelict\opengl3\wglext.d" />
-    <Compile Include="derelict\sdl2\functions.d" />
-    <Compile Include="derelict\sdl2\image.d" />
-    <Compile Include="derelict\sdl2\mixer.d" />
-    <Compile Include="derelict\sdl2\net.d" />
-    <Compile Include="derelict\sdl2\sdl.d" />
-    <Compile Include="derelict\sdl2\ttf.d" />
-    <Compile Include="derelict\sdl2\types.d" />
-    <Compile Include="derelict\util\exception.d" />
-    <Compile Include="derelict\util\loader.d" />
-    <Compile Include="derelict\util\sharedlib.d" />
-    <Compile Include="derelict\util\system.d" />
-    <Compile Include="derelict\util\wintypes.d" />
-    <Compile Include="derelict\util\xtypes.d" />
     <Compile Include="Game.d" />
     <Compile Include="shader.d" />
     <Compile Include="Matrix4x4.d" />
+    <Compile Include="Renderer.d" />
+    <Compile Include="SDLWindow.d" />
+    <Compile Include="Texture.d" />
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\font.bin">
@@ -89,4 +77,14 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+  <ProjectExtensions>
+    <MonoDevelop>
+      <Properties>
+        <Policies>
+          <TextStylePolicy FileWidth="120" inheritsSet="VisualStudio" inheritsScope="text/plain" scope="text/x-d" />
+          <DFormattingPolicy inheritsSet="Mono" inheritsScope="text/x-d" scope="text/x-d" />
+        </Policies>
+      </Properties>
+    </MonoDevelop>
+  </ProjectExtensions>
 </Project>
