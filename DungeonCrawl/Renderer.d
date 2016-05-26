@@ -5,18 +5,43 @@ import shader;
 
 class Renderer
 {
+    struct Vertex
+    {
+        float[ 3 ] pos;
+        float[ 2 ] uv;
+    }
+
     this( float screenWidth, float screenHeight )
     {
         glGenVertexArrays( 1, &quadVAO );
         glBindVertexArray( quadVAO );
         
-        immutable float[] quad = [ 0, 0, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1 ];
+        /*immutable float[] quad = [ 0, 0, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1 ];
         
         glGenBuffers( 1, &quadVBO );
         glBindBuffer( GL_ARRAY_BUFFER, quadVBO );
         glBufferData( GL_ARRAY_BUFFER, quad.length * GLfloat.sizeof, quad.ptr, GL_STATIC_DRAW );
         glEnableVertexAttribArray( 0 );
-        glVertexAttribPointer( 0, 2, GL_FLOAT, GL_FALSE, 0, null );
+        glVertexAttribPointer( 0, 2, GL_FLOAT, GL_FALSE, 0, null );*/
+
+        Vertex[ 6 ] quad;
+        quad[ 0 ] = Vertex( [ 0, 0, 0 ], [ 0, 0 ] );
+        quad[ 1 ] = Vertex( [ 0, 1, 0 ], [ 0, 1 ] );
+        quad[ 2 ] = Vertex( [ 1, 0, 0 ], [ 1, 0 ] );
+        quad[ 3 ] = Vertex( [ 1, 0, 0 ], [ 1, 0 ] );
+        quad[ 4 ] = Vertex( [ 1, 1, 0 ], [ 1, 1 ] );
+        quad[ 5 ] = Vertex( [ 0, 1, 0 ], [ 0, 1 ] );
+
+        glGenBuffers( 1, &quadVBO );
+        glBindBuffer( GL_ARRAY_BUFFER, quadVBO );
+        glBufferData( GL_ARRAY_BUFFER, quad.length * Vertex.sizeof, quad.ptr, GL_STATIC_DRAW );
+        
+        glEnableVertexAttribArray( 0 );
+        glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, Vertex.sizeof, null );
+
+        glEnableVertexAttribArray( 1 );
+        glVertexAttribPointer( 1, 2, GL_FLOAT, GL_FALSE, Vertex.sizeof, cast(char*)0 + 3 * 4 );
+        
         CheckGLError("GenerateQuadBuffers end");
 
         Matrix4x4 ortho = new Matrix4x4();
@@ -25,6 +50,9 @@ class Renderer
         uiShader = new Shader( "assets/shader.vert", "assets/shader.frag" );
         uiShader.Use();
         uiShader.SetMatrix44( "projectionMatrix", ortho.m );
+        uiShader.SetInt( "sTexture", 0 );
+
+        CheckGLError("Renderer constructor end");
     }
     
     public void ClearScreen()

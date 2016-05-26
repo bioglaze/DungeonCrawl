@@ -4,23 +4,12 @@ import Renderer;
 import SDLWindow;
 import Texture;
 
-/*
-    This is a Dungeon Crawler game by Timo Wiren, 2016
-
-    Build
-    -----
-
-    Depends on Derelict libraries derelict-gl3, derelict-util, and derelict-sdl2.
-    They are assumed to be in derelict folder next to DungeonCrawler root folder and can be obtained/built
-    with the following steps: http://derelictorg.github.io/compiling.html.
-
-    DungeonCrawl.sln is a Xamarin Studio solution configured for OS X.
-*/
+// This is a Dungeon Crawler game by Timo Wiren, 2016
 class Game
 {
     this()
     {
-        glider = new Texture( "assets/glider.png" );
+        fontTex = new Texture( "assets/font.tga" );
     }
 
     public void Render( Renderer renderer )
@@ -29,7 +18,7 @@ class Game
 
         if (mode == Mode.Menu)
         {
-            glider.Bind();
+            fontTex.Bind();
             renderer.DrawQuad( 0, 0, 100, 100 );
         }
         else if (mode == Mode.Ingame)
@@ -41,7 +30,7 @@ class Game
     private enum Mode { Menu, Ingame }
     
     private Mode mode = Mode.Menu;
-    private Texture glider;
+    private Texture fontTex;
 }
 
 void main()

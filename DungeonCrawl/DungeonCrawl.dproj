@@ -43,6 +43,13 @@
     <Target>Executable</Target>
     <Externalconsole>true</Externalconsole>
     <DebugLevel>0</DebugLevel>
+    <Libs>
+      <Libs>
+        <Lib>../../derelict/derelict-gl3-1.0.18/lib/libDerelictGL3.a</Lib>
+        <Lib>../../derelict/derelict-sdl2-2.0.0/lib/libDerelictSDL2.a</Lib>
+        <Lib>../../derelict/derelict-util-2.0.6/lib/libDerelictUtil.a</Lib>
+      </Libs>
+    </Libs>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Unittest|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -54,6 +61,13 @@
     <Target>Executable</Target>
     <Externalconsole>true</Externalconsole>
     <DebugLevel>0</DebugLevel>
+    <Libs>
+      <Libs>
+        <Lib>../../derelict/derelict-gl3-1.0.18/lib/libDerelictGL3.a</Lib>
+        <Lib>../../derelict/derelict-sdl2-2.0.0/lib/libDerelictSDL2.a</Lib>
+        <Lib>../../derelict/derelict-util-2.0.6/lib/libDerelictUtil.a</Lib>
+      </Libs>
+    </Libs>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Game.d" />
@@ -67,13 +81,13 @@
     <None Include="assets\font.bin">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="assets\font.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Include="assets\shader.frag">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="assets\shader.vert">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="assets\font.tga">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

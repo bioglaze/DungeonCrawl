@@ -28,6 +28,12 @@ class Shader
         glUniform1f( glGetUniformLocation( program, nameCstr ), value );
     }
 
+    public void SetInt( string name, int value )
+    {
+        immutable char* nameCstr = toStringz( name );
+        glUniform1i( glGetUniformLocation( program, nameCstr ), value );
+    }
+    
     public void SetFloat2( string name, float value1, float value2 )
     {
         immutable char* nameCstr = toStringz( name );
