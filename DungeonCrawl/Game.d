@@ -1,4 +1,6 @@
-﻿import std.stdio;
+﻿module Game;
+
+import std.stdio;
 import Matrix4x4;
 import Renderer;
 import SDLWindow;
@@ -9,7 +11,6 @@ class Game
 {
     this()
     {
-        fontTex = new Texture( "assets/font.tga" );
     }
 
     public void Render( Renderer renderer )
@@ -18,8 +19,8 @@ class Game
 
         if (mode == Mode.Menu)
         {
-            fontTex.Bind();
-            renderer.DrawQuad( 0, 0, 100, 100 );
+            //renderer.DrawQuad( 0, 0, 100, 100 );
+            renderer.DrawText( "jeejeejee", 0, 120 );
         }
         else if (mode == Mode.Ingame)
         {
@@ -30,7 +31,6 @@ class Game
     private enum Mode { Menu, Ingame }
     
     private Mode mode = Mode.Menu;
-    private Texture fontTex;
 }
 
 void main()

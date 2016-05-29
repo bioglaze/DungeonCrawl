@@ -1,4 +1,5 @@
 ﻿module Texture;
+
 import derelict.opengl3.gl3;
 import std.stdio;
 
@@ -72,6 +73,16 @@ class Texture
     public void Bind()
     {
         glBindTexture( GL_TEXTURE_2D, handle );
+    }
+
+    public int GetWidth()
+    {
+        return width;
+    }
+
+    public int GetHeight()
+    {
+        return height;
     }
 
     private int width, height;

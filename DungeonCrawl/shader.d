@@ -1,4 +1,5 @@
 ﻿module shader;
+
 import std.exception;
 import std.file;
 import std.stdio;

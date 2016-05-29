@@ -33,6 +33,7 @@
         <Lib>../../derelict/derelict-util-2.0.6/lib/libDerelictUtil.a</Lib>
       </Libs>
     </Libs>
+    <ExtraCompilerArguments>-w</ExtraCompilerArguments>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>bin\Release</OutputPath>
@@ -76,6 +77,7 @@
     <Compile Include="Renderer.d" />
     <Compile Include="SDLWindow.d" />
     <Compile Include="Texture.d" />
+    <Compile Include="Font.d" />
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\font.bin">

@@ -1,4 +1,5 @@
 ﻿module SDLWindow;
+
 import derelict.sdl2.sdl;
 import derelict.opengl3.gl3;
 import std.stdio: writeln;
@@ -42,6 +43,26 @@ class SDLWindow
         if (keyState[ SDL_SCANCODE_ESCAPE ] == 1)
         {
             return true;
+        }
+
+        if (keyState[ SDL_SCANCODE_LEFT ] == 1)
+        {
+
+        }
+
+        if (keyState[ SDL_SCANCODE_RIGHT ] == 1)
+        {
+            
+        }
+
+        if (keyState[ SDL_SCANCODE_UP ] == 1)
+        {
+            
+        }
+        
+        if (keyState[ SDL_SCANCODE_DOWN ] == 1)
+        {
+            
         }
         
         SDL_Event e;
