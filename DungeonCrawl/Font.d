@@ -105,11 +105,11 @@ class Font
             }*/
             
 
-            Character ch = chars[ cast( int )text[ c ] ];
+            Character* ch = &chars[ cast( int )text[ c ] ];
 
             if (text[ c ] == '\n')
             {
-                Character charA = chars[ cast(int)( 'a' )];
+                Character* charA = &chars[ cast(int)( 'a' )];
                 accumX = 0;
                 y += charA.height + charA.yOffset;
             }

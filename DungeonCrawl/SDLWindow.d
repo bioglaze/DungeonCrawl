@@ -3,6 +3,18 @@
 import derelict.sdl2.sdl;
 import derelict.opengl3.gl3;
 import std.stdio: writeln;
+import std.c.stdlib: exit;
+
+public enum KeyboardKey
+{
+    Space,
+    Left,
+    Right,
+    Up,
+    Down,
+    Escape,
+    S,
+}
 
 class SDLWindow
 {
@@ -36,33 +48,39 @@ class SDLWindow
         SDL_GL_SetSwapInterval( 1 );
     }
     
-    public bool ProcessInput()
+    public KeyboardKey[] ProcessInput()
     {	
+        KeyboardKey[] outKeys;
         const Uint8* keyState = SDL_GetKeyboardState( null );    
         
         if (keyState[ SDL_SCANCODE_ESCAPE ] == 1)
         {
-            return true;
+            outKeys ~= KeyboardKey.Escape;
         }
 
+        if (keyState[ SDL_SCANCODE_SPACE ] == 1)
+        {
+            outKeys ~= KeyboardKey.Space;
+        }
+        
         if (keyState[ SDL_SCANCODE_LEFT ] == 1)
         {
-
+            outKeys ~= KeyboardKey.Left;
         }
 
         if (keyState[ SDL_SCANCODE_RIGHT ] == 1)
         {
-            
+            outKeys ~= KeyboardKey.Right;
         }
 
         if (keyState[ SDL_SCANCODE_UP ] == 1)
         {
-            
+            outKeys ~= KeyboardKey.Up;
         }
         
         if (keyState[ SDL_SCANCODE_DOWN ] == 1)
         {
-            
+            outKeys ~= KeyboardKey.Down;
         }
         
         SDL_Event e;
@@ -73,20 +91,23 @@ class SDLWindow
             {
                 if (e.window.event == SDL_WINDOWEVENT_CLOSE)
                 {
-                    return true;
+                    Close();
+                    exit( 0 );
+
                 }
             }
             else if (e.type == SDL_QUIT)
             {
-                return true;
+                Close();
+                exit( 0 );
             }
             else
             {
-                writeln( "event: ", e.type );
+                //writeln( "event: ", e.type );
             }
         }
         
-        return false;
+        return outKeys;
     }
     
     public void SwapBuffers()
@@ -100,6 +121,6 @@ class SDLWindow
         SDL_Quit();
     }
     
-    SDL_Window* win;
+    private SDL_Window* win;
 }
 

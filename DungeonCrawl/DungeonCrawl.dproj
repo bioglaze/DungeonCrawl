@@ -51,6 +51,7 @@
         <Lib>../../derelict/derelict-util-2.0.6/lib/libDerelictUtil.a</Lib>
       </Libs>
     </Libs>
+    <ExtraCompilerArguments>-w</ExtraCompilerArguments>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Unittest|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -69,6 +70,7 @@
         <Lib>../../derelict/derelict-util-2.0.6/lib/libDerelictUtil.a</Lib>
       </Libs>
     </Libs>
+    <ExtraCompilerArguments>-w</ExtraCompilerArguments>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Game.d" />
@@ -78,6 +80,7 @@
     <Compile Include="SDLWindow.d" />
     <Compile Include="Texture.d" />
     <Compile Include="Font.d" />
+    <Compile Include="Level.d" />
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\font.bin">
