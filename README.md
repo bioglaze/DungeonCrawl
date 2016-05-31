@@ -6,7 +6,11 @@ Depends on Derelict libraries derelict-gl3, derelict-util, and derelict-sdl2.
 They are assumed to be in derelict folder next to DungeonCrawler root folder and can be obtained/built
 with the following steps: http://derelictorg.github.io/compiling.html
 
-DungeonCrawl.sln is a Xamarin Studio solution configured for OS X. build.sh can be used to compile on command-line.
+DungeonCrawl/DungeonCrawl.sln is a Xamarin Studio solution configured for OS X.
+
+DungeonCrawl\VisualStudio\DungeonCrawl.sln is a Visual Studio 2015 solution configured for 32-bit Windows.
+
+build.sh can be used to compile on command-line.
 
 ## License
 The game is licensed under MIT.
