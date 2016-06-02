@@ -39,6 +39,11 @@ class Game
     {
     }
 
+    public void CreateLevels( Renderer renderer )
+    {
+        levels[ 0 ] = new Level( renderer );
+    }
+
     public void Simulate( SDLWindow.KeyboardKey[] keys )
     {
         if (mode == Mode.Ingame)
@@ -93,7 +98,7 @@ class Game
         }
         else if (mode == Mode.Ingame)
         {
-            //Renderer.DrawVAO( levels[ currentLevel ].GetVAO() );
+            renderer.DrawVAO( levels[ currentLevel ].GetVAO(), levels[ currentLevel ].GetElementCount() );
         }
     }
 
@@ -111,8 +116,9 @@ void main()
     immutable int height = 480;
 
     auto window = new SDLWindow( width, height );
-    auto game = new Game();
     auto renderer = new Renderer( width, height );
+    auto game = new Game();
+    game.CreateLevels( renderer );
 
     while (true)
     {

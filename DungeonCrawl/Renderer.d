@@ -45,12 +45,12 @@ class Renderer
         
         CheckGLError("GenerateQuadBuffers end");
 
-        Matrix4x4 ortho = new Matrix4x4();
-        ortho.MakeProjection( 0, screenWidth, screenHeight, 0, -1, 1 );
+        orthoMat.MakeProjection( 0, screenWidth, screenHeight, 0, -1, 1 );
+        perspectiveMat.MakeProjection( 45, screenWidth / cast(float)screenHeight, 1, 200 );
 
         uiShader = new Shader( "assets/shader.vert", "assets/shader.frag" );
         uiShader.Use();
-        uiShader.SetMatrix44( "projectionMatrix", ortho.m );
+        uiShader.SetMatrix44( "projectionMatrix", orthoMat.m );
         uiShader.SetInt( "sTexture", 0 );
 
         font = new Font( "assets/font.bin" );
@@ -76,51 +76,59 @@ class Renderer
         CheckGLError( "After render" );
     }
 
-    void DrawText( string text, float x, float y )
+    public void DrawVAO( uint vaoID, int elementCount ) const
+    {
+        glBindVertexArray( vaoID );
+        glDrawElements( GL_TRIANGLES, elementCount, GL_UNSIGNED_SHORT, cast(GLvoid*)0 );
+        CheckGLError( "After DrawVAO" );
+    }
+
+    public void GenerateVAO( Vertex[] vertices, Face[] faces, out uint vao ) const
+    {
+        glGenVertexArrays( 1, &vao );
+        glBindVertexArray( vao );
+
+        uint vbo, ibo;
+        glGenBuffers( 1, &vbo );
+        glBindBuffer( GL_ARRAY_BUFFER, vbo );
+        glBufferData( GL_ARRAY_BUFFER, vertices.length * Vertex.sizeof, vertices.ptr, GL_STATIC_DRAW );
+
+        glGenBuffers( 1, &ibo );
+        glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ibo );
+        glBufferData( GL_ELEMENT_ARRAY_BUFFER, faces.length * Face.sizeof, faces.ptr, GL_STATIC_DRAW );
+
+        glEnableVertexAttribArray( 0 );
+        glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, Vertex.sizeof, null );
+
+        glEnableVertexAttribArray( 1 );
+        glVertexAttribPointer( 1, 2, GL_FLOAT, GL_FALSE, Vertex.sizeof, cast(char*)0 + 3 * 4 );
+
+        CheckGLError( "GenerateVAO end" );
+    }
+
+    public void DrawText( string text, float x, float y )
     {        
         if (text != cachedText)
-        {
-            glGenVertexArrays( 1, &textVAO );
-            glBindVertexArray( textVAO );
-     
+        {     
             Vertex[] vertices;
             Face[] faces;
             font.GetGeometry( text, fontTex.GetWidth(), fontTex.GetHeight(), vertices, faces );
+            GenerateVAO( vertices, faces, textVAO );
+
             cachedText = text;
             textFaceLength = cast(int)faces.length;
-            std.stdio.writeln( "vertices: ", vertices.length, ", faces: ", faces.length );
-
-            glGenBuffers( 1, &textVBO );
-            glBindBuffer( GL_ARRAY_BUFFER, textVBO );
-            glBufferData( GL_ARRAY_BUFFER, vertices.length * Vertex.sizeof, vertices.ptr, GL_STATIC_DRAW );
-
-            glGenBuffers( 1, &textIBO );
-            glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, textIBO );
-            glBufferData( GL_ELEMENT_ARRAY_BUFFER, faces.length * Face.sizeof, faces.ptr, GL_STATIC_DRAW );
-            
-            glEnableVertexAttribArray( 0 );
-            glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, Vertex.sizeof, null );
-            
-            glEnableVertexAttribArray( 1 );
-            glVertexAttribPointer( 1, 2, GL_FLOAT, GL_FALSE, Vertex.sizeof, cast(char*)0 + 3 * 4 );
-            
-            CheckGLError("GenerateQuadBuffers end");
         }
 
         fontTex.Bind();
-        
-        glBindVertexArray( textVAO );
-        
+
         uiShader.Use();
         uiShader.SetFloat2( "position", x, y );
         uiShader.SetFloat2( "scale", 1, 1 );
-        
-        glDrawElements( GL_TRIANGLES, textFaceLength * 3, GL_UNSIGNED_SHORT, cast(GLvoid*)0 );
 
-        CheckGLError("DrawText end");
+        DrawVAO( textVAO, textFaceLength * 3 );
     }
 
-    private void CheckGLError( string info )
+    private void CheckGLError( string info ) const
     {
         GLenum errorCode = GL_INVALID_ENUM;
         
@@ -141,6 +149,8 @@ class Renderer
     private Font font;
     private Texture fontTex;
     private string cachedText;
+    Matrix4x4 orthoMat;
+    Matrix4x4 perspectiveMat;
 }
 
 

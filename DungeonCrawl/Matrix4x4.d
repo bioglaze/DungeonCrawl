@@ -1,12 +1,8 @@
 ﻿module Matrix4x4;
+import std.math: tan, PI;
 
-class Matrix4x4
+struct Matrix4x4
 {
-	this()
-	{
-		// Constructor code
-	}
-
 	void MakeProjection( float left, float right, float bottom, float top, float nearDepth, float farDepth )
 	{
 		float tx = -((right + left) / (right - left));
@@ -22,6 +18,30 @@ class Matrix4x4
 		];
 	}
 	
+    void MakeProjection( float fovDegrees, float aspect, float nearDepth, float farDepth )
+    {
+        const float top = tan( fovDegrees * PI / 360.0f ) * nearDepth;
+        const float bottom = -top;
+        const float left = aspect * bottom;
+        const float right = aspect * top;
+
+        const float x = (2 * nearDepth) / (right - left);
+        const float y = (2 * nearDepth) / (top - bottom);
+        const float a = (right + left)  / (right - left);
+        const float b = (top + bottom)  / (top - bottom);
+
+        const float c = -(farDepth + nearDepth) / (farDepth - nearDepth);
+        const float d = -(2 * farDepth * nearDepth) / (farDepth - nearDepth);
+
+        m =
+        [
+            x, 0, 0,  0,
+            0, y, 0,  0,
+            a, b, c, -1,
+            0, 0, d,  0
+        ];
+    }
+
 	float[] m = new float[ 16 ];
 }
 

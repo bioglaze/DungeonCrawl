@@ -3,7 +3,8 @@
 import derelict.sdl2.sdl;
 import derelict.opengl3.gl3;
 import std.stdio: writeln;
-import std.c.stdlib: exit;
+import core.stdc.stdlib: exit;
+import std.string;
 
 public enum KeyboardKey
 {
@@ -24,7 +25,8 @@ class SDLWindow
         
         if (SDL_Init( SDL_INIT_EVERYTHING ) < 0)
         {
-            //throw new Error( "Failed to initialze SDL: " ~ to!string( SDL_GetError() ) );
+            const(char)* message = SDL_GetError();
+            writeln( "Failed to initialize SDL: ", message );
         }
         
         SDL_GL_SetAttribute( SDL_GL_DEPTH_SIZE, 24 );
@@ -43,6 +45,7 @@ class SDLWindow
             throw new Error( "Failed to create GL context!" );
         }
         
+        // If you get an unresolved symbol message here, try selecting "continue" or "ignore" in Visual Studio debugger.
         DerelictGL3.reload();
         
         SDL_GL_SetSwapInterval( 1 );
