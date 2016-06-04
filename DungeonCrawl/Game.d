@@ -1,7 +1,9 @@
 ﻿module Game;
 
 import std.stdio;
+import core.stdc.stdlib: exit;
 import Matrix4x4;
+import Vec3;
 import Renderer;
 import SDLWindow;
 import Texture;
@@ -14,6 +16,26 @@ enum FacingDirection
 
 class Player
 {
+    public void WalkForward()
+    {
+        if (facingDirection == FacingDirection.North)
+        {
+            ++levelPosition[ 1 ];
+        }
+        if (facingDirection == FacingDirection.South)
+        {
+            --levelPosition[ 1 ];
+        }
+        if (facingDirection == FacingDirection.East)
+        {
+            ++levelPosition[ 0 ];
+        }
+        if (facingDirection == FacingDirection.West)
+        {
+            --levelPosition[ 0 ];
+        }
+    }
+
     public void TurnRight()
     {
         facingDirection = cast(FacingDirection)((cast(int)facingDirection + 1) % 4);
@@ -30,6 +52,33 @@ class Player
         --facingDirection;
     }
     
+    Vec3 GetWorldPosition() const
+    {
+        return Vec3.Vec3( levelPosition[ 0 ] * 10, 0, levelPosition[ 1 ] * 10 );
+    }
+
+    Vec3 GetWorldDirection() const
+    {
+        if (facingDirection == FacingDirection.South)
+        {
+            return Vec3.Vec3( 0, 0, -1 );
+        }
+        else if (facingDirection == FacingDirection.North)
+        {
+            return Vec3.Vec3( 0, 0, 1 );
+        }
+        else if (facingDirection == FacingDirection.East)
+        {
+            return Vec3.Vec3( -1, 0, 0 );
+        }
+        else //if (facingDirection == FacingDirection.East)
+        {
+            return Vec3.Vec3( 1, 0, 0 );
+        }
+
+    }
+
+    private float[ 3 ] levelPosition = [ 0, 0, 0 ];
     private FacingDirection facingDirection = FacingDirection.South;
 }
 
@@ -50,27 +99,26 @@ class Game
         {
             foreach (key; keys)
             {
-                if (key == SDLWindow.KeyboardKey.Space)
+                if (key == SDLWindow.KeyboardKey.Escape)
                 {
-                    writeln( "game got space" );
+                    exit( 0 );
                 }
-                if (key == SDLWindow.KeyboardKey.Left)
+                else if (key == SDLWindow.KeyboardKey.Space)
                 {
-                    writeln( "game got left" );
+                }
+                else if (key == SDLWindow.KeyboardKey.Left)
+                {
                     player.TurnLeft();
                 }
-                if (key == SDLWindow.KeyboardKey.Right)
+                else if (key == SDLWindow.KeyboardKey.Right)
                 {
-                    writeln( "game got right" );
                     player.TurnRight();
                 }
-                if (key == SDLWindow.KeyboardKey.Up)
+                else if (key == SDLWindow.KeyboardKey.Up)
                 {
-                    writeln( "game got up" );
                 }
-                if (key == SDLWindow.KeyboardKey.Down)
+                else if (key == SDLWindow.KeyboardKey.Down)
                 {
-                    writeln( "game got down" );
                 }                
             }
         }
@@ -80,7 +128,6 @@ class Game
             {
                 if (key == SDLWindow.KeyboardKey.Space)
                 {
-                    writeln( "menu got space" );
                     mode = Mode.Ingame;
                 }
             }
@@ -94,10 +141,11 @@ class Game
         if (mode == Mode.Menu)
         {
             //renderer.DrawQuad( 0, 0, 256, 256 );
-            renderer.DrawText( "DungeonCrawl\n\nspace - new game\ns - high scores", 200, 70 );
+            renderer.DrawText( "DungeonCrawl\n\nspace - new game\ns - high scores", 100, 70 );
         }
         else if (mode == Mode.Ingame)
         {
+            renderer.LookAt( player.GetWorldPosition(), player.GetWorldDirection() );
             renderer.DrawVAO( levels[ currentLevel ].GetVAO(), levels[ currentLevel ].GetElementCount() );
         }
     }

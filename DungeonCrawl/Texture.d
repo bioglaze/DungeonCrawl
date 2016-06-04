@@ -35,15 +35,10 @@ class Texture
             
             width = imageSpec[ 4 ];
             width += imageSpec[ 5 ] * 256;
-            writeln( "image width: ", width );
 
             height = imageSpec[ 6 ];
             height += imageSpec[ 7 ] * 256;
-            writeln( "image height: ", height );
 
-            writeln( "pixel depth: ", imageSpec[ 9 ] );
-
-            writeln( "id block length: ", idLength[ 0 ] );
             if (idLength[ 0 ] > 0)
             {
                 byte[] imageId = new byte[ idLength[ 0 ] ];
@@ -60,8 +55,6 @@ class Texture
             glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
             glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
             glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
-            
-
         }
         catch (Exception e)
         {

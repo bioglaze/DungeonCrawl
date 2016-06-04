@@ -58,6 +58,7 @@ class SDLWindow
         
         if (keyState[ SDL_SCANCODE_ESCAPE ] == 1)
         {
+            writeln( "escape" );
             outKeys ~= KeyboardKey.Escape;
         }
 

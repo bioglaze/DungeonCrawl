@@ -3,6 +3,7 @@
 import std.stdio;
 import derelict.opengl3.gl3;
 import Matrix4x4;
+import Vec3;
 import shader;
 import Font;
 import Texture;
@@ -50,7 +51,7 @@ class Renderer
 
         uiShader = new Shader( "assets/shader.vert", "assets/shader.frag" );
         uiShader.Use();
-        uiShader.SetMatrix44( "projectionMatrix", orthoMat.m );
+        uiShader.SetMatrix44( "mvp", orthoMat.m );
         uiShader.SetInt( "sTexture", 0 );
 
         font = new Font( "assets/font.bin" );
@@ -69,8 +70,8 @@ class Renderer
         glBindVertexArray( quadVAO );
 
         uiShader.Use();
-        uiShader.SetFloat2( "position", x, y );
-        uiShader.SetFloat2( "scale", width, height );
+        //uiShader.SetFloat2( "position", x, y );
+        //uiShader.SetFloat2( "scale", width, height );
 
         glDrawArrays( GL_TRIANGLES, 0, 6 );
         CheckGLError( "After render" );
@@ -122,8 +123,11 @@ class Renderer
         fontTex.Bind();
 
         uiShader.Use();
-        uiShader.SetFloat2( "position", x, y );
-        uiShader.SetFloat2( "scale", 1, 1 );
+        Matrix4x4 mvp;
+        mvp.MakeIdentity();
+        mvp.Translate( [ x, y, 0 ] );
+        Matrix4x4.Multiply( mvp, orthoMat, mvp );
+        uiShader.SetMatrix44( "mvp", mvp.m );
 
         DrawVAO( textVAO, textFaceLength * 3 );
     }
@@ -137,6 +141,17 @@ class Renderer
             //writeln( "OpenGL error in " ~ info ~ ": " ~ to!string(errorCode) );
             writeln( "OpenGL error ", errorCode );
         }
+    }
+
+    public void LookAt( Vec3 position, Vec3 direction )
+    {
+        Matrix4x4 mvp;
+        Vec3.Vec3 center = Vec3.Vec3( position.x + direction.x * 100, position.y + direction.y, position.z + direction.z * 100 );
+        mvp.MakeLookAt( position, center, Vec3.Vec3( 0, 1, 0 ) );
+        Matrix4x4.Multiply( mvp, perspectiveMat, mvp );
+
+        uiShader.Use();
+        uiShader.SetMatrix44( "mvp", mvp.m );
     }
 
     private GLuint quadVAO;

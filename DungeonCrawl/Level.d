@@ -54,13 +54,36 @@ class Level
                 {
                     int s = 10;
                     vertices[ vertexCounter++ ] = Renderer.Vertex( [ -s, -s, s ], [ 0, 0 ] );
-                    vertices[ vertexCounter++ ] = Renderer.Vertex( [  s, -s, s ], [ 0, 0 ] );
-                    vertices[ vertexCounter++ ] = Renderer.Vertex( [  s, -s,-s ], [ 0, 0 ] );
-                    vertices[ vertexCounter++ ] = Renderer.Vertex( [ -s, -s,-s ], [ 0, 0 ] );
+                    vertices[ vertexCounter - 1 ].pos[ 0 ] += c * 10;
+                    vertices[ vertexCounter - 1 ].pos[ 2 ] += r * 10;
+
+                    vertices[ vertexCounter++ ] = Renderer.Vertex( [  s, -s, s ], [ 0, 1 ] );
+                    vertices[ vertexCounter - 1 ].pos[ 0 ] += c * 10;
+                    vertices[ vertexCounter - 1 ].pos[ 2 ] += r * 10;
+
+                    vertices[ vertexCounter++ ] = Renderer.Vertex( [  s, -s,-s ], [ 1, 0 ] );
+                    vertices[ vertexCounter - 1 ].pos[ 0 ] += c * 10;
+                    vertices[ vertexCounter - 1 ].pos[ 2 ] += r * 10;
+
+                    vertices[ vertexCounter++ ] = Renderer.Vertex( [ -s, -s,-s ], [ 1, 1 ] );
+                    vertices[ vertexCounter - 1 ].pos[ 0 ] += c * 10;
+                    vertices[ vertexCounter - 1 ].pos[ 2 ] += r * 10;
+
                     vertices[ vertexCounter++ ] = Renderer.Vertex( [ -s,  s, s ], [ 0, 0 ] );
-                    vertices[ vertexCounter++ ] = Renderer.Vertex( [  s,  s, s ], [ 0, 0 ] );
-                    vertices[ vertexCounter++ ] = Renderer.Vertex( [  s,  s,-s ], [ 0, 0 ] );
-                    vertices[ vertexCounter++ ] = Renderer.Vertex( [ -s,  s,-s ], [ 0, 0 ] );
+                    vertices[ vertexCounter - 1 ].pos[ 0 ] += c * 10;
+                    vertices[ vertexCounter - 1 ].pos[ 2 ] += r * 10;
+
+                    vertices[ vertexCounter++ ] = Renderer.Vertex( [  s,  s, s ], [ 0, 1 ] );
+                    vertices[ vertexCounter - 1 ].pos[ 0 ] += c * 10;
+                    vertices[ vertexCounter - 1 ].pos[ 2 ] += r * 10;
+
+                    vertices[ vertexCounter++ ] = Renderer.Vertex( [  s,  s,-s ], [ 1, 0 ] );
+                    vertices[ vertexCounter - 1 ].pos[ 0 ] += c * 10;
+                    vertices[ vertexCounter - 1 ].pos[ 2 ] += r * 10;
+
+                    vertices[ vertexCounter++ ] = Renderer.Vertex( [ -s,  s,-s ], [ 0, 1 ] );
+                    vertices[ vertexCounter - 1 ].pos[ 0 ] += c * 10;
+                    vertices[ vertexCounter - 1 ].pos[ 2 ] += r * 10;
 
                     faces[ faceCounter++ ] = Renderer.Face( 0, 4, 1 );
                     faces[ faceCounter++ ] = Renderer.Face( 4, 5, 1 );
@@ -94,7 +117,7 @@ class Level
     }
 
     private immutable int dimension = 10;
-    private BlockType[ dimension * dimension ] blocks;
+    private BlockType[ dimension * dimension ] blocks = BlockType.None;
     private uint vaoID;
     private int elementCount;
 }
