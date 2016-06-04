@@ -51,40 +51,39 @@ class SDLWindow
         SDL_GL_SetSwapInterval( 1 );
     }
     
-    public KeyboardKey[] ProcessInput()
+    public bool[ KeyboardKey ] ProcessInput()
     {	
-        KeyboardKey[] outKeys;
+        bool[ KeyboardKey ] outKeys;
         const Uint8* keyState = SDL_GetKeyboardState( null );    
         
         if (keyState[ SDL_SCANCODE_ESCAPE ] == 1)
         {
-            writeln( "escape" );
-            outKeys ~= KeyboardKey.Escape;
+            outKeys[ KeyboardKey.Escape ] = true;
         }
 
         if (keyState[ SDL_SCANCODE_SPACE ] == 1)
         {
-            outKeys ~= KeyboardKey.Space;
+            outKeys[ KeyboardKey.Space ] = true;
         }
         
         if (keyState[ SDL_SCANCODE_LEFT ] == 1)
         {
-            outKeys ~= KeyboardKey.Left;
+            outKeys[ KeyboardKey.Left ] = true;
         }
 
         if (keyState[ SDL_SCANCODE_RIGHT ] == 1)
         {
-            outKeys ~= KeyboardKey.Right;
+            outKeys[ KeyboardKey.Right ] = true;
         }
 
         if (keyState[ SDL_SCANCODE_UP ] == 1)
         {
-            outKeys ~= KeyboardKey.Up;
+            outKeys[ KeyboardKey.Up ] = true;
         }
         
         if (keyState[ SDL_SCANCODE_DOWN ] == 1)
         {
-            outKeys ~= KeyboardKey.Down;
+            outKeys[ KeyboardKey.Down ] = true;
         }
         
         SDL_Event e;

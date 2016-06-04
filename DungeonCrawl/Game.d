@@ -22,20 +22,40 @@ class Player
         {
             ++levelPosition[ 1 ];
         }
-        if (facingDirection == FacingDirection.South)
+        else if (facingDirection == FacingDirection.South)
         {
             --levelPosition[ 1 ];
         }
-        if (facingDirection == FacingDirection.East)
+        else if (facingDirection == FacingDirection.East)
         {
             ++levelPosition[ 0 ];
         }
-        if (facingDirection == FacingDirection.West)
+        else if (facingDirection == FacingDirection.West)
         {
             --levelPosition[ 0 ];
         }
     }
 
+    public void WalkBackward()
+    {
+        if (facingDirection == FacingDirection.North)
+        {
+            --levelPosition[ 1 ];
+        }
+        else if (facingDirection == FacingDirection.South)
+        {
+            ++levelPosition[ 1 ];
+        }
+        else if (facingDirection == FacingDirection.East)
+        {
+            --levelPosition[ 0 ];
+        }
+        else if (facingDirection == FacingDirection.West)
+        {
+            ++levelPosition[ 0 ];
+        }
+    }
+    
     public void TurnRight()
     {
         facingDirection = cast(FacingDirection)((cast(int)facingDirection + 1) % 4);
@@ -78,7 +98,7 @@ class Player
 
     }
 
-    private float[ 3 ] levelPosition = [ 0, 0, 0 ];
+    private float[ 3 ] levelPosition = [ 1, 0, 1 ];
     private FacingDirection facingDirection = FacingDirection.South;
 }
 
@@ -93,45 +113,43 @@ class Game
         levels[ 0 ] = new Level( renderer );
     }
 
-    public void Simulate( SDLWindow.KeyboardKey[] keys )
+    public void Simulate( bool[ SDLWindow.KeyboardKey ] keys )
     {
         if (mode == Mode.Ingame)
         {
-            foreach (key; keys)
+            if (SDLWindow.KeyboardKey.Escape in keys)
             {
-                if (key == SDLWindow.KeyboardKey.Escape)
-                {
-                    exit( 0 );
-                }
-                else if (key == SDLWindow.KeyboardKey.Space)
-                {
-                }
-                else if (key == SDLWindow.KeyboardKey.Left)
-                {
-                    player.TurnLeft();
-                }
-                else if (key == SDLWindow.KeyboardKey.Right)
-                {
-                    player.TurnRight();
-                }
-                else if (key == SDLWindow.KeyboardKey.Up)
-                {
-                }
-                else if (key == SDLWindow.KeyboardKey.Down)
-                {
-                }                
+                exit( 0 );
             }
+            else if (SDLWindow.KeyboardKey.Space in keys)
+            {
+            }
+            else if (SDLWindow.KeyboardKey.Left in keys && !(SDLWindow.KeyboardKey.Left in lastFrameKeys))
+            {
+                player.TurnLeft();
+            }
+            else if (SDLWindow.KeyboardKey.Right in keys && !(SDLWindow.KeyboardKey.Right in lastFrameKeys))
+            {
+                player.TurnRight();
+            }
+            else if (SDLWindow.KeyboardKey.Up in keys && !(SDLWindow.KeyboardKey.Up in lastFrameKeys))
+            {
+                player.WalkForward();
+            }
+            else if (SDLWindow.KeyboardKey.Down in keys && !(SDLWindow.KeyboardKey.Down in lastFrameKeys))
+            {
+                player.WalkBackward();
+            }                
         }
         else if (mode == Mode.Menu)
         {
-            foreach (key; keys)
+            if (SDLWindow.KeyboardKey.Space in keys)
             {
-                if (key == SDLWindow.KeyboardKey.Space)
-                {
-                    mode = Mode.Ingame;
-                }
+                mode = Mode.Ingame;
             }
         }
+
+        lastFrameKeys = keys;
     }
 
     public void Render( Renderer renderer )
@@ -146,7 +164,7 @@ class Game
         else if (mode == Mode.Ingame)
         {
             renderer.LookAt( player.GetWorldPosition(), player.GetWorldDirection() );
-            renderer.DrawVAO( levels[ currentLevel ].GetVAO(), levels[ currentLevel ].GetElementCount() );
+            renderer.DrawVAO( levels[ currentLevel ].GetVAO(), levels[ currentLevel ].GetElementCount()*3 );
         }
     }
 
@@ -156,6 +174,7 @@ class Game
     private Level[ 1 ] levels;
     private int currentLevel = 0;
     private Player player = new Player();
+    private bool[ SDLWindow.KeyboardKey ] lastFrameKeys;
 }
 
 void main()
@@ -170,7 +189,7 @@ void main()
 
     while (true)
     {
-        SDLWindow.KeyboardKey[] keys = window.ProcessInput();
+        bool[ SDLWindow.KeyboardKey ] keys = window.ProcessInput();
         game.Simulate( keys );
         game.Render( renderer );
         window.SwapBuffers();

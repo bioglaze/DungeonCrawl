@@ -81,6 +81,7 @@
     <Compile Include="Texture.d" />
     <Compile Include="Font.d" />
     <Compile Include="Level.d" />
+    <Compile Include="Vec3.d" />
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\font.bin">

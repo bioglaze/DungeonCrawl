@@ -12,13 +12,14 @@ class Level
 {
     this( Renderer renderer )
     {
+        blocks[ 0 * dimension + 0 ] = BlockType.Wall;
         // Fills the edges
         for (int i = 0; i < dimension; ++i)
         {
-            blocks[ i ] = BlockType.Wall;
-            blocks[ (dimension - 1) * dimension + i ] = BlockType.Wall;
-            blocks[ (dimension - 1) * i ] = BlockType.Wall;
-            blocks[ (dimension - 1) * i + dimension - 1 ] = BlockType.Wall;
+            //blocks[ i ] = BlockType.Wall;
+            //blocks[ (dimension - 1) * dimension + i ] = BlockType.Wall;
+            //blocks[ (dimension - 1) * i ] = BlockType.Wall;
+            //blocks[ (dimension - 1) * i + dimension - 1 ] = BlockType.Wall;
         }
 
         GenerateGeometry( renderer );
@@ -41,7 +42,7 @@ class Level
 
         vertices = new Renderer.Vertex[ filledBlocks * 8 ];
         faces = new Renderer.Face[ filledBlocks * 6 * 2 ];
-        elementCount = faces.length;
+        elementCount = cast(int)faces.length;
 
         int vertexCounter = 0;
         int faceCounter = 0;
@@ -52,6 +53,7 @@ class Level
             {
                 if (blocks[ r * dimension + c ] != BlockType.None)
                 {
+std.stdio.writeln("adding block");
                     int s = 10;
                     vertices[ vertexCounter++ ] = Renderer.Vertex( [ -s, -s, s ], [ 0, 0 ] );
                     vertices[ vertexCounter - 1 ].pos[ 0 ] += c * 10;

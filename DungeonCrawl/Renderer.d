@@ -44,7 +44,7 @@ class Renderer
         glEnableVertexAttribArray( 1 );
         glVertexAttribPointer( 1, 2, GL_FLOAT, GL_FALSE, Vertex.sizeof, cast(char*)0 + 3 * 4 );
         
-        CheckGLError("GenerateQuadBuffers end");
+        CheckGLError( "quadVAO end" );
 
         orthoMat.MakeProjection( 0, screenWidth, screenHeight, 0, -1, 1 );
         perspectiveMat.MakeProjection( 45, screenWidth / cast(float)screenHeight, 1, 200 );
@@ -125,7 +125,7 @@ class Renderer
         uiShader.Use();
         Matrix4x4 mvp;
         mvp.MakeIdentity();
-        mvp.Translate( [ x, y, 0 ] );
+        mvp.Translate( Vec3.Vec3( x, y, 0 ) );
         Matrix4x4.Multiply( mvp, orthoMat, mvp );
         uiShader.SetMatrix44( "mvp", mvp.m );
 
@@ -138,16 +138,20 @@ class Renderer
         
         while ((errorCode = glGetError()) != GL_NO_ERROR)
         {
-            //writeln( "OpenGL error in " ~ info ~ ": " ~ to!string(errorCode) );
             writeln( "OpenGL error ", errorCode );
         }
     }
-
+private int frame;
     public void LookAt( Vec3 position, Vec3 direction )
     {
         Matrix4x4 mvp;
         Vec3.Vec3 center = Vec3.Vec3( position.x + direction.x * 100, position.y + direction.y, position.z + direction.z * 100 );
         mvp.MakeLookAt( position, center, Vec3.Vec3( 0, 1, 0 ) );
+        //Matrix4x4.Multiply( mvp, perspectiveMat, mvp );
+
+        ++frame;
+        //mvp.MakeRotationXYZ( frame, frame, frame );
+        mvp.Translate( Vec3.Vec3( 0, 0, 30 ) );
         Matrix4x4.Multiply( mvp, perspectiveMat, mvp );
 
         uiShader.Use();
