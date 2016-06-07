@@ -119,17 +119,17 @@ class Font
             }
             
             const float scale = 1;
-            float x = 0;
+            const float x = 0;
             const float z = -0.6f;
             
-            float offx = x + ch.xOffset * scale + accumX * scale;
-            float offy = y + ch.yOffset * scale;
+            const float offx = x + ch.xOffset * scale + accumX * scale;
+            const float offy = y + ch.yOffset * scale;
             
-            float u0 = ch.x / texWidth;
-            float u1 = (ch.x + ch.width) / texWidth;
+            const float u0 = ch.x / texWidth;
+            const float u1 = (ch.x + ch.width) / texWidth;
             
-            float v0 = (ch.y + ch.height) / texHeight;
-            float v1 = (ch.y) / texHeight;
+            const float v0 = (ch.y + ch.height) / texHeight;
+            const float v1 = (ch.y) / texHeight;
             
             // Upper triangle.
             faces[ c * 2 + 0 ].a = cast(ushort)(c * 6 + 0);

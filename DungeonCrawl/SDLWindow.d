@@ -38,7 +38,7 @@ class SDLWindow
         win = SDL_CreateWindow("Dungeon Crawler", SDL_WINDOWPOS_CENTERED,
             SDL_WINDOWPOS_CENTERED, screenWidth, screenHeight, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
         DerelictGL3.load();
-        auto context = SDL_GL_CreateContext( win );
+        const auto context = SDL_GL_CreateContext( win );
         
         if (!context)
         {

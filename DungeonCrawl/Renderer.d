@@ -141,17 +141,15 @@ class Renderer
             writeln( "OpenGL error ", errorCode );
         }
     }
-private int frame;
+
     public void LookAt( Vec3 position, Vec3 direction )
     {
         Matrix4x4 mvp;
-        Vec3.Vec3 center = Vec3.Vec3( position.x + direction.x * 100, position.y + direction.y, position.z + direction.z * 100 );
+        Vec3.Vec3 center = Vec3.Vec3( position.x + direction.x * 100,
+                                      position.y + direction.y,
+                                      position.z + direction.z * 100 );
         mvp.MakeLookAt( position, center, Vec3.Vec3( 0, 1, 0 ) );
-        //Matrix4x4.Multiply( mvp, perspectiveMat, mvp );
-
-        ++frame;
-        //mvp.MakeRotationXYZ( frame, frame, frame );
-        mvp.Translate( Vec3.Vec3( 0, 0, 30 ) );
+        mvp.Translate( Vec3.Vec3( position.x, 0, 30 + position.z ) );
         Matrix4x4.Multiply( mvp, perspectiveMat, mvp );
 
         uiShader.Use();

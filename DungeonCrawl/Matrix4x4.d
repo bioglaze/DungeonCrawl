@@ -1,5 +1,5 @@
 ﻿module Matrix4x4;
-import std.math: sin, cos, tan, PI, isNaN;
+import std.math: abs, sin, cos, tan, PI, isNaN;
 import Vec3;
 
 void Multiply( Matrix4x4 a, Matrix4x4 b, out Matrix4x4 result )
@@ -73,22 +73,22 @@ struct Matrix4x4
         CheckForNaN();   
     }
 
-	void MakeProjection( float left, float right, float bottom, float top, float nearDepth, float farDepth )
-	{
-		float tx = -((right + left) / (right - left));
-		float ty = -((top + bottom) / (top - bottom));
-		float tz = -((farDepth + nearDepth) / (farDepth - nearDepth));
+    void MakeProjection( float left, float right, float bottom, float top, float nearDepth, float farDepth )
+    {
+        const float tx = -((right + left) / (right - left));
+        const float ty = -((top + bottom) / (top - bottom));
+        const float tz = -((farDepth + nearDepth) / (farDepth - nearDepth));
 		
-		m =
-		[
-			2.0f / (right - left), 0.0f, 0.0f, 0.0f,
-			0.0f, 2.0f / (top - bottom), 0.0f, 0.0f,
-			0.0f, 0.0f, -2.0f / (farDepth - nearDepth), 0.0f,
-			tx, ty, tz, 1.0f
-		];
+        m =
+        [
+            2.0f / (right - left), 0.0f, 0.0f, 0.0f,
+            0.0f, 2.0f / (top - bottom), 0.0f, 0.0f,
+            0.0f, 0.0f, -2.0f / (farDepth - nearDepth), 0.0f,
+            tx, ty, tz, 1.0f
+        ];
 
         CheckForNaN();
-	}
+    }
 	
     void MakeProjection( float fovDegrees, float aspect, float nearDepth, float farDepth )
     {
@@ -180,5 +180,41 @@ unittest
 	auto proj = new Matrix4x4();
 	proj.MakeProjection( 0, 640, 0, 480, -1, 1 );
 	assert( proj.m[ 15 ] == 1 );
+}
+
+unittest
+{
+    Matrix4x4 matrix1;
+    matrix1.m = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 ];
+    
+    Matrix4x4 matrix2;
+    matrix2.m = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 ];
+    
+    Matrix4x4 result;
+    Multiply( matrix1, matrix2, result );
+    
+    Matrix4x4 expectedResult;
+    expectedResult.m = 
+    [ 
+        90, 100, 110, 120,
+            202, 228, 254, 280,
+            314, 356, 398, 440,
+            426, 484, 542, 600
+    ];
+    
+    for (int i = 0; i < 16; ++i)
+    {
+        assert( abs( result.m[ i ] - expectedResult.m[ i ] ) < 0.0001f, "Matrix4x4 Multiply failed" );
+    }
+}
+
+unittest
+{
+    Matrix4x4 matrix;
+    const float exceptedResult = 42;
+    matrix.m[ 3 ] = exceptedResult;
+    matrix.Transpose();
+    
+    assert( matrix.m[ 3 * 4 ] == exceptedResult, "Matrix4x4 Transpose failed!" );
 }
 

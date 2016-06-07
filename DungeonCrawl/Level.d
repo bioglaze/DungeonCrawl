@@ -12,7 +12,7 @@ class Level
 {
     this( Renderer renderer )
     {
-        blocks[ 0 * dimension + 0 ] = BlockType.Wall;
+        blocks[ 0 * dimension + 3 ] = BlockType.Wall;
         // Fills the edges
         for (int i = 0; i < dimension; ++i)
         {
@@ -25,9 +25,9 @@ class Level
         GenerateGeometry( renderer );
     }
 
-	public void GenerateGeometry( Renderer renderer )
-	{
-	    Renderer.Vertex[] vertices;
+    public void GenerateGeometry( Renderer renderer )
+    {
+        Renderer.Vertex[] vertices;
         Renderer.Face[] faces;
 
         int filledBlocks = 0;
@@ -53,8 +53,7 @@ class Level
             {
                 if (blocks[ r * dimension + c ] != BlockType.None)
                 {
-std.stdio.writeln("adding block");
-                    int s = 10;
+                    immutable int s = 10;
                     vertices[ vertexCounter++ ] = Renderer.Vertex( [ -s, -s, s ], [ 0, 0 ] );
                     vertices[ vertexCounter - 1 ].pos[ 0 ] += c * 10;
                     vertices[ vertexCounter - 1 ].pos[ 2 ] += r * 10;
@@ -104,9 +103,7 @@ std.stdio.writeln("adding block");
         }
 
         renderer.GenerateVAO( vertices, faces, vaoID );
-        //std.stdio.writeln( "vertexCounter: ", vertexCounter );
-        //std.stdio.writeln( "faceCounter: ", faceCounter );
-	}
+    }
 
     public uint GetVAO() const
     {
