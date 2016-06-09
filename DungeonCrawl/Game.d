@@ -81,24 +81,27 @@ class Player
     {
         if (facingDirection == FacingDirection.South)
         {
-            return Vec3.Vec3( 0, 0, -1 );
+            //return Vec3.Vec3( 0, 0, -1 );
+            return Vec3.Vec3( 0, 180, 0 );
         }
         else if (facingDirection == FacingDirection.North)
         {
-            return Vec3.Vec3( 0, 0, 1 );
+            //return Vec3.Vec3( 0, 0, 1 );
+            return Vec3.Vec3( 0, 0, 0 );
         }
         else if (facingDirection == FacingDirection.East)
         {
-            return Vec3.Vec3( -1, 0, 0 );
+            //return Vec3.Vec3( -1, 0, 0 );
+            return Vec3.Vec3( 0, 90, 0 );
         }
         else //if (facingDirection == FacingDirection.East)
         {
-            return Vec3.Vec3( 1, 0, 0 );
+            //return Vec3.Vec3( 1, 0, 0 );
+            return Vec3.Vec3( 0, -90, 0 );
         }
-
     }
 
-    private float[ 3 ] levelPosition = [ 1, 0, 1 ];
+    private float[ 3 ] levelPosition = [ -1, 0, -2 ];
     private FacingDirection facingDirection = FacingDirection.South;
 }
 
@@ -163,8 +166,9 @@ class Game
         }
         else if (mode == Mode.Ingame)
         {
+            levels[ currentLevel ].BindTextures();
             renderer.LookAt( player.GetWorldPosition(), player.GetWorldDirection() );
-            renderer.DrawVAO( levels[ currentLevel ].GetVAO(), levels[ currentLevel ].GetElementCount()*3 );
+            renderer.DrawVAO( levels[ currentLevel ].GetVAO(), levels[ currentLevel ].GetElementCount() * 3 );
         }
     }
 

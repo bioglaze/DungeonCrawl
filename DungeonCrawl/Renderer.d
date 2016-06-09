@@ -51,7 +51,6 @@ class Renderer
 
         uiShader = new Shader( "assets/shader.vert", "assets/shader.frag" );
         uiShader.Use();
-        uiShader.SetMatrix44( "mvp", orthoMat.m );
         uiShader.SetInt( "sTexture", 0 );
 
         font = new Font( "assets/font.bin" );
@@ -129,7 +128,9 @@ class Renderer
         Matrix4x4.Multiply( mvp, orthoMat, mvp );
         uiShader.SetMatrix44( "mvp", mvp.m );
 
+        glDisable( GL_CULL_FACE );
         DrawVAO( textVAO, textFaceLength * 3 );
+        glEnable( GL_CULL_FACE );
     }
 
     private void CheckGLError( string info ) const
@@ -142,15 +143,38 @@ class Renderer
         }
     }
 
-    public void LookAt( Vec3 position, Vec3 direction )
+    float angle = 0;
+
+    public void LookAt( Vec3 position, Vec3 directionDeg )
     {
-        Matrix4x4 mvp;
+        /*Matrix4x4 mvp;
         Vec3.Vec3 center = Vec3.Vec3( position.x + direction.x * 100,
                                       position.y + direction.y,
                                       position.z + direction.z * 100 );
         mvp.MakeLookAt( position, center, Vec3.Vec3( 0, 1, 0 ) );
-        mvp.Translate( Vec3.Vec3( position.x, 0, 30 + position.z ) );
+        //mvp.Translate( Vec3.Vec3( position.x, 0, 30 + position.z ) );
         Matrix4x4.Multiply( mvp, perspectiveMat, mvp );
+        */
+        /*Matrix4x4 view;
+        Vec3.Vec3 center = Vec3.Vec3( position.x + direction.x * 100,
+                                      position.y + direction.y,
+                                     position.z + direction.z * 100 );
+        view.MakeLookAt( position, center, Vec3.Vec3( 0, 1, 0 ) );
+*/
+
+        Matrix4x4 mvp;
+        
+        Matrix4x4 rot;
+        ++angle;
+        //rot.MakeRotationXYZ( directionDeg.x, directionDeg.y, directionDeg.z );
+        rot.MakeRotationXYZ( angle, angle, angle );
+
+        Matrix4x4 trans;
+        trans.MakeIdentity();
+        trans.Translate( position );
+        //Matrix4x4 r;
+        //Matrix4x4.Multiply( trans, rot, r );
+        Matrix4x4.Multiply( rot, perspectiveMat, mvp );
 
         uiShader.Use();
         uiShader.SetMatrix44( "mvp", mvp.m );

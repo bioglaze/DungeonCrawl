@@ -48,6 +48,9 @@ class SDLWindow
         // If you get an unresolved symbol message here, try selecting "continue" or "ignore" in Visual Studio debugger.
         DerelictGL3.reload();
         
+        glEnable( GL_DEPTH_TEST );
+        glEnable( GL_CULL_FACE );
+
         SDL_GL_SetSwapInterval( 1 );
     }
     

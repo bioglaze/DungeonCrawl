@@ -1,5 +1,6 @@
 ﻿module Level;
 import Renderer;
+import Texture;
 static import std.stdio;
 
 enum BlockType
@@ -23,6 +24,12 @@ class Level
         }
 
         GenerateGeometry( renderer );
+        tex = new Texture( "assets/wall1.tga" );
+    }
+
+    public void BindTextures()
+    {
+        tex.Bind();
     }
 
     public void GenerateGeometry( Renderer renderer )
@@ -119,5 +126,6 @@ class Level
     private BlockType[ dimension * dimension ] blocks = BlockType.None;
     private uint vaoID;
     private int elementCount;
+    private Texture tex;
 }
 
