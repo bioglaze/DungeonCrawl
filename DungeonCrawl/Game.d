@@ -1,4 +1,4 @@
-﻿module Game;
+module Game;
 
 import std.stdio;
 import core.stdc.stdlib: exit;
@@ -74,6 +74,7 @@ class Player
     
     Vec3 GetWorldPosition() const
     {
+writefln( "x: %f, z: %f", levelPosition[ 0 ], levelPosition[ 1 ] );
         return Vec3.Vec3( levelPosition[ 0 ] * 10, 0, levelPosition[ 1 ] * 10 );
     }
 
@@ -81,27 +82,27 @@ class Player
     {
         if (facingDirection == FacingDirection.South)
         {
-            //return Vec3.Vec3( 0, 0, -1 );
-            return Vec3.Vec3( 0, 180, 0 );
+            return Vec3.Vec3( 0, 0, -1 );
+            //return Vec3.Vec3( 0, 180, 0 );
         }
         else if (facingDirection == FacingDirection.North)
         {
-            //return Vec3.Vec3( 0, 0, 1 );
-            return Vec3.Vec3( 0, 0, 0 );
+            return Vec3.Vec3( 0, 0, 1 );
+            //return Vec3.Vec3( 0, 0, 0 );
         }
         else if (facingDirection == FacingDirection.East)
         {
-            //return Vec3.Vec3( -1, 0, 0 );
-            return Vec3.Vec3( 0, 90, 0 );
+            return Vec3.Vec3( -1, 0, 0 );
+            //return Vec3.Vec3( 0, 90, 0 );
         }
         else //if (facingDirection == FacingDirection.East)
         {
-            //return Vec3.Vec3( 1, 0, 0 );
-            return Vec3.Vec3( 0, -90, 0 );
+            return Vec3.Vec3( 1, 0, 0 );
+            //return Vec3.Vec3( 0, -90, 0 );
         }
     }
 
-    private float[ 3 ] levelPosition = [ -1, 0, -2 ];
+    private float[ 3 ] levelPosition = [ -2, -9, 0 ];
     private FacingDirection facingDirection = FacingDirection.South;
 }
 

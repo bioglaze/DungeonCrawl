@@ -1,5 +1,6 @@
-﻿module Matrix4x4;
+module Matrix4x4;
 import std.math: abs, sin, cos, tan, PI, isNaN;
+import std.string;
 import Vec3;
 
 void Multiply( Matrix4x4 a, Matrix4x4 b, out Matrix4x4 result )
@@ -24,7 +25,15 @@ void Multiply( Matrix4x4 a, Matrix4x4 b, out Matrix4x4 result )
 
 struct Matrix4x4
 {
-    void CheckForNaN()
+    string toString() const
+    {
+        return format( "%f, %f, %f, %f\n%f, %f, %f, %f\n%f, %f, %f, %f\n%f, %f, %f, %f\n",
+            m[ 0 ], m[ 1 ], m[ 2 ], m[ 3 ], m[ 4 ], m[ 5 ], m[ 6 ], m[ 7 ],
+            m[ 8 ], m[ 9 ], m[ 10 ], m[ 11 ], m[ 12 ], m[ 13 ], m[ 14 ], m[ 15 ] );
+            
+    }
+
+    void CheckForNaN() const
     {
         for (int i = 0; i < 16; ++i)
         {
@@ -181,7 +190,11 @@ struct Matrix4x4
         translateMatrix.m[ 13 ] = v.y;
         translateMatrix.m[ 14 ] = v.z;
 
-        Multiply( this, translateMatrix, this );
+        Matrix4x4 th;
+        th.m = m;
+        Matrix4x4 res;
+        Multiply( th, translateMatrix, res );
+        m = res.m;
 
         CheckForNaN();
     }
@@ -212,7 +225,7 @@ struct Matrix4x4
         CheckForNaN();
     }
 
-	float[] m = new float[ 16 ];
+    float[ 16 ] m;
 }
 
 unittest
