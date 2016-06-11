@@ -6,21 +6,23 @@ static import std.stdio;
 enum BlockType
 {
     None = 0,
-    Wall,
+    Wall1,
+    Wall2,
 }
 
 class Level
 {
     this( Renderer renderer )
     {
-        blocks[ 0 * dimension + 4 ] = BlockType.Wall;
-        blocks[ 0 * dimension + 2 ] = BlockType.Wall;
+        blocks[ 0 * dimension + 4 ] = BlockType.Wall1;
+        blocks[ 0 * dimension + 2 ] = BlockType.Wall1;
         // Fills the edges
         for (int i = 0; i < dimension; ++i)
         {
-            blocks[ i ] = BlockType.Wall;
-            blocks[ (dimension - 1) * dimension + i ] = BlockType.Wall;
-            blocks[ (dimension - 1) * i ] = BlockType.Wall;
+            blocks[ i ] = BlockType.Wall1;
+            blocks[ dimension * dimension - i - 1 ] = BlockType.Wall1;
+            blocks[ dimension * i ] = BlockType.Wall1;
+            blocks[ dimension * i + dimension - 1 ] = BlockType.Wall1;
         }
 
         GenerateGeometry( renderer );
@@ -112,8 +114,7 @@ class Level
                     {
                         faces[ faceCounter - f - 1 ].a += vertexCounter - 8;
                         faces[ faceCounter - f - 1 ].b += vertexCounter - 8;
-                        faces[ faceCounter - f - 1 ].c += vertexCounter - 8;
-                        
+                        faces[ faceCounter - f - 1 ].c += vertexCounter - 8;                        
                     }                    
                 }
             }

@@ -47,7 +47,7 @@ class Renderer
         CheckGLError( "quadVAO end" );
 
         orthoMat.MakeProjection( 0, screenWidth, screenHeight, 0, -1, 1 );
-        perspectiveMat.MakeProjection( 45, screenWidth / cast(float)screenHeight, 1, 200 );
+        perspectiveMat.MakeProjection( 45, screenWidth / cast(float)screenHeight, 1, 300 );
 
         uiShader = new Shader( "assets/shader.vert", "assets/shader.frag" );
         uiShader.Use();
@@ -152,28 +152,15 @@ class Renderer
 
     public void LookAt( Vec3 position, Vec3 directionDeg )
     {
-        /*Matrix4x4 mvp;
-        Vec3.Vec3 center = Vec3.Vec3( position.x + directionDeg.x * 100,
-                                      position.y + directionDeg.y,
-                                      position.z + directionDeg.z * 100 );
-        mvp.MakeLookAt( position, center, Vec3.Vec3( 0, 1, 0 ) );
-        //mvp.Translate( Vec3.Vec3( position.x, 0, 30 + position.z ) );
-        Matrix4x4.Multiply( mvp, perspectiveMat, mvp );
-        */
-
-        Matrix4x4 mvp;
-        
         Matrix4x4 rot;
-        //++angle;
-angle = 0;
-        //rot.MakeRotationXYZ( directionDeg.x, directionDeg.y, directionDeg.z );
-        rot.MakeRotationXYZ( angle, angle, angle );
+        rot.MakeRotationXYZ( directionDeg.x, directionDeg.y, directionDeg.z );
 
-        //writeln( "before: ", mvp.toString() );
         Matrix4x4 trans;
         trans.MakeIdentity();
         trans.Translate( position );
-        Matrix4x4.Multiply( rot, trans, rot );
+        Matrix4x4.Multiply( trans, rot, rot );
+
+        Matrix4x4 mvp;
         Matrix4x4.Multiply( rot, perspectiveMat, mvp );
 
         uiShader.Use();
