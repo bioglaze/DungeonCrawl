@@ -55,6 +55,11 @@ class Renderer
 
         font = new Font( "assets/font.bin" );
         fontTex = new Texture( "assets/font.tga" );
+
+        glEnable( GL_DEPTH_TEST );
+        glEnable( GL_CULL_FACE );
+        glCullFace( GL_BACK );
+        glFrontFace( GL_CW );
         
         CheckGLError("Renderer constructor end");
     }
@@ -147,15 +152,15 @@ class Renderer
 
     public void LookAt( Vec3 position, Vec3 directionDeg )
     {
-        Matrix4x4 mvp;
+        /*Matrix4x4 mvp;
         Vec3.Vec3 center = Vec3.Vec3( position.x + directionDeg.x * 100,
                                       position.y + directionDeg.y,
                                       position.z + directionDeg.z * 100 );
         mvp.MakeLookAt( position, center, Vec3.Vec3( 0, 1, 0 ) );
         //mvp.Translate( Vec3.Vec3( position.x, 0, 30 + position.z ) );
         Matrix4x4.Multiply( mvp, perspectiveMat, mvp );
+        */
 
-/*
         Matrix4x4 mvp;
         
         Matrix4x4 rot;
@@ -168,12 +173,9 @@ angle = 0;
         Matrix4x4 trans;
         trans.MakeIdentity();
         trans.Translate( position );
-        //writeln( "after: ", mvp.toString() );
-//Matrix4x4 gfgfr;
         Matrix4x4.Multiply( rot, trans, rot );
         Matrix4x4.Multiply( rot, perspectiveMat, mvp );
-//writeln( "after: ", mvp.toString() );
-*/
+
         uiShader.Use();
         uiShader.SetMatrix44( "mvp", mvp.m );
     }

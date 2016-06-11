@@ -74,7 +74,7 @@ class Player
     
     Vec3 GetWorldPosition() const
     {
-writefln( "x: %f, z: %f", levelPosition[ 0 ], levelPosition[ 1 ] );
+        //writefln( "x: %f, z: %f", levelPosition[ 0 ], levelPosition[ 1 ] );
         return Vec3.Vec3( levelPosition[ 0 ] * 10, 0, levelPosition[ 1 ] * 10 );
     }
 
@@ -102,7 +102,8 @@ writefln( "x: %f, z: %f", levelPosition[ 0 ], levelPosition[ 1 ] );
         }
     }
 
-    private float[ 3 ] levelPosition = [ -2, -9, 0 ];
+    //private float[ 3 ] levelPosition = [ -2, -9, 0 ];
+    private float[ 3 ] levelPosition = [ -2, -3, 0 ];
     private FacingDirection facingDirection = FacingDirection.South;
 }
 

@@ -1,4 +1,4 @@
-﻿module Level;
+module Level;
 import Renderer;
 import Texture;
 static import std.stdio;
@@ -13,14 +13,14 @@ class Level
 {
     this( Renderer renderer )
     {
-        blocks[ 0 * dimension + 3 ] = BlockType.Wall;
+        blocks[ 0 * dimension + 4 ] = BlockType.Wall;
+        blocks[ 0 * dimension + 2 ] = BlockType.Wall;
         // Fills the edges
         for (int i = 0; i < dimension; ++i)
         {
-            //blocks[ i ] = BlockType.Wall;
-            //blocks[ (dimension - 1) * dimension + i ] = BlockType.Wall;
-            //blocks[ (dimension - 1) * i ] = BlockType.Wall;
-            //blocks[ (dimension - 1) * i + dimension - 1 ] = BlockType.Wall;
+            blocks[ i ] = BlockType.Wall;
+            blocks[ (dimension - 1) * dimension + i ] = BlockType.Wall;
+            blocks[ (dimension - 1) * i ] = BlockType.Wall;
         }
 
         GenerateGeometry( renderer );
@@ -61,37 +61,39 @@ class Level
                 if (blocks[ r * dimension + c ] != BlockType.None)
                 {
                     immutable int s = 10;
+                    immutable int s2 = s * 2;
+                    
                     vertices[ vertexCounter++ ] = Renderer.Vertex( [ -s, -s, s ], [ 0, 0 ] );
-                    vertices[ vertexCounter - 1 ].pos[ 0 ] += c * 10;
-                    vertices[ vertexCounter - 1 ].pos[ 2 ] += r * 10;
+                    vertices[ vertexCounter - 1 ].pos[ 0 ] += c * s2;
+                    vertices[ vertexCounter - 1 ].pos[ 2 ] += r * s2;
 
-                    vertices[ vertexCounter++ ] = Renderer.Vertex( [  s, -s, s ], [ 0, 1 ] );
-                    vertices[ vertexCounter - 1 ].pos[ 0 ] += c * 10;
-                    vertices[ vertexCounter - 1 ].pos[ 2 ] += r * 10;
+                    vertices[ vertexCounter++ ] = Renderer.Vertex( [  s, -s, s ], [ 1, 0 ] );
+                    vertices[ vertexCounter - 1 ].pos[ 0 ] += c * s2;
+                    vertices[ vertexCounter - 1 ].pos[ 2 ] += r * s2;
 
                     vertices[ vertexCounter++ ] = Renderer.Vertex( [  s, -s,-s ], [ 1, 0 ] );
-                    vertices[ vertexCounter - 1 ].pos[ 0 ] += c * 10;
-                    vertices[ vertexCounter - 1 ].pos[ 2 ] += r * 10;
+                    vertices[ vertexCounter - 1 ].pos[ 0 ] += c * s2;
+                    vertices[ vertexCounter - 1 ].pos[ 2 ] += r * s2;
 
-                    vertices[ vertexCounter++ ] = Renderer.Vertex( [ -s, -s,-s ], [ 1, 1 ] );
-                    vertices[ vertexCounter - 1 ].pos[ 0 ] += c * 10;
-                    vertices[ vertexCounter - 1 ].pos[ 2 ] += r * 10;
+                    vertices[ vertexCounter++ ] = Renderer.Vertex( [ -s, -s,-s ], [ 0, 0 ] );
+                    vertices[ vertexCounter - 1 ].pos[ 0 ] += c * s2;
+                    vertices[ vertexCounter - 1 ].pos[ 2 ] += r * s2;
 
-                    vertices[ vertexCounter++ ] = Renderer.Vertex( [ -s,  s, s ], [ 0, 0 ] );
-                    vertices[ vertexCounter - 1 ].pos[ 0 ] += c * 10;
-                    vertices[ vertexCounter - 1 ].pos[ 2 ] += r * 10;
+                    vertices[ vertexCounter++ ] = Renderer.Vertex( [ -s,  s, s ], [ 0, 1 ] );
+                    vertices[ vertexCounter - 1 ].pos[ 0 ] += c * s2;
+                    vertices[ vertexCounter - 1 ].pos[ 2 ] += r * s2;
 
-                    vertices[ vertexCounter++ ] = Renderer.Vertex( [  s,  s, s ], [ 0, 1 ] );
-                    vertices[ vertexCounter - 1 ].pos[ 0 ] += c * 10;
-                    vertices[ vertexCounter - 1 ].pos[ 2 ] += r * 10;
+                    vertices[ vertexCounter++ ] = Renderer.Vertex( [  s,  s, s ], [ 1, 1 ] );
+                    vertices[ vertexCounter - 1 ].pos[ 0 ] += c * s2;
+                    vertices[ vertexCounter - 1 ].pos[ 2 ] += r * s2;
 
-                    vertices[ vertexCounter++ ] = Renderer.Vertex( [  s,  s,-s ], [ 1, 0 ] );
-                    vertices[ vertexCounter - 1 ].pos[ 0 ] += c * 10;
-                    vertices[ vertexCounter - 1 ].pos[ 2 ] += r * 10;
+                    vertices[ vertexCounter++ ] = Renderer.Vertex( [  s,  s,-s ], [ 1, 1 ] );
+                    vertices[ vertexCounter - 1 ].pos[ 0 ] += c * s2;
+                    vertices[ vertexCounter - 1 ].pos[ 2 ] += r * s2;
 
                     vertices[ vertexCounter++ ] = Renderer.Vertex( [ -s,  s,-s ], [ 0, 1 ] );
-                    vertices[ vertexCounter - 1 ].pos[ 0 ] += c * 10;
-                    vertices[ vertexCounter - 1 ].pos[ 2 ] += r * 10;
+                    vertices[ vertexCounter - 1 ].pos[ 0 ] += c * s2;
+                    vertices[ vertexCounter - 1 ].pos[ 2 ] += r * s2;
 
                     faces[ faceCounter++ ] = Renderer.Face( 0, 4, 1 );
                     faces[ faceCounter++ ] = Renderer.Face( 4, 5, 1 );
@@ -105,6 +107,14 @@ class Level
                     faces[ faceCounter++ ] = Renderer.Face( 5, 7, 6 );
                     faces[ faceCounter++ ] = Renderer.Face( 3, 0, 2 );
                     faces[ faceCounter++ ] = Renderer.Face( 2, 0, 1 );
+
+                    for (int f = 0; f < 12; ++f)
+                    {
+                        faces[ faceCounter - f - 1 ].a += vertexCounter - 8;
+                        faces[ faceCounter - f - 1 ].b += vertexCounter - 8;
+                        faces[ faceCounter - f - 1 ].c += vertexCounter - 8;
+                        
+                    }                    
                 }
             }
         }
