@@ -1,4 +1,4 @@
-﻿module Texture;
+module Texture;
 
 import derelict.opengl3.gl3;
 import std.stdio;
@@ -23,8 +23,7 @@ class Texture
 
             if (imageType[ 0 ] != 2)
             {
-                writeln( "Image type must be uncompressed true-color image" );
-                throw new Exception( "wrong TGA type" );
+                throw new Exception( "wrong TGA type: must be uncompressed true-color" );
             }
 
             byte[ 5 ] colorSpec;
@@ -58,8 +57,7 @@ class Texture
         }
         catch (Exception e)
         {
-            writeln( "Could not open ", path );
-            writeln( e );
+            writeln( "could not open ", path, ":", e );
         }
     }
 

@@ -157,6 +157,11 @@ class Renderer
 
         Matrix4x4 trans;
         trans.MakeIdentity();
+
+        // test begin (enable to see .obj mesh)
+        // glFrontFace( GL_CCW );
+        //trans.Scale( 10, 10, 10 );
+        // test end
         trans.Translate( position );
         Matrix4x4.Multiply( trans, rot, rot );
 

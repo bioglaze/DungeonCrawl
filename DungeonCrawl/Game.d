@@ -63,21 +63,12 @@ class Player
     
     public void TurnLeft()
     {
-        if (facingDirection == FacingDirection.North)
+        final switch (facingDirection)
         {
-            facingDirection = FacingDirection.West;
-        }
-        else if (facingDirection == FacingDirection.South)
-        {
-            facingDirection = FacingDirection.East;
-        }
-        else if (facingDirection == FacingDirection.West)
-        {
-            facingDirection = FacingDirection.South;
-        }
-        else if (facingDirection == FacingDirection.East)
-        {
-            facingDirection = FacingDirection.North;
+        case FacingDirection.North: facingDirection = FacingDirection.West; break;
+        case FacingDirection.South: facingDirection = FacingDirection.East; break;
+        case FacingDirection.East: facingDirection = FacingDirection.North; break;
+        case FacingDirection.West: facingDirection = FacingDirection.South; break;
         }
     }
     
@@ -88,21 +79,12 @@ class Player
 
     Vec3 GetWorldDirection() const
     {
-        if (facingDirection == FacingDirection.South)
+        final switch (facingDirection)
         {
-            return Vec3.Vec3( 0, 0, 0 );
-        }
-        else if (facingDirection == FacingDirection.North)
-        {
-            return Vec3.Vec3( 0, 180, 0 );
-        }
-        else if (facingDirection == FacingDirection.East)
-        {
-            return Vec3.Vec3( 0, 90, 0 );
-        }
-        else //if (facingDirection == FacingDirection.East)
-        {
-            return Vec3.Vec3( 0, -90, 0 );
+        case FacingDirection.South: return Vec3.Vec3( 0, 0, 0 );
+        case FacingDirection.North: return Vec3.Vec3( 0, 180, 0 );
+        case FacingDirection.East: return Vec3.Vec3( 0, 90, 0 );
+        case FacingDirection.West: return Vec3.Vec3( 0, -90, 0 );
         }
     }
 
@@ -171,9 +153,8 @@ class Game
         }
         else if (mode == Mode.Ingame)
         {
-            levels[ currentLevel ].BindTextures();
             renderer.LookAt( player.GetWorldPosition(), player.GetWorldDirection() );
-            renderer.DrawVAO( levels[ currentLevel ].GetVAO(), levels[ currentLevel ].GetElementCount() * 3 );
+            levels[ currentLevel ].Draw( renderer );
         }
     }
 

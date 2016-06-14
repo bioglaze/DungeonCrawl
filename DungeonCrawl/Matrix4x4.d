@@ -140,47 +140,21 @@ struct Matrix4x4
         m[  8 ] = zAxis.x; m[  9 ] = zAxis.y; m[ 10 ] = zAxis.z; m[ 11 ] = -Vec3.Dot( zAxis, eye );
         m[ 12 ] =       0; m[ 13 ] =       0; m[ 14 ] =       0; m[ 15 ] = 1;
 
-/*
-        Vec3 forward = Vec3.Vec3( center.x - eye.x, center.y - eye.y, center.z - eye.z );
-        Normalize( forward );
-
-        Vec3 right = Cross( forward, up );
-        Normalize( right );
-        Vec3 newUp = Cross( right, forward );
-
-        Matrix4x4 a;
-
-        a.m[ 0 ] = right.x;
-        a.m[ 4 ] = right.y;
-        a.m[ 8 ] = right.z;
-        a.m[ 12 ] = 0;
-
-        a.m[ 1 ] = newUp.x;
-        a.m[ 5 ] = newUp.y;
-        a.m[ 9 ] = newUp.z;
-        a.m[13 ] = 0;
-
-        a.m[ 2 ] = -forward.x;
-        a.m[ 6 ] = -forward.y;
-        a.m[10 ] = -forward.z;
-        a.m[14 ] = 0;
-
-        a.m[ 3 ] = a.m[ 7 ] = a.m[ 11 ] = 0;
-        a.m[15 ] = 1;
-
-        Matrix4x4 translate;
-        translate.MakeIdentity();
-        translate.m[ 12 ] = -eye.x;
-        translate.m[ 13 ] = -eye.y;
-        translate.m[ 14 ] = -eye.z;
-
-        Multiply( translate, a, a );
-
-        this = a;
-*/
         CheckForNaN();
     }
 
+    void Scale( float x, float y, float z )
+    {
+        Matrix4x4 scale;
+        scale.MakeIdentity();
+        
+        scale.m[  0 ] = x;
+        scale.m[  5 ] = y;
+        scale.m[ 10 ] = z;
+
+        Multiply( this, scale, this );
+    }
+    
     void Translate( Vec3 v )
     {
         Matrix4x4 translateMatrix;

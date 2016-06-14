@@ -1,6 +1,7 @@
 module Level;
 import Renderer;
 import Texture;
+import Mesh;
 static import std.stdio;
 
 enum BlockType
@@ -27,8 +28,17 @@ class Level
 
         GenerateGeometry( renderer );
         tex = new Texture( "assets/wall1.tga" );
+
+        wall = new Mesh( "assets/textured_cube.obj", renderer );
     }
 
+    public void Draw( Renderer renderer )
+    {
+        BindTextures();
+        renderer.DrawVAO( vaoID, elementCount * 3 );
+        //renderer.DrawVAO( wall.GetVAO(), wall.GetElementCount() * 3 );
+    }
+    
     public void BindTextures()
     {
         tex.Bind();
@@ -123,20 +133,11 @@ class Level
         renderer.GenerateVAO( vertices, faces, vaoID );
     }
 
-    public uint GetVAO() const
-    {
-        return vaoID;
-    }
-
-    public int GetElementCount() const
-    {
-        return elementCount;
-    }
-
     private immutable int dimension = 10;
     private BlockType[ dimension * dimension ] blocks = BlockType.None;
     private uint vaoID;
     private int elementCount;
     private Texture tex;
+    private Mesh wall;
 }
 
