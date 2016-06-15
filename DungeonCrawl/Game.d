@@ -148,7 +148,6 @@ class Game
 
         if (mode == Mode.Menu)
         {
-            //renderer.DrawQuad( 0, 0, 256, 256 );
             renderer.DrawText( "DungeonCrawl\n\nspace - new game\ns - high scores", 100, 70 );
         }
         else if (mode == Mode.Ingame)

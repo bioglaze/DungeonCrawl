@@ -56,9 +56,8 @@ class Mesh
                 uint items = formattedRead( line, "%s %f %f %f", &v, &vertex.x, &vertex.y, &vertex.z );
                 assert( items == 4, "parse error readin .obj file" );
                 vertices ~= vertex;
-                //writefln("parsed vertex: %f %f %f", vertex.x, vertex.y, vertex.z );
             }
-            else if (line.length > 0 && line[ 0..1 ] == "vn")
+            else if (line.length > 0 && line[ 0..2 ] == "vn")
             {
                 Vec3 normal;
                 string v;
@@ -66,7 +65,7 @@ class Mesh
                 assert( items == 4, "parse error readin .obj file" );
                 normals ~= normal;
             }
-            else if (line.length > 0 && line[ 0..1 ] == "vt")
+            else if (line.length > 0 && line[ 0..2 ] == "vt")
             {
                 Vec3 texcoord;
                 string v;
@@ -103,10 +102,6 @@ class Mesh
                 --face.t3;
 
                 faces ~= face;
-                /*writefln("face: %d/%d/%d, %d/%d/%d, %d/%d/%d ",
-                        face.v1, face.t1, face.n1,
-                                            face.v2, face.t2, face.n2,
-                                            face.v3, face.t3, face.n3 );*/
             }
         }
     }
@@ -133,8 +128,8 @@ class Mesh
         for (int f = 0; f < faces.length; ++f)
         {
             Vec3 tvertex = vertices[ faces[ f ].v1 ];
-            Vec3 tnormal = vertices[ faces[ f ].n1 ];
-            Vec3 ttcoord = vertices[ faces[ f ].t1 ];
+            Vec3 tnormal = normals[ faces[ f ].n1 ];
+            Vec3 ttcoord = texcoords[ faces[ f ].t1 ];
 
             // Searches vertex from vertex list and adds it if not found.
 
@@ -164,8 +159,8 @@ class Mesh
 
             // Vertex 2
             tvertex = vertices[ faces[ f ].v2 ];
-            tnormal = vertices[ faces[ f ].n2 ];
-            ttcoord = vertices[ faces[ f ].t2 ];
+            tnormal = normals[ faces[ f ].n2 ];
+            ttcoord = texcoords[ faces[ f ].t2 ];
 
             found = false;
 
@@ -192,8 +187,8 @@ class Mesh
 
             // Vertex 3
             tvertex = vertices[ faces[ f ].v3 ];
-            tnormal = vertices[ faces[ f ].n3 ];
-            ttcoord = vertices[ faces[ f ].t3 ];
+            tnormal = normals[ faces[ f ].n3 ];
+            ttcoord = texcoords[ faces[ f ].t3 ];
 
             found = false;
 

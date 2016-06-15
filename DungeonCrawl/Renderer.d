@@ -23,29 +23,6 @@ class Renderer
 {
     this( float screenWidth, float screenHeight )
     {
-        glGenVertexArrays( 1, &quadVAO );
-        glBindVertexArray( quadVAO );
-        
-        Vertex[ 6 ] quad;
-        quad[ 0 ] = Vertex( [ 0, 0, 0 ], [ 0, 0 ] );
-        quad[ 1 ] = Vertex( [ 0, 1, 0 ], [ 0, 1 ] );
-        quad[ 2 ] = Vertex( [ 1, 0, 0 ], [ 1, 0 ] );
-        quad[ 3 ] = Vertex( [ 1, 0, 0 ], [ 1, 0 ] );
-        quad[ 4 ] = Vertex( [ 1, 1, 0 ], [ 1, 1 ] );
-        quad[ 5 ] = Vertex( [ 0, 1, 0 ], [ 0, 1 ] );
-
-        glGenBuffers( 1, &quadVBO );
-        glBindBuffer( GL_ARRAY_BUFFER, quadVBO );
-        glBufferData( GL_ARRAY_BUFFER, quad.length * Vertex.sizeof, quad.ptr, GL_STATIC_DRAW );
-        
-        glEnableVertexAttribArray( 0 );
-        glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, Vertex.sizeof, null );
-
-        glEnableVertexAttribArray( 1 );
-        glVertexAttribPointer( 1, 2, GL_FLOAT, GL_FALSE, Vertex.sizeof, cast(char*)0 + 3 * 4 );
-        
-        CheckGLError( "quadVAO end" );
-
         orthoMat.MakeProjection( 0, screenWidth, screenHeight, 0, -1, 1 );
         perspectiveMat.MakeProjection( 45, screenWidth / cast(float)screenHeight, 1, 300 );
 
@@ -59,7 +36,7 @@ class Renderer
         glEnable( GL_DEPTH_TEST );
         glEnable( GL_CULL_FACE );
         glCullFace( GL_BACK );
-        glFrontFace( GL_CW );
+        glFrontFace( GL_CCW );
         
         CheckGLError("Renderer constructor end");
     }
@@ -67,18 +44,6 @@ class Renderer
     public void ClearScreen()
     {
         glClear( GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT );
-    }
-
-    public void DrawQuad( float x, float y, float width, float height )
-    {
-        glBindVertexArray( quadVAO );
-
-        uiShader.Use();
-        //uiShader.SetFloat2( "position", x, y );
-        //uiShader.SetFloat2( "scale", width, height );
-
-        glDrawArrays( GL_TRIANGLES, 0, 6 );
-        CheckGLError( "After render" );
     }
 
     public void DrawVAO( uint vaoID, int elementCount ) const
@@ -133,9 +98,7 @@ class Renderer
         Matrix4x4.Multiply( mvp, orthoMat, mvp );
         uiShader.SetMatrix44( "mvp", mvp.m );
 
-        glDisable( GL_CULL_FACE );
         DrawVAO( textVAO, textFaceLength * 3 );
-        glEnable( GL_CULL_FACE );
     }
 
     private void CheckGLError( string info ) const
@@ -148,8 +111,6 @@ class Renderer
         }
     }
 
-    float angle = 0;
-
     public void LookAt( Vec3 position, Vec3 directionDeg )
     {
         Matrix4x4 rot;
@@ -159,7 +120,6 @@ class Renderer
         trans.MakeIdentity();
 
         // test begin (enable to see .obj mesh)
-        // glFrontFace( GL_CCW );
         //trans.Scale( 10, 10, 10 );
         // test end
         trans.Translate( position );
@@ -172,8 +132,6 @@ class Renderer
         uiShader.SetMatrix44( "mvp", mvp.m );
     }
 
-    private GLuint quadVAO;
-    private GLuint quadVBO;
     private GLuint textVAO;
     private GLuint textVBO;
     private GLuint textIBO;
@@ -182,8 +140,8 @@ class Renderer
     private Font font;
     private Texture fontTex;
     private string cachedText;
-    Matrix4x4 orthoMat;
-    Matrix4x4 perspectiveMat;
+    private Matrix4x4 orthoMat;
+    private Matrix4x4 perspectiveMat;
 }
 
 
