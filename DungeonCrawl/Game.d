@@ -3,94 +3,12 @@ module Game;
 import std.stdio;
 import core.stdc.stdlib: exit;
 import Matrix4x4;
-import Vec3;
 import Renderer;
 import SDLWindow;
 import Texture;
 import Level;
-
-enum FacingDirection
-{
-    North = 0, East, South, West
-}
-
-class Player
-{
-    public void WalkForward()
-    {
-        if (facingDirection == FacingDirection.North)
-        {
-            --levelPosition[ 1 ];
-        }
-        else if (facingDirection == FacingDirection.South)
-        {
-            ++levelPosition[ 1 ];
-        }
-        else if (facingDirection == FacingDirection.East)
-        {
-            ++levelPosition[ 0 ];
-        }
-        else if (facingDirection == FacingDirection.West)
-        {
-            --levelPosition[ 0 ];
-        }
-    }
-
-    public void WalkBackward()
-    {
-        if (facingDirection == FacingDirection.North)
-        {
-            ++levelPosition[ 1 ];
-        }
-        else if (facingDirection == FacingDirection.South)
-        {
-            --levelPosition[ 1 ];
-        }
-        else if (facingDirection == FacingDirection.East)
-        {
-            --levelPosition[ 0 ];
-        }
-        else if (facingDirection == FacingDirection.West)
-        {
-            ++levelPosition[ 0 ];
-        }
-    }
-    
-    public void TurnRight()
-    {
-        facingDirection = cast(FacingDirection)((cast(int)facingDirection + 1) % 4);
-    }
-    
-    public void TurnLeft()
-    {
-        final switch (facingDirection)
-        {
-        case FacingDirection.North: facingDirection = FacingDirection.West; break;
-        case FacingDirection.South: facingDirection = FacingDirection.East; break;
-        case FacingDirection.East: facingDirection = FacingDirection.North; break;
-        case FacingDirection.West: facingDirection = FacingDirection.South; break;
-        }
-    }
-    
-    Vec3 GetWorldPosition() const
-    {
-        return Vec3.Vec3( levelPosition[ 0 ] * 10, 0, levelPosition[ 1 ] * 10 );
-    }
-
-    Vec3 GetWorldDirection() const
-    {
-        final switch (facingDirection)
-        {
-        case FacingDirection.South: return Vec3.Vec3( 0, 0, 0 );
-        case FacingDirection.North: return Vec3.Vec3( 0, 180, 0 );
-        case FacingDirection.East: return Vec3.Vec3( 0, 90, 0 );
-        case FacingDirection.West: return Vec3.Vec3( 0, -90, 0 );
-        }
-    }
-
-    private float[ 3 ] levelPosition = [ -2, -3, 0 ];
-    private FacingDirection facingDirection = FacingDirection.South;
-}
+import Player;
+import std.typecons;
 
 class Game
 {
@@ -122,11 +40,13 @@ class Game
             {
                 player.TurnRight();
             }
-            else if (SDLWindow.KeyboardKey.Up in keys && !(SDLWindow.KeyboardKey.Up in lastFrameKeys))
+            else if (SDLWindow.KeyboardKey.Up in keys && !(SDLWindow.KeyboardKey.Up in lastFrameKeys) &&
+                     levels[ currentLevel ].CanWalkForward( player ) )
             {
                 player.WalkForward();
             }
-            else if (SDLWindow.KeyboardKey.Down in keys && !(SDLWindow.KeyboardKey.Down in lastFrameKeys))
+            else if (SDLWindow.KeyboardKey.Down in keys && !(SDLWindow.KeyboardKey.Down in lastFrameKeys) &&
+                     levels[ currentLevel ].CanWalkBackward( player ))
             {
                 player.WalkBackward();
             }                

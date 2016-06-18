@@ -209,6 +209,8 @@
   <File path="..\Game.d" />
   <File path="..\Level.d" />
   <File path="..\Matrix4x4.d" />
+  <File path="..\Mesh.d" />
+  <File path="..\Player.d" />
   <File path="..\Renderer.d" />
   <File path="..\SDLWindow.d" />
   <File path="..\shader.d" />

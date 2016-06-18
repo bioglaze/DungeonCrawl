@@ -1,7 +1,8 @@
 module Level;
+import Mesh;
+import Player;
 import Renderer;
 import Texture;
-import Mesh;
 static import std.stdio;
 
 enum BlockType
@@ -15,8 +16,9 @@ class Level
 {
     this( Renderer renderer )
     {
-        blocks[ 0 * dimension + 4 ] = BlockType.Wall1;
-        blocks[ 0 * dimension + 2 ] = BlockType.Wall1;
+        //blocks[ 2 * dimension + 4 ] = BlockType.Wall1;
+        //blocks[ 4 * dimension + 2 ] = BlockType.Wall1;
+        blocks[ 1 * dimension + 1 ] = BlockType.Wall1;
         // Fills the edges
         for (int i = 0; i < dimension; ++i)
         {
@@ -30,6 +32,18 @@ class Level
         tex = new Texture( "assets/wall1.tga" );
 
         wall = new Mesh( "assets/textured_cube.obj", renderer );
+    }
+
+    public bool CanWalkForward( Player player ) const
+    {
+        auto playerForward = player.GetForwardPosition();
+        return true;//blocks[ playerForward[ 0 ] * dimension + playerForward[ 1 ] ] == BlockType.None;
+    }
+
+    public bool CanWalkBackward( Player player ) const
+    {
+        auto playerForward = player.GetForwardPosition();
+        return true;
     }
 
     public void Draw( Renderer renderer )
@@ -49,17 +63,10 @@ class Level
         Renderer.Vertex[] vertices;
         Renderer.Face[] faces;
 
-        int filledBlocks = 0;
+        immutable int filledBlocks = dimension * dimension;
+        immutable int vertexCount = 26;
 
-        for (int i = 0; i < dimension * dimension; ++i)
-        {
-            if (blocks[ i ] != BlockType.None)
-            {
-                ++filledBlocks;
-            }
-        }
-
-        vertices = new Renderer.Vertex[ filledBlocks * 8 ];
+        vertices = new Renderer.Vertex[ filledBlocks * vertexCount ];
         faces = new Renderer.Face[ filledBlocks * 6 * 2 ];
         elementCount = cast(int)faces.length;
 
@@ -70,61 +77,68 @@ class Level
         {
             for (int c = 0; c < dimension; ++c)
             {
-                if (blocks[ r * dimension + c ] != BlockType.None)
-                {
-                    immutable int s = 10;
-                    immutable int s2 = s * 2;
-                    
-                    vertices[ vertexCounter++ ] = Renderer.Vertex( [ -s, -s, s ], [ 0, 0 ] );
-                    vertices[ vertexCounter - 1 ].pos[ 0 ] += c * s2;
-                    vertices[ vertexCounter - 1 ].pos[ 2 ] += r * s2;
+                //if (blocks[ r * dimension + c ] != BlockType.None)
+                {                    
+                    vertices[ vertexCounter++ ] = Renderer.Vertex([ 1.000000, -1.000000, 1.000000 ], [ 1.000000, 0.000000 ]);
+                    vertices[ vertexCounter++ ] = Renderer.Vertex([ -1.000000, -1.000000, -1.000000 ], [ 0.000000, 1.000000 ]);
+                    vertices[ vertexCounter++ ] = Renderer.Vertex([ 1.000000, -1.000000, -1.000000 ], [ 0.000000, 0.000000 ]);
+                    vertices[ vertexCounter++ ] = Renderer.Vertex([ -1.000000, 1.000000, -1.000000 ], [ 1.000000, 0.000000 ]);
+                    vertices[ vertexCounter++ ] = Renderer.Vertex([ 1.000000, 1.000000, 1.000001 ], [ 0.000000, 1.000000 ]);
+                    vertices[ vertexCounter++ ] = Renderer.Vertex([ 1.000000, 1.000000, -1.000000 ], [ 0.000000, 0.000000 ]);
+                    vertices[ vertexCounter++ ] = Renderer.Vertex([ 1.000000, 1.000000, -1.00000 ], [ 1.000000, 0.000000 ]);
+                    vertices[ vertexCounter++ ] = Renderer.Vertex([ 1.000000, -1.000000, 1.000000 ], [ 0.000000, 1.000000 ]);
+                    vertices[ vertexCounter++ ] = Renderer.Vertex([ 1.000000, 1.000000, 1.000001 ], [ 1.000000, 0.000000 ]);
+                    vertices[ vertexCounter++ ] = Renderer.Vertex([ -1.000000, -1.000000, 1.000000 ], [ 0.000000, 1.000000 ]);
+                    vertices[ vertexCounter++ ] = Renderer.Vertex([ 1.000000, -1.000000, 1.000000 ], [ 0.000000, 0.000000 ]);
+                    vertices[ vertexCounter++ ] = Renderer.Vertex([ -1.000000, -1.000000, 1.000000 ], [ 0.000000, 0.000000 ]);
+                    vertices[ vertexCounter++ ] = Renderer.Vertex([ -1.000000, 1.000000, -1.000000 ], [ 1.000000, 1.000000 ]);
+                    vertices[ vertexCounter++ ] = Renderer.Vertex([ -1.000000, -1.000000, -1.000000 ], [ 0.000000, 1.000000 ]);
+                    vertices[ vertexCounter++ ] = Renderer.Vertex([ 1.000000, -1.000000, -1.000000 ], [ 1.000000, 0.000000 ]);
+                    vertices[ vertexCounter++ ] = Renderer.Vertex([ -1.000000, 1.000000, -1.000000 ], [ 0.000000, 1.000000 ]);
+                    vertices[ vertexCounter++ ] = Renderer.Vertex([ -1.000000, -1.000000, 1.000000 ], [ 1.000000, 1.000000 ]);
+                    vertices[ vertexCounter++ ] = Renderer.Vertex([ -1.000000, 1.000000, 1.000000 ], [ 1.000000, 1.000000 ]);
+                    vertices[ vertexCounter++ ] = Renderer.Vertex([ 1.00000, 1.000000, 1.000001 ], [ 0.000000, 1.000000 ]);
+                    vertices[ vertexCounter++ ] = Renderer.Vertex([ 1.000000, 1.000000, 1.000001 ], [ 1.000000, 1.000000 ]);
+                    vertices[ vertexCounter++ ] = Renderer.Vertex([ 1.000000, -1.000000, 1.000000 ], [ 0.000000, 1.000000 ]);
+                    vertices[ vertexCounter++ ] = Renderer.Vertex([ -1.000000, -1.000000, 1.000000 ], [ 0.000000, 1.000000 ]);
+                    vertices[ vertexCounter++ ] = Renderer.Vertex([ -1.000000, 1.000000, 1.000000 ], [ 1.000000, 0.000000 ]);
+                    vertices[ vertexCounter++ ] = Renderer.Vertex([ -1.000000, 1.000000, -1.000000 ], [ 1.000000, 1.000000 ]);
+                    vertices[ vertexCounter++ ] = Renderer.Vertex([ -1.000000, -1.000000, -1.000000 ], [ 1.000000, 1.000000 ]);
+                    vertices[ vertexCounter++ ] = Renderer.Vertex([ -1.000000, 1.000000, -1.000000 ], [ 0.000000, 1.000000 ]);
 
-                    vertices[ vertexCounter++ ] = Renderer.Vertex( [  s, -s, s ], [ 1, 0 ] );
-                    vertices[ vertexCounter - 1 ].pos[ 0 ] += c * s2;
-                    vertices[ vertexCounter - 1 ].pos[ 2 ] += r * s2;
+                    for (int i = 0; i < vertexCount; ++i)
+                    {
+                        immutable int s = 10;
+                        immutable int s2 = s * 2;
+                        const float y = blocks[ r * dimension + c ] != BlockType.None ? 0 : s * 2;
 
-                    vertices[ vertexCounter++ ] = Renderer.Vertex( [  s, -s,-s ], [ 1, 0 ] );
-                    vertices[ vertexCounter - 1 ].pos[ 0 ] += c * s2;
-                    vertices[ vertexCounter - 1 ].pos[ 2 ] += r * s2;
+                        vertices[ vertexCounter - i - 1 ].pos[ 0 ] *= s;
+                        vertices[ vertexCounter - i - 1 ].pos[ 1 ] *= s;
+                        vertices[ vertexCounter - i - 1 ].pos[ 2 ] *= s;
 
-                    vertices[ vertexCounter++ ] = Renderer.Vertex( [ -s, -s,-s ], [ 0, 0 ] );
-                    vertices[ vertexCounter - 1 ].pos[ 0 ] += c * s2;
-                    vertices[ vertexCounter - 1 ].pos[ 2 ] += r * s2;
+                        vertices[ vertexCounter - i - 1 ].pos[ 0 ] += c * s2;
+                        vertices[ vertexCounter - i - 1 ].pos[ 1 ] -= y;
+                        vertices[ vertexCounter - i - 1 ].pos[ 2 ] += r * s2;
+                    }
 
-                    vertices[ vertexCounter++ ] = Renderer.Vertex( [ -s,  s, s ], [ 0, 1 ] );
-                    vertices[ vertexCounter - 1 ].pos[ 0 ] += c * s2;
-                    vertices[ vertexCounter - 1 ].pos[ 2 ] += r * s2;
-
-                    vertices[ vertexCounter++ ] = Renderer.Vertex( [  s,  s, s ], [ 1, 1 ] );
-                    vertices[ vertexCounter - 1 ].pos[ 0 ] += c * s2;
-                    vertices[ vertexCounter - 1 ].pos[ 2 ] += r * s2;
-
-                    vertices[ vertexCounter++ ] = Renderer.Vertex( [  s,  s,-s ], [ 1, 1 ] );
-                    vertices[ vertexCounter - 1 ].pos[ 0 ] += c * s2;
-                    vertices[ vertexCounter - 1 ].pos[ 2 ] += r * s2;
-
-                    vertices[ vertexCounter++ ] = Renderer.Vertex( [ -s,  s,-s ], [ 0, 1 ] );
-                    vertices[ vertexCounter - 1 ].pos[ 0 ] += c * s2;
-                    vertices[ vertexCounter - 1 ].pos[ 2 ] += r * s2;
-
-                    faces[ faceCounter++ ] = Renderer.Face( 0, 4, 1 );
-                    faces[ faceCounter++ ] = Renderer.Face( 4, 5, 1 );
-                    faces[ faceCounter++ ] = Renderer.Face( 1, 5, 2 );
-                    faces[ faceCounter++ ] = Renderer.Face( 2, 5, 6 );
-                    faces[ faceCounter++ ] = Renderer.Face( 2, 6, 3 );
-                    faces[ faceCounter++ ] = Renderer.Face( 3, 6, 7 );
-                    faces[ faceCounter++ ] = Renderer.Face( 3, 7, 0 );
-                    faces[ faceCounter++ ] = Renderer.Face( 0, 7, 4 );
-                    faces[ faceCounter++ ] = Renderer.Face( 4, 7, 5 );
-                    faces[ faceCounter++ ] = Renderer.Face( 5, 7, 6 );
-                    faces[ faceCounter++ ] = Renderer.Face( 3, 0, 2 );
-                    faces[ faceCounter++ ] = Renderer.Face( 2, 0, 1 );
+                    faces[ faceCounter++ ] = Renderer.Face( 0, 1, 2 );
+                    faces[ faceCounter++ ] = Renderer.Face( 3, 4, 5 );
+                    faces[ faceCounter++ ] = Renderer.Face( 6, 7, 2 );
+                    faces[ faceCounter++ ] = Renderer.Face( 8, 9, 10 );
+                    faces[ faceCounter++ ] = Renderer.Face( 11, 12, 13 );
+                    faces[ faceCounter++ ] = Renderer.Face( 14, 15, 5 );
+                    faces[ faceCounter++ ] = Renderer.Face( 0, 16, 13 );
+                    faces[ faceCounter++ ] = Renderer.Face( 3, 17, 18 );
+                    faces[ faceCounter++ ] = Renderer.Face( 6, 19, 20 );
+                    faces[ faceCounter++ ] = Renderer.Face( 8, 17, 21 );
+                    faces[ faceCounter++ ] = Renderer.Face( 11, 22, 23 );
+                    faces[ faceCounter++ ] = Renderer.Face( 14, 24, 25 );
 
                     for (int f = 0; f < 12; ++f)
                     {
-                        faces[ faceCounter - f - 1 ].a += vertexCounter - 8;
-                        faces[ faceCounter - f - 1 ].b += vertexCounter - 8;
-                        faces[ faceCounter - f - 1 ].c += vertexCounter - 8;                        
+                        faces[ faceCounter - f - 1 ].a += vertexCounter - vertexCount;
+                        faces[ faceCounter - f - 1 ].b += vertexCounter - vertexCount;
+                        faces[ faceCounter - f - 1 ].c += vertexCounter - vertexCount;                        
                     }                    
                 }
             }

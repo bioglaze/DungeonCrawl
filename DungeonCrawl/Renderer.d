@@ -123,6 +123,7 @@ class Renderer
         //trans.Scale( 10, 10, 10 );
         // test end
         trans.Translate( position );
+        trans.Translate( Vec3.Vec3( -40, 0, -70 ) );
         Matrix4x4.Multiply( trans, rot, rot );
 
         Matrix4x4 mvp;
