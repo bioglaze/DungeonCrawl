@@ -72,7 +72,7 @@ class Game
         }
         else if (mode == Mode.Ingame)
         {
-            renderer.LookAt( player.GetWorldPosition(), player.GetWorldDirection() );
+            renderer.SetCamera( player.GetWorldPosition(), player.GetWorldDirection() );
             levels[ currentLevel ].Draw( renderer );
         }
     }

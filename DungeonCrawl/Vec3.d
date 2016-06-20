@@ -16,6 +16,7 @@ float Dot( Vec3 v1, Vec3 v2 )
 void Normalize( ref Vec3 v )
 {
     const float len = Length( v );
+    assert( len != 0, "length is 0" );
     v.x /= len;
     v.y /= len;
     v.z /= len;
@@ -45,6 +46,24 @@ struct Vec3
         x = ax;
         y = ay;
         z = az;
+    }
+
+    Vec3 opBinary( string op )( Vec3 v ) const
+    {
+        static if (op == "+")
+        {
+            return Vec3( x + v.x, y + v.y, z + v.z );
+        }
+        else static assert( false, "operator " ~ op ~ " not implemented" );
+    }
+
+    Vec3 opBinary( string op )( float f ) const
+    {
+        static if (op == "*")
+        {
+            return Vec3( x * f, y * f, z * f );
+        }
+        else static assert( false, "operator " ~ op ~ " not implemented" );
     }
 
     float x = 0, y = 0, z = 0;

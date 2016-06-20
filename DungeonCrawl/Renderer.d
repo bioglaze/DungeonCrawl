@@ -111,26 +111,31 @@ class Renderer
         }
     }
 
-    public void LookAt( Vec3 position, Vec3 directionDeg )
+    public void SetMVP( Vec3 position, float scale )
     {
-        Matrix4x4 rot;
-        rot.MakeRotationXYZ( directionDeg.x, directionDeg.y, directionDeg.z );
+        Matrix4x4 view;
+        view.MakeLookAt( cameraPosition, cameraPosition + cameraDirectionDeg * 50, Vec3.Vec3( 0, 1, 0 ) );
+        view.Transpose();
 
-        Matrix4x4 trans;
-        trans.MakeIdentity();
+        Matrix4x4 model;
+        model.MakeIdentity();
 
-        // test begin (enable to see .obj mesh)
-        //trans.Scale( 10, 10, 10 );
-        // test end
-        trans.Translate( position );
-        trans.Translate( Vec3.Vec3( -40, 0, -70 ) );
-        Matrix4x4.Multiply( trans, rot, rot );
+        model.Scale( scale, scale, scale );
+        model.Translate( position );
 
         Matrix4x4 mvp;
-        Matrix4x4.Multiply( rot, perspectiveMat, mvp );
+        Matrix4x4 mv;
+        Matrix4x4.Multiply( model, view, mv );
+        Matrix4x4.Multiply( mv, perspectiveMat, mvp );
 
         uiShader.Use();
         uiShader.SetMatrix44( "mvp", mvp.m );
+    }
+
+    public void SetCamera( Vec3 aCameraPosition, Vec3 directionDeg )
+    {
+        cameraPosition = aCameraPosition;
+        cameraDirectionDeg = directionDeg;
     }
 
     private GLuint textVAO;
@@ -143,6 +148,8 @@ class Renderer
     private string cachedText;
     private Matrix4x4 orthoMat;
     private Matrix4x4 perspectiveMat;
+    private Vec3 cameraPosition;
+    private Vec3 cameraDirectionDeg;
 }
 
 

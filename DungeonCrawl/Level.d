@@ -3,6 +3,7 @@ import Mesh;
 import Player;
 import Renderer;
 import Texture;
+import Vec3;
 static import std.stdio;
 
 enum BlockType
@@ -31,7 +32,7 @@ class Level
         GenerateGeometry( renderer );
         tex = new Texture( "assets/wall1.tga" );
 
-        wall = new Mesh( "assets/textured_cube.obj", renderer );
+        sword = new Mesh( "assets/sword.obj", renderer );
     }
 
     public bool CanWalkForward( Player player ) const
@@ -49,8 +50,11 @@ class Level
     public void Draw( Renderer renderer )
     {
         BindTextures();
+        renderer.SetMVP( Vec3.Vec3( 1, 1, 1 ), 1 );
         renderer.DrawVAO( vaoID, elementCount * 3 );
-        //renderer.DrawVAO( wall.GetVAO(), wall.GetElementCount() * 3 );
+
+        renderer.SetMVP( Vec3.Vec3( 40, 0, 70 ), 10 );
+        renderer.DrawVAO( sword.GetVAO(), sword.GetElementCount() * 3 );
     }
     
     public void BindTextures()
@@ -152,6 +156,6 @@ class Level
     private uint vaoID;
     private int elementCount;
     private Texture tex;
-    private Mesh wall;
+    private Mesh sword;
 }
 

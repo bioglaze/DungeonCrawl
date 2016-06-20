@@ -81,17 +81,28 @@ class Player
         return Vec3.Vec3( levelPosition[ 0 ] * 20, 0, levelPosition[ 1 ] * 20 );
     }
 
-    public Vec3 GetWorldDirection() const
+    public Vec3 GetWorldDirectionDeg() const
     {
         final switch (facingDirection)
         {
-            case FacingDirection.South: return Vec3.Vec3( 0, 0, 0 );
+            case FacingDirection.South: return Vec3.Vec3( 0, -180, 0 );
             case FacingDirection.North: return Vec3.Vec3( 0, 180, 0 );
             case FacingDirection.East: return Vec3.Vec3( 0, 90, 0 );
             case FacingDirection.West: return Vec3.Vec3( 0, -90, 0 );
         }
     }
 
-    private int[ 3 ] levelPosition = [ 1, 5, 0 ];
+    public Vec3 GetWorldDirection() const
+    {
+        final switch (facingDirection)
+        {
+            case FacingDirection.South: return Vec3.Vec3( 0, 0, -1 );
+            case FacingDirection.North: return Vec3.Vec3( 0, 0, 1 );
+            case FacingDirection.East: return Vec3.Vec3( -1, 0, 0 );
+            case FacingDirection.West: return Vec3.Vec3( 1, 0, 0 );
+        }
+    }
+
+    private int[ 3 ] levelPosition = [ 2, 0, 0 ];
     private FacingDirection facingDirection = FacingDirection.South;
 }
