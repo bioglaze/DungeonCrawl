@@ -5,21 +5,22 @@ import Renderer;
 import Texture;
 import Vec3;
 static import std.stdio;
+import std.stdio;
 
-enum BlockType
+private enum BlockType
 {
     None = 0,
     Wall1,
     Wall2,
 }
 
-class Level
+public class Level
 {
     this( Renderer renderer )
     {
         //blocks[ 2 * dimension + 4 ] = BlockType.Wall1;
         //blocks[ 4 * dimension + 2 ] = BlockType.Wall1;
-        blocks[ 1 * dimension + 1 ] = BlockType.Wall1;
+        blocks[ 1 * dimension + 3 ] = BlockType.Wall1;
         // Fills the edges
         for (int i = 0; i < dimension; ++i)
         {
@@ -53,7 +54,7 @@ class Level
         renderer.SetMVP( Vec3.Vec3( 1, 1, 1 ), 1 );
         renderer.DrawVAO( vaoID, elementCount * 3 );
 
-        renderer.SetMVP( Vec3.Vec3( 40, 0, 70 ), 10 );
+        renderer.SetMVP( Vec3.Vec3( 20, 0, 40 ), 10 ); // 20, 0, 20 is tile 1, 1
         renderer.DrawVAO( sword.GetVAO(), sword.GetElementCount() * 3 );
     }
     

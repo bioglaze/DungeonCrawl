@@ -103,6 +103,6 @@ class Player
         }
     }
 
-    private int[ 3 ] levelPosition = [ 2, 0, 0 ];
+    private int[ 2 ] levelPosition = [ 1, 1 ];
     private FacingDirection facingDirection = FacingDirection.South;
 }

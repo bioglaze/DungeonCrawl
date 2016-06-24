@@ -19,6 +19,28 @@ public align(1) struct Face
     ushort a, b, c;
 }
 
+public void CheckGLError( string info )
+{
+    GLenum errorCode = GL_INVALID_ENUM;
+        
+    while ((errorCode = glGetError()) != GL_NO_ERROR)
+    {
+        if (errorCode == 1282)
+        {
+            writeln( "OpenGL error GL_INVALID_OPERATION in ", info );
+        }
+        else if (errorCode == 1281)
+        {
+            writeln( "OpenGL error GL_INVALID_VALUE in ", info );
+        }
+        else
+        {
+            writeln( "OpenGL error ", errorCode, " in ", info );
+        }
+        //assert( false, "" );
+    }
+}
+
 class Renderer
 {
     this( float screenWidth, float screenHeight )
@@ -37,8 +59,19 @@ class Renderer
         glEnable( GL_CULL_FACE );
         glCullFace( GL_BACK );
         glFrontFace( GL_CCW );
-        
-        CheckGLError("Renderer constructor end");
+
+        CheckGLError( "Before generate quad" );
+
+        Vertex[ 6 ] quad;
+        quad[ 0 ] = Vertex( [ 0, 0, 0 ], [ 0, 0 ] );
+        quad[ 1 ] = Vertex( [ 0, 1, 0 ], [ 0, 1 ] );
+        quad[ 2 ] = Vertex( [ 1, 0, 0 ], [ 1, 0 ] );
+        quad[ 3 ] = Vertex( [ 1, 0, 0 ], [ 1, 0 ] );
+        quad[ 4 ] = Vertex( [ 1, 1, 0 ], [ 1, 1 ] );
+        quad[ 5 ] = Vertex( [ 0, 1, 0 ], [ 0, 1 ] );
+
+        Face[ 2 ] quadIndices = [ Face( 0, 1, 2 ), Face( 3, 5, 4 ) ];
+        GenerateVAO( quad, quadIndices, quadVAO );        
     }
     
     public void ClearScreen()
@@ -58,14 +91,20 @@ class Renderer
         glGenVertexArrays( 1, &vao );
         glBindVertexArray( vao );
 
+        CheckGLError( "GenerateVAO after vao" );
+
         uint vbo, ibo;
         glGenBuffers( 1, &vbo );
         glBindBuffer( GL_ARRAY_BUFFER, vbo );
         glBufferData( GL_ARRAY_BUFFER, vertices.length * Vertex.sizeof, vertices.ptr, GL_STATIC_DRAW );
 
+        CheckGLError( "GenerateVAO after vertices" );
+
         glGenBuffers( 1, &ibo );
         glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ibo );
         glBufferData( GL_ELEMENT_ARRAY_BUFFER, faces.length * Face.sizeof, faces.ptr, GL_STATIC_DRAW );
+
+        CheckGLError( "GenerateVAO after indices" );
 
         glEnableVertexAttribArray( 0 );
         glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, Vertex.sizeof, null );
@@ -101,16 +140,22 @@ class Renderer
         DrawVAO( textVAO, textFaceLength * 3 );
     }
 
-    private void CheckGLError( string info ) const
+    public void DrawTexture( Texture texture, int x, int y, int xScale, int yScale )
     {
-        GLenum errorCode = GL_INVALID_ENUM;
-        
-        while ((errorCode = glGetError()) != GL_NO_ERROR)
-        {
-            writeln( "OpenGL error ", errorCode );
-        }
-    }
+        texture.Bind();
 
+        Matrix4x4 mvp;
+        mvp.MakeIdentity();
+        mvp.Scale( xScale, yScale, 1 );
+        mvp.Translate( Vec3.Vec3( x, y, 0 ) );
+
+        uiShader.Use();
+        Matrix4x4.Multiply( mvp, orthoMat, mvp );
+        uiShader.SetMatrix44( "mvp", mvp.m );
+
+        DrawVAO( quadVAO, 2 * 3 );
+    }
+    
     public void SetMVP( Vec3 position, float scale )
     {
         Matrix4x4 view;
@@ -138,6 +183,7 @@ class Renderer
         cameraDirectionDeg = directionDeg;
     }
 
+    private GLuint quadVAO;
     private GLuint textVAO;
     private GLuint textVBO;
     private GLuint textIBO;

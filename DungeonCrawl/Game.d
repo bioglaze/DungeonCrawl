@@ -16,9 +16,10 @@ class Game
     {
     }
 
-    public void CreateLevels( Renderer renderer )
+    public void Init( Renderer renderer )
     {
         levels[ 0 ] = new Level( renderer );
+        heart = new Texture( "assets/heart.tga" );
     }
 
     public void Simulate( bool[ SDLWindow.KeyboardKey ] keys )
@@ -57,6 +58,10 @@ class Game
             {
                 mode = Mode.Ingame;
             }
+            else if (SDLWindow.KeyboardKey.Escape in keys)
+            {
+                exit( 0 );
+            }
         }
 
         lastFrameKeys = keys;
@@ -74,6 +79,7 @@ class Game
         {
             renderer.SetCamera( player.GetWorldPosition(), player.GetWorldDirection() );
             levels[ currentLevel ].Draw( renderer );
+            renderer.DrawTexture( heart, 20, 20, 64, 64 );
         }
     }
 
@@ -83,6 +89,7 @@ class Game
     private Level[ 1 ] levels;
     private int currentLevel = 0;
     private Player player = new Player();
+    private Texture heart;
     private bool[ SDLWindow.KeyboardKey ] lastFrameKeys;
 }
 
@@ -94,7 +101,7 @@ void main()
     auto window = new SDLWindow( width, height );
     auto renderer = new Renderer( width, height );
     auto game = new Game();
-    game.CreateLevels( renderer );
+    game.Init( renderer );
 
     while (true)
     {
