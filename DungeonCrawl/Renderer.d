@@ -140,6 +140,17 @@ class Renderer
         DrawVAO( textVAO, textFaceLength * 3 );
     }
 
+    public void EnableAlphaBlending()
+    {
+        glEnable( GL_BLEND );
+        glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+    }
+
+    public void DisableAlphaBlending()
+    {
+        glDisable( GL_BLEND );
+    }
+    
     public void DrawTexture( Texture texture, int x, int y, int xScale, int yScale )
     {
         texture.Bind();

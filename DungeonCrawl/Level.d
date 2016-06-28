@@ -39,13 +39,13 @@ public class Level
     public bool CanWalkForward( Player player ) const
     {
         auto playerForward = player.GetForwardPosition();
-        return true;//blocks[ playerForward[ 0 ] * dimension + playerForward[ 1 ] ] == BlockType.None;
+        return blocks[ playerForward[ 1 ] * dimension + playerForward[ 0 ] ] == BlockType.None;
     }
 
     public bool CanWalkBackward( Player player ) const
     {
-        auto playerForward = player.GetForwardPosition();
-        return true;
+        auto playerBackward = player.GetBackwardPosition();
+        return blocks[ playerBackward[ 1 ] * dimension + playerBackward[ 0 ] ] == BlockType.None;
     }
 
     public void Draw( Renderer renderer )

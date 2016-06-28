@@ -79,7 +79,15 @@ class Game
         {
             renderer.SetCamera( player.GetWorldPosition(), player.GetWorldDirection() );
             levels[ currentLevel ].Draw( renderer );
-            renderer.DrawTexture( heart, 20, 20, 64, 64 );
+
+            renderer.EnableAlphaBlending();
+            
+            for (int i = 0; i < player.GetHealth(); ++i)
+            {
+                renderer.DrawTexture( heart, 20 + 74 * i, 20, 64, 64 );
+            }
+
+            renderer.DisableAlphaBlending();
         }
     }
 

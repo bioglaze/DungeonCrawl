@@ -1,5 +1,8 @@
 module Player;
 import std.typecons;
+import std.math;
+import std.algorithm;
+import std.stdio;
 import Vec3;
 
 enum FacingDirection
@@ -69,27 +72,27 @@ class Player
     {
         final switch (facingDirection)
         {
+            case FacingDirection.North: return tuple( levelPosition[ 0 ], levelPosition[ 1 ] - 1 );
+            case FacingDirection.South: return tuple( levelPosition[ 0 ], levelPosition[ 1 ] + 1);
+            case FacingDirection.East: return tuple( levelPosition[ 0 ] + 1, levelPosition[ 1 ]  );
+            case FacingDirection.West: return tuple( levelPosition[ 0 ] - 1, levelPosition[ 1 ]  );
+        }
+    }
+
+    public Tuple!(int, int) GetBackwardPosition()
+    {
+        final switch (facingDirection)
+        {
             case FacingDirection.North: return tuple( levelPosition[ 0 ], levelPosition[ 1 ] + 1 );
             case FacingDirection.South: return tuple( levelPosition[ 0 ], levelPosition[ 1 ] - 1 );
-            case FacingDirection.East: return tuple( levelPosition[ 0 ], levelPosition[ 1 ] + 1 );
-            case FacingDirection.West: return tuple( levelPosition[ 0 ], levelPosition[ 1 ] - 1 );
+            case FacingDirection.East: return tuple( levelPosition[ 0 ] - 1, levelPosition[ 1 ]  );
+            case FacingDirection.West: return tuple( levelPosition[ 0 ] + 1, levelPosition[ 1 ]  );
         }
     }
 
     public Vec3 GetWorldPosition() const
     {
         return Vec3.Vec3( levelPosition[ 0 ] * 20, 0, levelPosition[ 1 ] * 20 );
-    }
-
-    public Vec3 GetWorldDirectionDeg() const
-    {
-        final switch (facingDirection)
-        {
-            case FacingDirection.South: return Vec3.Vec3( 0, -180, 0 );
-            case FacingDirection.North: return Vec3.Vec3( 0, 180, 0 );
-            case FacingDirection.East: return Vec3.Vec3( 0, 90, 0 );
-            case FacingDirection.West: return Vec3.Vec3( 0, -90, 0 );
-        }
     }
 
     public Vec3 GetWorldDirection() const
@@ -103,6 +106,18 @@ class Player
         }
     }
 
+    public int GetHealth() const
+    {
+        return health;
+    }
+    
+    public void EatFood( int healthGain )
+    {
+        health = min( health + healthGain, healthMax );
+    }
+    
     private int[ 2 ] levelPosition = [ 1, 1 ];
     private FacingDirection facingDirection = FacingDirection.South;
+    private int health = 2;
+    private int healthMax = 2;
 }
