@@ -118,6 +118,6 @@ class Player
     
     private int[ 2 ] levelPosition = [ 1, 1 ];
     private FacingDirection facingDirection = FacingDirection.South;
-    private int health = 2;
+    private int health = 1;
     private int healthMax = 2;
 }

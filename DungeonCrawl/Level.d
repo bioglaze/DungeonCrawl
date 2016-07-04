@@ -6,6 +6,7 @@ import Texture;
 import Vec3;
 static import std.stdio;
 import std.stdio;
+import std.random: uniform;
 
 private enum BlockType
 {
@@ -31,9 +32,13 @@ public class Level
         }
 
         GenerateGeometry( renderer );
+        GeneratePickups();
+        GenerateMonsters();
+        
         tex = new Texture( "assets/wall1.tga" );
 
-        sword = new Mesh( "assets/sword.obj", renderer );
+        meshes.sword = new Mesh( "assets/sword.obj", renderer );
+        meshes.health = new Mesh( "assets/sword.obj", renderer );
     }
 
     public bool CanWalkForward( Player player ) const
@@ -55,7 +60,7 @@ public class Level
         renderer.DrawVAO( vaoID, elementCount * 3 );
 
         renderer.SetMVP( Vec3.Vec3( 20, 0, 40 ), 10 ); // 20, 0, 20 is tile 1, 1
-        renderer.DrawVAO( sword.GetVAO(), sword.GetElementCount() * 3 );
+        renderer.DrawVAO( meshes.sword.GetVAO(), meshes.sword.GetElementCount() * 3 );
     }
     
     public void BindTextures()
@@ -63,7 +68,51 @@ public class Level
         tex.Bind();
     }
 
-    public void GenerateGeometry( Renderer renderer )
+    private void GeneratePickups()
+    in
+    {
+        assert( elementCount > 0, "level geometry must be generated before placing pickups" );
+    }
+    body
+    {    
+        int placedHealthPickupCounter = 0;
+
+        while (placedHealthPickupCounter < healthPickups.length)
+        {
+            int posCandidateX = uniform( 1, 8 );
+            int posCandidateY = uniform( 1, 8 );
+
+            if (blocks[ posCandidateY * dimension + posCandidateX ] == BlockType.None)
+            {
+                healthPickups[ placedHealthPickupCounter ].levelPosition = [ posCandidateX, posCandidateY ];
+                ++placedHealthPickupCounter;
+            }
+        }
+    }
+
+    private void GenerateMonsters()
+    in
+    {
+        assert( elementCount > 0, "level geometry must be generated before placing monsters" );
+    }
+    body
+    {    
+        int placedMonsterCounter = 0;
+
+        while (placedMonsterCounter < monsters.length)
+        {
+            int posCandidateX = uniform( 1, 8 );
+            int posCandidateY = uniform( 1, 8 );
+
+            if (blocks[ posCandidateY * dimension + posCandidateX ] == BlockType.None)
+            {
+                monsters[ placedMonsterCounter ].levelPosition = [ posCandidateX, posCandidateY ];
+                ++placedMonsterCounter;
+            }
+        }
+    }
+    
+    private void GenerateGeometry( Renderer renderer )
     {
         Renderer.Vertex[] vertices;
         Renderer.Face[] faces;
@@ -152,11 +201,32 @@ public class Level
         renderer.GenerateVAO( vertices, faces, vaoID );
     }
 
+    private struct Meshes
+    {
+        Mesh sword;
+        Mesh health;
+    };
+
+    private Meshes meshes;
     private immutable int dimension = 10;
     private BlockType[ dimension * dimension ] blocks = BlockType.None;
     private uint vaoID;
     private int elementCount;
     private Texture tex;
-    private Mesh sword;
+
+    private struct HealthPickup
+    {
+        int[ 2 ] levelPosition;
+        bool isActive = false;
+    }
+
+    private struct Monster
+    {
+        int[ 2 ] levelPosition;
+        bool isAlive = true;
+    }
+    
+    private HealthPickup[ 3 ] healthPickups;
+    private Monster[ 3 ] monsters;
 }
 
