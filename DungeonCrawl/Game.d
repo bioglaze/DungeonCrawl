@@ -24,6 +24,8 @@ class Game
 
     public void Simulate( bool[ SDLWindow.KeyboardKey ] keys )
     {
+        oldGameTurn = gameTurn;
+        
         if (mode == Mode.Ingame)
         {
             if (SDLWindow.KeyboardKey.Escape in keys)
@@ -36,21 +38,37 @@ class Game
             else if (SDLWindow.KeyboardKey.Left in keys && !(SDLWindow.KeyboardKey.Left in lastFrameKeys))
             {
                 player.TurnLeft();
+                ++gameTurn;
             }
             else if (SDLWindow.KeyboardKey.Right in keys && !(SDLWindow.KeyboardKey.Right in lastFrameKeys))
             {
                 player.TurnRight();
+                ++gameTurn;
             }
             else if (SDLWindow.KeyboardKey.Up in keys && !(SDLWindow.KeyboardKey.Up in lastFrameKeys) &&
                      levels[ currentLevel ].CanWalkForward( player ) )
             {
                 player.WalkForward();
+                ++gameTurn;
             }
             else if (SDLWindow.KeyboardKey.Down in keys && !(SDLWindow.KeyboardKey.Down in lastFrameKeys) &&
                      levels[ currentLevel ].CanWalkBackward( player ))
             {
                 player.WalkBackward();
-            }                
+                ++gameTurn;
+            }
+
+            if (oldGameTurn != gameTurn)
+            {
+                if (levels[ currentLevel ].HasHealthInPosition( player.GetLevelPosition() ) &&
+                    !player.HasMaxHealth())
+                {
+                    levels[ currentLevel ].RemoveHealth( player.GetLevelPosition() );
+                    player.EatFood( 1 );
+                }
+                
+                oldGameTurn = gameTurn;
+            }
         }
         else if (mode == Mode.Menu)
         {
@@ -99,6 +117,7 @@ class Game
     private Player player = new Player();
     private Texture heart;
     private bool[ SDLWindow.KeyboardKey ] lastFrameKeys;
+    private int gameTurn = 0, oldGameTurn = 0;
 }
 
 void main()

@@ -53,6 +53,31 @@ public class Level
         return blocks[ playerBackward[ 1 ] * dimension + playerBackward[ 0 ] ] == BlockType.None;
     }
 
+    public bool HasHealthInPosition( int[] position ) const
+    {
+        for (int i = 0; i < healthPickups.length; ++i)
+        {
+            if (healthPickups[ i ].isActive && healthPickups[ i ].levelPosition == position)
+                //if (healthPickups[ i ].isActive && healthPickups[ i ].levelPosition == position)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public void RemoveHealth( int[] position )
+    {
+        for (int i = 0; i < healthPickups.length; ++i)
+        {
+            if (healthPickups[ i ].levelPosition == position)
+            {
+                healthPickups[ i ].isActive = false;
+            }
+        }
+    }
+    
     public void Draw( Renderer renderer )
     {
         BindTextures();
@@ -61,6 +86,16 @@ public class Level
 
         renderer.SetMVP( Vec3.Vec3( 20, 0, 40 ), 10 ); // 20, 0, 20 is tile 1, 1
         renderer.DrawVAO( meshes.sword.GetVAO(), meshes.sword.GetElementCount() * 3 );
+
+        for (int i = 0; i < healthPickups.length; ++i)
+        {
+            if (healthPickups[ i ].isActive)
+            {
+                renderer.SetMVP( Vec3.Vec3( healthPickups[ i ].levelPosition[ 0 ] * dimension * 2, 0,
+                                            healthPickups[ i ].levelPosition[ 1 ] * dimension * 2 ), 10 );
+                renderer.DrawVAO( meshes.health.GetVAO(), meshes.health.GetElementCount() * 3 );
+            }
+        }
     }
     
     public void BindTextures()
@@ -217,7 +252,7 @@ public class Level
     private struct HealthPickup
     {
         int[ 2 ] levelPosition;
-        bool isActive = false;
+        bool isActive = true;
     }
 
     private struct Monster

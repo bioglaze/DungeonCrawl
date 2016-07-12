@@ -68,6 +68,11 @@ class Player
         }
     }
 
+    public int[] GetLevelPosition()
+    {
+        return levelPosition;
+    }
+    
     public Tuple!(int, int) GetForwardPosition()
     {
         final switch (facingDirection)
@@ -109,6 +114,11 @@ class Player
     public int GetHealth() const
     {
         return health;
+    }
+
+    public bool HasMaxHealth() const
+    {
+        return health == healthMax;
     }
     
     public void EatFood( int healthGain )
