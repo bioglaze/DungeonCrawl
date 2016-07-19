@@ -79,8 +79,9 @@ class Renderer
         glClear( GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT );
     }
 
-    public void DrawVAO( uint vaoID, int elementCount ) const
+    public void DrawVAO( uint vaoID, int elementCount, float[ 3 ] tintColor )
     {
+        uiShader.SetFloat3( "tintColor", tintColor[ 0 ], tintColor[ 1 ], tintColor[ 2 ] );
         glBindVertexArray( vaoID );
         glDrawElements( GL_TRIANGLES, elementCount, GL_UNSIGNED_SHORT, cast(GLvoid*)0 );
         CheckGLError( "After DrawVAO" );
@@ -136,8 +137,9 @@ class Renderer
         mvp.Translate( Vec3.Vec3( x, y, 0 ) );
         Matrix4x4.Multiply( mvp, orthoMat, mvp );
         uiShader.SetMatrix44( "mvp", mvp.m );
+        uiShader.SetFloat3( "tintColor", 1, 1, 1 );
 
-        DrawVAO( textVAO, textFaceLength * 3 );
+        DrawVAO( textVAO, textFaceLength * 3, [ 1, 1, 1 ] );
     }
 
     public void EnableAlphaBlending()
@@ -151,7 +153,7 @@ class Renderer
         glDisable( GL_BLEND );
     }
     
-    public void DrawTexture( Texture texture, int x, int y, int xScale, int yScale )
+    public void DrawTexture( Texture texture, int x, int y, int xScale, int yScale, float[ 3 ] tintColor )
     {
         texture.Bind();
 
@@ -163,8 +165,10 @@ class Renderer
         uiShader.Use();
         Matrix4x4.Multiply( mvp, orthoMat, mvp );
         uiShader.SetMatrix44( "mvp", mvp.m );
+        uiShader.SetFloat3( "tintColor", tintColor[ 0 ], tintColor[ 1 ], tintColor[ 2 ] );
 
-        DrawVAO( quadVAO, 2 * 3 );
+        DrawVAO( quadVAO, 2 * 3, [ 1, 1, 1 ] );
+        uiShader.SetFloat3( "tintColor", 1, 1, 1 );
     }
     
     public void SetMVP( Vec3 position, float scale )

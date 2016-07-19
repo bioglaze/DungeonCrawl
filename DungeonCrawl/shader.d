@@ -1,4 +1,4 @@
-﻿module shader;
+module shader;
 
 import std.exception;
 import std.file;
@@ -39,6 +39,12 @@ class Shader
     {
         immutable char* nameCstr = toStringz( name );
         glUniform2f( glGetUniformLocation( program, nameCstr ), value1, value2 );
+    }
+
+    public void SetFloat3( string name, float value1, float value2, float value3 )
+    {
+        immutable char* nameCstr = toStringz( name );
+        glUniform3f( glGetUniformLocation( program, nameCstr ), value1, value2, value3 );
     }
 
     public void SetMatrix44( string name, float[] matrix )

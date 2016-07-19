@@ -38,7 +38,8 @@ public class Level
         tex = new Texture( "assets/wall1.tga" );
 
         meshes.sword = new Mesh( "assets/sword.obj", renderer );
-        meshes.health = new Mesh( "assets/sword.obj", renderer );
+        meshes.health = new Mesh( "assets/health.obj", renderer );
+        meshes.monster1 = new Mesh( "assets/monster1.obj", renderer );
     }
 
     public bool CanWalkForward( Player player ) const
@@ -58,7 +59,6 @@ public class Level
         for (int i = 0; i < healthPickups.length; ++i)
         {
             if (healthPickups[ i ].isActive && healthPickups[ i ].levelPosition == position)
-                //if (healthPickups[ i ].isActive && healthPickups[ i ].levelPosition == position)
             {
                 return true;
             }
@@ -82,10 +82,7 @@ public class Level
     {
         BindTextures();
         renderer.SetMVP( Vec3.Vec3( 1, 1, 1 ), 1 );
-        renderer.DrawVAO( vaoID, elementCount * 3 );
-
-        renderer.SetMVP( Vec3.Vec3( 20, 0, 40 ), 10 ); // 20, 0, 20 is tile 1, 1
-        renderer.DrawVAO( meshes.sword.GetVAO(), meshes.sword.GetElementCount() * 3 );
+        renderer.DrawVAO( vaoID, elementCount * 3, [ 1, 1, 1 ] );
 
         for (int i = 0; i < healthPickups.length; ++i)
         {
@@ -93,7 +90,17 @@ public class Level
             {
                 renderer.SetMVP( Vec3.Vec3( healthPickups[ i ].levelPosition[ 0 ] * dimension * 2, 0,
                                             healthPickups[ i ].levelPosition[ 1 ] * dimension * 2 ), 10 );
-                renderer.DrawVAO( meshes.health.GetVAO(), meshes.health.GetElementCount() * 3 );
+                renderer.DrawVAO( meshes.health.GetVAO(), meshes.health.GetElementCount() * 3, [ 1, 1, 1 ] );
+            }
+        }
+
+        for (int i = 0; i < monsters.length; ++i)
+        {
+            if (monsters[ i ].isAlive)
+            {
+                renderer.SetMVP( Vec3.Vec3( monsters[ i ].levelPosition[ 0 ] * dimension * 2, 0,
+                                            monsters[ i ].levelPosition[ 1 ] * dimension * 2 ), 10 );
+                renderer.DrawVAO( meshes.health.GetVAO(), meshes.health.GetElementCount() * 3, [ 1, 0.5f, 0.5f ] );
             }
         }
     }
@@ -240,6 +247,7 @@ public class Level
     {
         Mesh sword;
         Mesh health;
+        Mesh monster1;
     };
 
     private Meshes meshes;

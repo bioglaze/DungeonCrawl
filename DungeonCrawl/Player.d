@@ -116,6 +116,11 @@ class Player
         return health;
     }
 
+    public int GetMaxHealth() const
+    {
+        return healthMax;
+    }
+    
     public bool HasMaxHealth() const
     {
         return health == healthMax;

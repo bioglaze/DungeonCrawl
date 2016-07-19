@@ -1,6 +1,7 @@
 #version 330 core
 
 uniform sampler2D sTexture;
+uniform vec3 tintColor;
 
 in vec2 vUV;
 out vec4 fragColor;
@@ -11,5 +12,6 @@ void main()
     vec2 uv = vUV;
     uv.y = 1.0 - uv.y;
     fragColor = texture( sTexture, uv );
+    fragColor.rgb *= tintColor;
 }
 

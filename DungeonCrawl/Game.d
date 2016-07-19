@@ -1,14 +1,16 @@
 module Game;
 
 import std.stdio;
+import std.typecons;
 import core.stdc.stdlib: exit;
+import core.time;
 import Matrix4x4;
 import Renderer;
 import SDLWindow;
 import Texture;
 import Level;
 import Player;
-import std.typecons;
+import Vec3;
 
 class Game
 {
@@ -66,7 +68,8 @@ class Game
                     levels[ currentLevel ].RemoveHealth( player.GetLevelPosition() );
                     player.EatFood( 1 );
                 }
-                
+
+                playerMoveTicks = MonoTime.currTime.ticks;
                 oldGameTurn = gameTurn;
             }
         }
@@ -95,14 +98,28 @@ class Game
         }
         else if (mode == Mode.Ingame)
         {
+            long lerp = MonoTime.currTime.ticks - playerMoveTicks;
+            long lerpTime = 333553789;
+            //if (lerp < lerpTime)
+            //    writeln( "lerp: ", cast(float)lerp / lerpTime );
+            
+            int[ 2 ] playerPosition = player.GetLevelPosition();
+            playerPosition[ 0 ] -= player.GetWorldDirection().x;
+            playerPosition[ 1 ] -= player.GetWorldDirection().z;
+            float worldX = cast(float)lerpTime * 20 + playerPosition[ 0 ] * 20;
+            float worldZ = cast(float)lerpTime * 20 + playerPosition[ 1 ] * 20;
+            Vec3 pp = Vec3.Vec3( worldX, 0, worldZ );
+            
             renderer.SetCamera( player.GetWorldPosition(), player.GetWorldDirection() );
             levels[ currentLevel ].Draw( renderer );
 
             renderer.EnableAlphaBlending();
             
-            for (int i = 0; i < player.GetHealth(); ++i)
+            for (int i = 0; i < player.GetMaxHealth(); ++i)
             {
-                renderer.DrawTexture( heart, 20 + 74 * i, 20, 64, 64 );
+                float r = player.GetHealth() > i ? 1.0f : 0.0f;
+                
+                renderer.DrawTexture( heart, 20 + 74 * i, 20, 64, 64, [ r, r, r ] );
             }
 
             renderer.DisableAlphaBlending();
@@ -118,6 +135,7 @@ class Game
     private Texture heart;
     private bool[ SDLWindow.KeyboardKey ] lastFrameKeys;
     private int gameTurn = 0, oldGameTurn = 0;
+    private long playerMoveTicks = 0;
 }
 
 void main()
