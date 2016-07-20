@@ -36,6 +36,7 @@ public class Level
         GenerateMonsters();
         
         tex = new Texture( "assets/wall1.tga" );
+        healthTex = new Texture( "assets/health.tga" );
 
         meshes.sword = new Mesh( "assets/sword.obj", renderer );
         meshes.health = new Mesh( "assets/health.obj", renderer );
@@ -80,35 +81,37 @@ public class Level
     
     public void Draw( Renderer renderer )
     {
-        BindTextures();
-        renderer.SetMVP( Vec3.Vec3( 1, 1, 1 ), 1 );
+        tex.Bind();
+        renderer.SetMVP( Vec3.Vec3( 1, 1, 1 ), 0, 1 );
         renderer.DrawVAO( vaoID, elementCount * 3, [ 1, 1, 1 ] );
+
+        healthTex.Bind();
 
         for (int i = 0; i < healthPickups.length; ++i)
         {
             if (healthPickups[ i ].isActive)
             {
+                static float rotY = 0;
+                ++rotY;
                 renderer.SetMVP( Vec3.Vec3( healthPickups[ i ].levelPosition[ 0 ] * dimension * 2, 0,
-                                            healthPickups[ i ].levelPosition[ 1 ] * dimension * 2 ), 10 );
+                                            healthPickups[ i ].levelPosition[ 1 ] * dimension * 2 ), rotY, 1 );
                 renderer.DrawVAO( meshes.health.GetVAO(), meshes.health.GetElementCount() * 3, [ 1, 1, 1 ] );
             }
         }
+
+        tex.Bind();
 
         for (int i = 0; i < monsters.length; ++i)
         {
             if (monsters[ i ].isAlive)
             {
                 renderer.SetMVP( Vec3.Vec3( monsters[ i ].levelPosition[ 0 ] * dimension * 2, 0,
-                                            monsters[ i ].levelPosition[ 1 ] * dimension * 2 ), 10 );
+                                            monsters[ i ].levelPosition[ 1 ] * dimension * 2 ), 0, 1 );
                 renderer.DrawVAO( meshes.health.GetVAO(), meshes.health.GetElementCount() * 3, [ 1, 0.5f, 0.5f ] );
             }
         }
     }
-    
-    public void BindTextures()
-    {
-        tex.Bind();
-    }
+ 
 
     private void GeneratePickups()
     in
@@ -256,6 +259,7 @@ public class Level
     private uint vaoID;
     private int elementCount;
     private Texture tex;
+    private Texture healthTex;
 
     private struct HealthPickup
     {

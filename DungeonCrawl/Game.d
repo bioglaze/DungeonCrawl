@@ -104,8 +104,8 @@ class Game
             //    writeln( "lerp: ", cast(float)lerp / lerpTime );
             
             int[ 2 ] playerPosition = player.GetLevelPosition();
-            playerPosition[ 0 ] -= player.GetWorldDirection().x;
-            playerPosition[ 1 ] -= player.GetWorldDirection().z;
+            playerPosition[ 0 ] -= cast(int)player.GetWorldDirection().x;
+            playerPosition[ 1 ] -= cast(int)player.GetWorldDirection().z;
             float worldX = cast(float)lerpTime * 20 + playerPosition[ 0 ] * 20;
             float worldZ = cast(float)lerpTime * 20 + playerPosition[ 1 ] * 20;
             Vec3 pp = Vec3.Vec3( worldX, 0, worldZ );

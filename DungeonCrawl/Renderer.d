@@ -171,15 +171,16 @@ class Renderer
         uiShader.SetFloat3( "tintColor", 1, 1, 1 );
     }
     
-    public void SetMVP( Vec3 position, float scale )
+    public void SetMVP( Vec3 position, float rotY, float scale )
     {
         Matrix4x4 view;
         view.MakeLookAt( cameraPosition, cameraPosition + cameraDirectionDeg * 50, Vec3.Vec3( 0, 1, 0 ) );
         view.Transpose();
 
         Matrix4x4 model;
-        model.MakeIdentity();
+        //model.MakeIdentity();
 
+        model.MakeRotationXYZ( 0, rotY, 0 );
         model.Scale( scale, scale, scale );
         model.Translate( position );
 
