@@ -2,6 +2,7 @@ module Game;
 
 import std.stdio;
 import std.typecons;
+import std.format;
 import core.stdc.stdlib: exit;
 import core.time;
 import Matrix4x4;
@@ -12,7 +13,12 @@ import Level;
 import Player;
 import Vec3;
 
-class Game
+private enum PlayerLastMoveDirection
+{
+    None, Forward, Backward
+}
+
+public class Game
 {
     this()
     {
@@ -26,6 +32,10 @@ class Game
 
     public void Simulate( bool[ SDLWindow.KeyboardKey ] keys )
     {
+        long lerp = MonoTime.currTime.ticks - playerMoveTicks;
+        if (lerp < moveTime)
+            return;
+
         oldGameTurn = gameTurn;
         
         if (mode == Mode.Ingame)
@@ -40,23 +50,25 @@ class Game
             else if (SDLWindow.KeyboardKey.Left in keys && !(SDLWindow.KeyboardKey.Left in lastFrameKeys))
             {
                 player.TurnLeft();
-                ++gameTurn;
+                lastMoveDir = PlayerLastMoveDirection.None;
             }
             else if (SDLWindow.KeyboardKey.Right in keys && !(SDLWindow.KeyboardKey.Right in lastFrameKeys))
             {
                 player.TurnRight();
-                ++gameTurn;
+                lastMoveDir = PlayerLastMoveDirection.None;
             }
             else if (SDLWindow.KeyboardKey.Up in keys && !(SDLWindow.KeyboardKey.Up in lastFrameKeys) &&
                      levels[ currentLevel ].CanWalkForward( player ) )
             {
                 player.WalkForward();
+                lastMoveDir = PlayerLastMoveDirection.Forward;
                 ++gameTurn;
             }
             else if (SDLWindow.KeyboardKey.Down in keys && !(SDLWindow.KeyboardKey.Down in lastFrameKeys) &&
                      levels[ currentLevel ].CanWalkBackward( player ))
             {
                 player.WalkBackward();
+                lastMoveDir = PlayerLastMoveDirection.Backward;
                 ++gameTurn;
             }
 
@@ -98,19 +110,9 @@ class Game
         }
         else if (mode == Mode.Ingame)
         {
-            long lerp = MonoTime.currTime.ticks - playerMoveTicks;
-            long lerpTime = 333553789;
-            //if (lerp < lerpTime)
-            //    writeln( "lerp: ", cast(float)lerp / lerpTime );
+            Vec3 pp = CalculateAnimatedPlayerPosition();
             
-            int[ 2 ] playerPosition = player.GetLevelPosition();
-            playerPosition[ 0 ] -= cast(int)player.GetWorldDirection().x;
-            playerPosition[ 1 ] -= cast(int)player.GetWorldDirection().z;
-            float worldX = cast(float)lerpTime * 20 + playerPosition[ 0 ] * 20;
-            float worldZ = cast(float)lerpTime * 20 + playerPosition[ 1 ] * 20;
-            Vec3 pp = Vec3.Vec3( worldX, 0, worldZ );
-            
-            renderer.SetCamera( player.GetWorldPosition(), player.GetWorldDirection() );
+            renderer.SetCamera( pp, player.GetWorldDirection() );
             levels[ currentLevel ].Draw( renderer );
 
             renderer.EnableAlphaBlending();
@@ -122,8 +124,55 @@ class Game
                 renderer.DrawTexture( heart, 20 + 74 * i, 20, 64, 64, [ r, r, r ] );
             }
 
+            renderer.DrawText( std.format.format( "turn: %s, score: %s", gameTurn, 70 ), 150, 20 );
+
             renderer.DisableAlphaBlending();
         }
+    }
+
+    private Vec3 CalculateAnimatedPlayerPosition()
+    {
+        long lerp = MonoTime.currTime.ticks - playerMoveTicks;
+
+        int[ 2 ] playerPosition = player.GetLevelPosition();
+
+        float worldX = playerPosition[ 0 ] * 20;
+        float worldZ = playerPosition[ 1 ] * 20;
+
+        if (lastMoveDir == PlayerLastMoveDirection.Forward && player.GetWorldDirection().z == -1 && lerp < moveTime)
+        {
+            worldZ += cast(float)lerp / moveTime * 20 - 20;
+        }
+        else if (lastMoveDir == PlayerLastMoveDirection.Forward && player.GetWorldDirection().z == 1 && lerp < moveTime)
+        {
+            worldZ -= cast(float)lerp / moveTime * 20 - 20;
+        }
+        else if (lastMoveDir == PlayerLastMoveDirection.Forward && player.GetWorldDirection().x == 1 && lerp < moveTime)
+        {
+            worldX -= cast(float)lerp / moveTime * 20 - 20;
+        }
+        else if (lastMoveDir == PlayerLastMoveDirection.Forward && player.GetWorldDirection().x == -1 && lerp < moveTime)
+        {
+            worldX += cast(float)lerp / moveTime * 20 - 20;
+        }
+        else if (lastMoveDir == PlayerLastMoveDirection.Backward && player.GetWorldDirection().z == -1 && lerp < moveTime)
+        {
+            worldZ -= cast(float)lerp / moveTime * 20 - 20;
+        }
+        else if (lastMoveDir == PlayerLastMoveDirection.Backward && player.GetWorldDirection().z == 1 && lerp < moveTime)
+        {
+            worldZ += cast(float)lerp / moveTime * 20 - 20;
+        }
+        else if (lastMoveDir == PlayerLastMoveDirection.Backward && player.GetWorldDirection().x == 1 && lerp < moveTime)
+        {
+            worldX += cast(float)lerp / moveTime * 20 - 20;
+        }
+        else if (lastMoveDir == PlayerLastMoveDirection.Backward && player.GetWorldDirection().x == -1 && lerp < moveTime)
+        {
+            worldX -= cast(float)lerp / moveTime * 20 - 20;
+        }
+
+        return Vec3.Vec3( worldX, 0, worldZ );
     }
 
     private enum Mode { Menu, Ingame }
@@ -136,6 +185,9 @@ class Game
     private bool[ SDLWindow.KeyboardKey ] lastFrameKeys;
     private int gameTurn = 0, oldGameTurn = 0;
     private long playerMoveTicks = 0;
+    private PlayerLastMoveDirection lastMoveDir = PlayerLastMoveDirection.None;
+    //long moveTime = 333553789;
+    private immutable long moveTime = 3335537 / 4;
 }
 
 void main()
