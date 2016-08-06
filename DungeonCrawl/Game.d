@@ -32,7 +32,7 @@ public class Game
 
     public void Simulate( bool[ SDLWindow.KeyboardKey ] keys )
     {
-        long lerp = MonoTime.currTime.ticks - playerMoveTicks;
+        const long lerp = MonoTime.currTime.ticks - playerMoveTicks;
         if (lerp < moveTime)
             return;
 
@@ -44,8 +44,10 @@ public class Game
             {
                 exit( 0 );
             }
-            else if (SDLWindow.KeyboardKey.Space in keys)
+            else if (SDLWindow.KeyboardKey.Space in keys && !(SDLWindow.KeyboardKey.Space in lastFrameKeys))
             {
+                ++gameTurn;
+                playerMoveTicks = 0;
             }
             else if (SDLWindow.KeyboardKey.Left in keys && !(SDLWindow.KeyboardKey.Left in lastFrameKeys))
             {
@@ -71,7 +73,7 @@ public class Game
                 lastMoveDir = PlayerLastMoveDirection.Backward;
                 ++gameTurn;
             }
-
+            
             if (oldGameTurn != gameTurn)
             {
                 if (levels[ currentLevel ].HasHealthInPosition( player.GetLevelPosition() ) &&
@@ -83,6 +85,8 @@ public class Game
 
                 playerMoveTicks = MonoTime.currTime.ticks;
                 oldGameTurn = gameTurn;
+
+                levels[ currentLevel ].Simulate();
             }
         }
         else if (mode == Mode.Menu)
@@ -119,7 +123,7 @@ public class Game
             
             for (int i = 0; i < player.GetMaxHealth(); ++i)
             {
-                float r = player.GetHealth() > i ? 1.0f : 0.0f;
+                const float r = player.GetHealth() > i ? 1.0f : 0.0f;
                 
                 renderer.DrawTexture( heart, 20 + 74 * i, 20, 64, 64, [ r, r, r ] );
             }

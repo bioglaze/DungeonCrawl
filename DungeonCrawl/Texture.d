@@ -28,7 +28,6 @@ private void ReadTGA( string path, out int width, out int height, out byte[] pix
         byte[ 5 ] colorSpec;
         f.rawRead( colorSpec );
 
-        byte[ 10 ] imageSpec;
         byte[ 4 ] specBegin;
         short[ 2 ] specDim;
         f.rawRead( specBegin );

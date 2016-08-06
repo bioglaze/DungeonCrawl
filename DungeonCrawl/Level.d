@@ -78,6 +78,34 @@ public class Level
             }
         }
     }
+
+    public void Simulate()
+    {
+        for (int i = 0; i < monsters.length; ++i)
+        {
+            if (monsters[ i ].isAlive)
+            {
+                const int moveDirection = uniform( 0, 4 );
+
+                if (moveDirection == 0 && monsters[ i ].levelPosition[ 0 ] > 0)
+                {
+                    --monsters[ i ].levelPosition[ 0 ];
+                }
+                else if (moveDirection == 1 && monsters[ i ].levelPosition[ 0 ] < dimension - 1)
+                {
+                    ++monsters[ i ].levelPosition[ 0 ];
+                }
+                else if (moveDirection == 2 && monsters[ i ].levelPosition[ 1 ] > 0)
+                {
+                    --monsters[ i ].levelPosition[ 1 ];
+                }
+                else if (moveDirection == 3 && monsters[ i ].levelPosition[ 1 ] < dimension - 1)
+                {
+                    ++monsters[ i ].levelPosition[ 1 ];
+                }
+            }
+        }
+    }
     
     public void Draw( Renderer renderer )
     {
@@ -124,8 +152,8 @@ public class Level
 
         while (placedHealthPickupCounter < healthPickups.length)
         {
-            int posCandidateX = uniform( 1, 8 );
-            int posCandidateY = uniform( 1, 8 );
+            const int posCandidateX = uniform( 1, 8 );
+            const int posCandidateY = uniform( 1, 8 );
 
             if (blocks[ posCandidateY * dimension + posCandidateX ] == BlockType.None)
             {
