@@ -8,6 +8,21 @@ static import std.stdio;
 import std.stdio;
 import std.random: uniform;
 
+public struct Meshes
+{
+    Mesh sword;
+    Mesh health;
+    Mesh monster1;
+    Mesh stairway;
+}
+
+public struct Textures
+{
+    Texture tex;
+    Texture health;
+    Texture white;
+}
+
 private enum BlockType
 {
     None = 0,
@@ -17,8 +32,14 @@ private enum BlockType
 
 public class Level
 {
-    this( Renderer renderer )
+    this( Renderer renderer, Meshes aMeshes, Textures aTextures, bool aHasStairwayUp, bool aHasStairwayDown )
     {
+        hasStairwayUp = aHasStairwayUp;
+        hasStairwayDown = aHasStairwayDown;
+        
+        meshes = aMeshes;
+        textures = aTextures;
+        
         //blocks[ 2 * dimension + 4 ] = BlockType.Wall1;
         //blocks[ 4 * dimension + 2 ] = BlockType.Wall1;
         blocks[ 1 * dimension + 3 ] = BlockType.Wall1;
@@ -33,14 +54,7 @@ public class Level
 
         GenerateGeometry( renderer );
         GeneratePickups();
-        GenerateMonsters();
-        
-        tex = new Texture( "assets/wall1.tga" );
-        healthTex = new Texture( "assets/health.tga" );
-
-        meshes.sword = new Mesh( "assets/sword.obj", renderer );
-        meshes.health = new Mesh( "assets/health.obj", renderer );
-        meshes.monster1 = new Mesh( "assets/monster1.obj", renderer );
+        GenerateMonsters();        
     }
 
     public bool CanWalkForward( Player player ) const
@@ -109,11 +123,11 @@ public class Level
     
     public void Draw( Renderer renderer )
     {
-        tex.Bind();
+        textures.tex.Bind();
         renderer.SetMVP( Vec3.Vec3( 1, 1, 1 ), 0, 1 );
         renderer.DrawVAO( vaoID, elementCount * 3, [ 1, 1, 1 ] );
 
-        healthTex.Bind();
+        textures.health.Bind();
 
         for (int i = 0; i < healthPickups.length; ++i)
         {
@@ -127,7 +141,7 @@ public class Level
             }
         }
 
-        tex.Bind();
+        textures.tex.Bind();
 
         for (int i = 0; i < monsters.length; ++i)
         {
@@ -138,8 +152,32 @@ public class Level
                 renderer.DrawVAO( meshes.health.GetVAO(), meshes.health.GetElementCount() * 3, [ 1, 0.5f, 0.5f ] );
             }
         }
+
+        textures.white.Bind();
+
+        if (hasStairwayUp)
+        {
+            renderer.SetMVP( Vec3.Vec3( stairwayUpPosition[ 0 ] * dimension * 2, 0,
+                                        stairwayUpPosition[ 1 ] * dimension * 2 ), 0, 3 );
+            renderer.DrawVAO( meshes.stairway.GetVAO(), meshes.stairway.GetElementCount() * 3, [ 1, 1, 1 ] );
+        }
+        if (hasStairwayDown)
+        {
+            renderer.SetMVP( Vec3.Vec3( stairwayDownPosition[ 0 ] * dimension * 2, 0,
+                                        stairwayDownPosition[ 1 ] * dimension * 2 ), 0, 3 );
+            renderer.DrawVAO( meshes.stairway.GetVAO(), meshes.stairway.GetElementCount() * 3, [ 1, 0, 0 ] );
+        }
     }
- 
+
+    public bool CanGoUp( int[] playerPosition )
+    {
+        return (playerPosition[ 0 ] == stairwayUpPosition[ 0 ] && playerPosition[ 1 ] == stairwayUpPosition[ 1 ]);
+    }
+
+    public bool CanGoDown( int[] playerPosition )
+    {
+        return (playerPosition[ 0 ] == stairwayDownPosition[ 0 ] && playerPosition[ 1 ] == stairwayDownPosition[ 1 ]);
+    }
 
     private void GeneratePickups()
     in
@@ -152,13 +190,34 @@ public class Level
 
         while (placedHealthPickupCounter < healthPickups.length)
         {
-            const int posCandidateX = uniform( 1, 8 );
-            const int posCandidateY = uniform( 1, 8 );
+            const int posCandidateX = uniform( 1, dimension - 2 );
+            const int posCandidateY = uniform( 1, dimension - 2 );
 
             if (blocks[ posCandidateY * dimension + posCandidateX ] == BlockType.None)
             {
                 healthPickups[ placedHealthPickupCounter ].levelPosition = [ posCandidateX, posCandidateY ];
                 ++placedHealthPickupCounter;
+            }
+        }
+
+        bool placedStairwayUp = false;
+        bool placedStairwayDown = false;
+
+        while (!placedStairwayUp || !placedStairwayDown)
+        {
+            const int posCandidateX = uniform( 1, dimension - 2 );
+            const int posCandidateZ = uniform( 1, dimension - 2 );
+
+            if (!placedStairwayUp && blocks[ posCandidateZ * dimension + posCandidateX ] == BlockType.None)
+            {
+                stairwayUpPosition = [ posCandidateX, posCandidateZ ];
+                placedStairwayUp = true;
+            }
+            else if (!placedStairwayDown && blocks[ posCandidateZ * dimension + posCandidateX ] == BlockType.None &&
+                     !(posCandidateX == stairwayUpPosition[ 0 ] && posCandidateZ == stairwayUpPosition[ 1 ] ) )
+            {
+                stairwayDownPosition = [ posCandidateX, posCandidateZ ];
+                placedStairwayDown = true;
             }
         }
     }
@@ -174,8 +233,8 @@ public class Level
 
         while (placedMonsterCounter < monsters.length)
         {
-            int posCandidateX = uniform( 1, 8 );
-            int posCandidateY = uniform( 1, 8 );
+            int posCandidateX = uniform( 1, dimension - 2 );
+            int posCandidateY = uniform( 1, dimension - 2 );
 
             if (blocks[ posCandidateY * dimension + posCandidateX ] == BlockType.None)
             {
@@ -274,21 +333,17 @@ public class Level
         renderer.GenerateVAO( vertices, faces, vaoID );
     }
 
-    private struct Meshes
-    {
-        Mesh sword;
-        Mesh health;
-        Mesh monster1;
-    };
-
+    private Textures textures;
     private Meshes meshes;
     private immutable int dimension = 10;
     private BlockType[ dimension * dimension ] blocks = BlockType.None;
     private uint vaoID;
     private int elementCount;
-    private Texture tex;
-    private Texture healthTex;
-
+    private int[ 2 ] stairwayUpPosition;
+    private int[ 2 ] stairwayDownPosition;
+    private bool hasStairwayDown;
+    private bool hasStairwayUp;
+    
     private struct HealthPickup
     {
         int[ 2 ] levelPosition;

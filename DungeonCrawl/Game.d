@@ -12,6 +12,7 @@ import Texture;
 import Level;
 import Player;
 import Vec3;
+import Mesh;
 
 private enum PlayerLastMoveDirection
 {
@@ -20,22 +21,34 @@ private enum PlayerLastMoveDirection
 
 public class Game
 {
-    this()
-    {
-    }
-
     public void Init( Renderer renderer )
-    {
-        levels[ 0 ] = new Level( renderer );
+    {        
         heart = new Texture( "assets/heart.tga" );
+
+        textures.tex = new Texture( "assets/wall1.tga" );
+        textures.health = new Texture( "assets/health.tga" );
+        textures.white = new Texture( "assets/white.tga" );
+
+        meshes.sword = new Mesh( "assets/sword.obj", renderer );
+        meshes.health = new Mesh( "assets/health.obj", renderer );
+        meshes.monster1 = new Mesh( "assets/monster1.obj", renderer );
+        meshes.stairway = new Mesh( "assets/stairway.obj", renderer );
+
+        for (int i = 0; i < levels.length; ++i)
+        {
+            levels[ i ] = new Level( renderer, meshes, textures, i != 0, i != levels.length - 1 );
+        }
     }
 
     public void Simulate( bool[ SDLWindow.KeyboardKey ] keys )
     {
         const long lerp = MonoTime.currTime.ticks - playerMoveTicks;
-        if (lerp < moveTime)
-            return;
 
+        if (lerp < moveTime)
+        {
+            return;
+        }
+        
         oldGameTurn = gameTurn;
         
         if (mode == Mode.Ingame)
@@ -46,8 +59,20 @@ public class Game
             }
             else if (SDLWindow.KeyboardKey.Space in keys && !(SDLWindow.KeyboardKey.Space in lastFrameKeys))
             {
-                ++gameTurn;
-                playerMoveTicks = 0;
+                if (levels[ currentLevel ].CanGoUp( player.GetLevelPosition() ) )
+                {
+                    --currentLevel;
+                }
+                else if (levels[ currentLevel ].CanGoDown( player.GetLevelPosition() ) )
+                {
+                    ++currentLevel;
+                }
+                else
+                {
+                    ++gameTurn;
+                }
+
+                lastMoveDir = PlayerLastMoveDirection.None;
             }
             else if (SDLWindow.KeyboardKey.Left in keys && !(SDLWindow.KeyboardKey.Left in lastFrameKeys))
             {
@@ -95,12 +120,23 @@ public class Game
             {
                 mode = Mode.Ingame;
             }
+            else if (SDLWindow.KeyboardKey.H in keys)
+            {
+                mode = Mode.Help;
+            }
             else if (SDLWindow.KeyboardKey.Escape in keys)
             {
                 exit( 0 );
             }
         }
-
+        else if (mode == Mode.Help)
+        {
+            if (SDLWindow.KeyboardKey.Escape in keys)
+            {
+                mode = Mode.Menu;
+            }
+        }
+        
         lastFrameKeys = keys;
     }
 
@@ -110,7 +146,11 @@ public class Game
 
         if (mode == Mode.Menu)
         {
-            renderer.DrawText( "DungeonCrawl\n\nspace - new game\ns - high scores", 100, 70 );
+            renderer.DrawText( "DungeonCrawl\n\nspace - new game\nh - help", 100, 70 );
+        }
+        if (mode == Mode.Help)
+        {
+            renderer.DrawText( "arrows - move\nspace - rest, use stairs", 100, 70 );
         }
         else if (mode == Mode.Ingame)
         {
@@ -128,7 +168,7 @@ public class Game
                 renderer.DrawTexture( heart, 20 + 74 * i, 20, 64, 64, [ r, r, r ] );
             }
 
-            renderer.DrawText( std.format.format( "turn: %s, score: %s", gameTurn, 70 ), 150, 20 );
+            renderer.DrawText( std.format.format( "turn: %d, score: %d, dlevel %d", gameTurn, 70, currentLevel ), 150, 20 );
 
             renderer.DisableAlphaBlending();
         }
@@ -179,19 +219,21 @@ public class Game
         return Vec3.Vec3( worldX, 0, worldZ );
     }
 
-    private enum Mode { Menu, Ingame }
+    private enum Mode { Menu, Ingame, Help }
     
     private Mode mode = Mode.Menu;
-    private Level[ 1 ] levels;
+    private Level[ 3 ] levels;
     private int currentLevel = 0;
     private Player player = new Player();
     private Texture heart;
+    private Level.Textures textures;
+    private Level.Meshes meshes;
     private bool[ SDLWindow.KeyboardKey ] lastFrameKeys;
     private int gameTurn = 0, oldGameTurn = 0;
     private long playerMoveTicks = 0;
     private PlayerLastMoveDirection lastMoveDir = PlayerLastMoveDirection.None;
-    //long moveTime = 333553789;
-    private immutable long moveTime = 3335537 / 4;
+    long moveTime = 333553789;
+    //private immutable long moveTime = 3335537 / 4;
 }
 
 void main()
