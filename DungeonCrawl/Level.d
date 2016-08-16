@@ -57,6 +57,16 @@ public class Level
         GenerateMonsters();        
     }
 
+    public int[] GetStairwayDownPosition()
+    {
+        return stairwayDownPosition;
+    }
+
+    public int[] GetStairwayUpPosition()
+    {
+        return stairwayUpPosition;
+    }
+    
     public bool CanWalkForward( Player player ) const
     {
         auto playerForward = player.GetForwardPosition();
@@ -127,6 +137,10 @@ public class Level
         renderer.SetMVP( Vec3.Vec3( 1, 1, 1 ), 0, 1 );
         renderer.DrawVAO( vaoID, elementCount * 3, [ 1, 1, 1 ] );
 
+        // Draws the ceiling. Wasteful, but there aren't a huge amount of tris in the level data.
+        renderer.SetMVP( Vec3.Vec3( 1, 40, 1 ), 0, 1 );
+        renderer.DrawVAO( vaoID, elementCount * 3, [ 1, 1, 1 ] );
+
         textures.health.Bind();
 
         for (int i = 0; i < healthPickups.length; ++i)
@@ -141,7 +155,7 @@ public class Level
             }
         }
 
-        textures.tex.Bind();
+        textures.white.Bind();
 
         for (int i = 0; i < monsters.length; ++i)
         {
@@ -149,7 +163,7 @@ public class Level
             {
                 renderer.SetMVP( Vec3.Vec3( monsters[ i ].levelPosition[ 0 ] * dimension * 2, 0,
                                             monsters[ i ].levelPosition[ 1 ] * dimension * 2 ), 0, 1 );
-                renderer.DrawVAO( meshes.health.GetVAO(), meshes.health.GetElementCount() * 3, [ 1, 0.5f, 0.5f ] );
+                renderer.DrawVAO( meshes.health.GetVAO(), meshes.health.GetElementCount() * 3, [ 1, 1, 1 ] );
             }
         }
 
@@ -158,13 +172,13 @@ public class Level
         if (hasStairwayUp)
         {
             renderer.SetMVP( Vec3.Vec3( stairwayUpPosition[ 0 ] * dimension * 2, 0,
-                                        stairwayUpPosition[ 1 ] * dimension * 2 ), 0, 3 );
+                                        stairwayUpPosition[ 1 ] * dimension * 2 ), 0, 8 );
             renderer.DrawVAO( meshes.stairway.GetVAO(), meshes.stairway.GetElementCount() * 3, [ 1, 1, 1 ] );
         }
         if (hasStairwayDown)
         {
             renderer.SetMVP( Vec3.Vec3( stairwayDownPosition[ 0 ] * dimension * 2, 0,
-                                        stairwayDownPosition[ 1 ] * dimension * 2 ), 0, 3 );
+                                        stairwayDownPosition[ 1 ] * dimension * 2 ), 0, 8 );
             renderer.DrawVAO( meshes.stairway.GetVAO(), meshes.stairway.GetElementCount() * 3, [ 1, 0, 0 ] );
         }
     }
@@ -205,18 +219,21 @@ public class Level
 
         while (!placedStairwayUp || !placedStairwayDown)
         {
-            const int posCandidateX = uniform( 1, dimension - 2 );
-            const int posCandidateZ = uniform( 1, dimension - 2 );
+            const int posCandidateUpX = uniform( 1, dimension / 2 );
+            const int posCandidateUpZ = uniform( 1, dimension / 2 );
 
-            if (!placedStairwayUp && blocks[ posCandidateZ * dimension + posCandidateX ] == BlockType.None)
+            const int posCandidateDownX = uniform( dimension / 2 + 1, dimension - 2 );
+            const int posCandidateDownZ = uniform( dimension / 2 + 1, dimension - 2 );
+
+            if (!placedStairwayUp && blocks[ posCandidateUpZ * dimension + posCandidateUpX ] == BlockType.None)
             {
-                stairwayUpPosition = [ posCandidateX, posCandidateZ ];
+                stairwayUpPosition = [ posCandidateUpX, posCandidateUpZ ];
                 placedStairwayUp = true;
             }
-            else if (!placedStairwayDown && blocks[ posCandidateZ * dimension + posCandidateX ] == BlockType.None &&
-                     !(posCandidateX == stairwayUpPosition[ 0 ] && posCandidateZ == stairwayUpPosition[ 1 ] ) )
+            else if (!placedStairwayDown && blocks[ posCandidateDownZ * dimension + posCandidateDownX ] == BlockType.None &&
+                     !(posCandidateDownX == stairwayUpPosition[ 0 ] && posCandidateDownZ == stairwayUpPosition[ 1 ] ) )
             {
-                stairwayDownPosition = [ posCandidateX, posCandidateZ ];
+                stairwayDownPosition = [ posCandidateDownX, posCandidateDownZ ];
                 placedStairwayDown = true;
             }
         }

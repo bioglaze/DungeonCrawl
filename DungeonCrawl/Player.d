@@ -12,6 +12,11 @@ enum FacingDirection
 
 class Player
 {
+    public void TeleportTo( int[] position )
+    {
+        levelPosition = position;
+    }
+    
     public void WalkForward()
     {
         if (facingDirection == FacingDirection.North)

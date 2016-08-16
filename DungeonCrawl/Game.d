@@ -62,10 +62,12 @@ public class Game
                 if (levels[ currentLevel ].CanGoUp( player.GetLevelPosition() ) )
                 {
                     --currentLevel;
+                    player.TeleportTo( levels[ currentLevel ].GetStairwayDownPosition() );
                 }
                 else if (levels[ currentLevel ].CanGoDown( player.GetLevelPosition() ) )
                 {
                     ++currentLevel;
+                    player.TeleportTo( levels[ currentLevel ].GetStairwayUpPosition() );
                 }
                 else
                 {
