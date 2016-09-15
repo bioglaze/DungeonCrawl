@@ -16,6 +16,7 @@ public enum KeyboardKey
     Escape,
     S,
     H,
+    A,
 }
 
 class SDLWindow
@@ -90,6 +91,11 @@ class SDLWindow
         if (keyState[ SDL_SCANCODE_H ] == 1)
         {
             outKeys[ KeyboardKey.H ] = true;
+        }
+
+        if (keyState[ SDL_SCANCODE_A ] == 1)
+        {
+            outKeys[ KeyboardKey.A ] = true;
         }
         
         SDL_Event e;

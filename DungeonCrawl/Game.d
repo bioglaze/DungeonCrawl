@@ -47,9 +47,7 @@ public class Game
         if (lerp < moveTime)
         {
             return;
-        }
-        
-        oldGameTurn = gameTurn;
+        }        
         
         if (mode == Mode.Ingame)
         {
@@ -76,6 +74,11 @@ public class Game
 
                 lastMoveDir = PlayerLastMoveDirection.None;
             }
+            else if (SDLWindow.KeyboardKey.A in keys && !(SDLWindow.KeyboardKey.A in lastFrameKeys))
+            {
+                Level.Monster* monster = levels[ currentLevel ].GetMonsterInFrontOfPlayer( player );
+                //player.Attack();
+            }
             else if (SDLWindow.KeyboardKey.Left in keys && !(SDLWindow.KeyboardKey.Left in lastFrameKeys))
             {
                 player.TurnLeft();
@@ -101,7 +104,7 @@ public class Game
                 ++gameTurn;
             }
             
-            if (oldGameTurn != gameTurn)
+            if (oldGameTurn != gameTurn && MonoTime.currTime.ticks - enemyMoveTicks > moveTime)
             {
                 if (levels[ currentLevel ].HasHealthInPosition( player.GetLevelPosition() ) &&
                     !player.HasMaxHealth())
@@ -111,8 +114,9 @@ public class Game
                 }
 
                 playerMoveTicks = MonoTime.currTime.ticks;
+                enemyMoveTicks = MonoTime.currTime.ticks;
                 oldGameTurn = gameTurn;
-
+                //writeln("lerp: ", lerp, ", playerMove: ", playerMoveTicks);
                 levels[ currentLevel ].Simulate();
             }
         }
@@ -152,7 +156,7 @@ public class Game
         }
         if (mode == Mode.Help)
         {
-            renderer.DrawText( "arrows - move\nspace - rest, use stairs", 100, 70 );
+            renderer.DrawText( "arrows - move\na - attack\nspace - rest, use stairs", 60, 70 );
         }
         else if (mode == Mode.Ingame)
         {
@@ -160,6 +164,12 @@ public class Game
             
             renderer.SetCamera( pp, player.GetWorldDirection() );
             levels[ currentLevel ].Draw( renderer );
+
+            textures.white.Bind();
+            Vec3 swordPosition = pp - player.GetWorldDirection() * 10;
+            swordPosition.y -= 5;
+            renderer.SetMVP( swordPosition, 0, 0.7f );
+            renderer.DrawVAO( meshes.sword.GetVAO(), meshes.sword.GetElementCount() * 3, [ 1, 1, 1 ] );
 
             renderer.EnableAlphaBlending();
             
@@ -233,6 +243,7 @@ public class Game
     private bool[ SDLWindow.KeyboardKey ] lastFrameKeys;
     private int gameTurn = 0, oldGameTurn = 0;
     private long playerMoveTicks = 0;
+    private long enemyMoveTicks = 0;
     private PlayerLastMoveDirection lastMoveDir = PlayerLastMoveDirection.None;
     long moveTime = 333553789;
     //private immutable long moveTime = 3335537 / 4;

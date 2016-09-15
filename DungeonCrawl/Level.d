@@ -23,6 +23,12 @@ public struct Textures
     Texture white;
 }
 
+public struct Monster
+{
+    int[ 2 ] levelPosition;
+    bool isAlive = true;
+}
+
 private enum BlockType
 {
     None = 0,
@@ -65,6 +71,21 @@ public class Level
     public int[] GetStairwayUpPosition()
     {
         return stairwayUpPosition;
+    }
+
+    public Monster* GetMonsterInFrontOfPlayer( Player player )
+    {
+        auto playerForward = player.GetForwardPosition();
+        for (int m = 0; m < monsters.length; ++m)
+        {
+            if (monsters[ m ].levelPosition[ 0 ] == playerForward[ 0 ] &&
+                monsters[ m ].levelPosition[ 1 ] == playerForward[ 1 ])
+            {
+                writeln("monster in front of player");
+            }
+        }
+
+        return null;
     }
     
     public bool CanWalkForward( Player player ) const
@@ -161,9 +182,9 @@ public class Level
         {
             if (monsters[ i ].isAlive)
             {
-                renderer.SetMVP( Vec3.Vec3( monsters[ i ].levelPosition[ 0 ] * dimension * 2, 0,
-                                            monsters[ i ].levelPosition[ 1 ] * dimension * 2 ), 0, 1 );
-                renderer.DrawVAO( meshes.health.GetVAO(), meshes.health.GetElementCount() * 3, [ 1, 1, 1 ] );
+                renderer.SetMVP( Vec3.Vec3( monsters[ i ].levelPosition[ 0 ] * dimension * 2, -5,
+                                            monsters[ i ].levelPosition[ 1 ] * dimension * 2 ), 0, 1.5f );
+                renderer.DrawVAO( meshes.monster1.GetVAO(), meshes.monster1.GetElementCount() * 3, [ 1, 1, 1 ] );
             }
         }
 
@@ -365,12 +386,6 @@ public class Level
     {
         int[ 2 ] levelPosition;
         bool isActive = true;
-    }
-
-    private struct Monster
-    {
-        int[ 2 ] levelPosition;
-        bool isAlive = true;
     }
     
     private HealthPickup[ 3 ] healthPickups;

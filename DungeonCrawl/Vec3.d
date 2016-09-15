@@ -47,6 +47,10 @@ struct Vec3
         {
             return Vec3( x + v.x, y + v.y, z + v.z );
         }
+        else static if (op == "-")
+        {
+            return Vec3( x - v.x, y - v.y, z - v.z );
+        }
         else static assert( false, "operator " ~ op ~ " not implemented" );
     }
 
