@@ -53,7 +53,7 @@
   <cccmd>$(CC) -c</cccmd>
   <ccTransOpt>1</ccTransOpt>
   <program>$(DMDInstallDir)windows\bin\dmd.exe</program>
-  <imppath>..\..\..\derelict\derelict-gl3-1.0.18\source;..\..\..\derelict\derelict-sdl2-2.0.0\source;..\..\..\derelict\derelict-util-2.0.6\source</imppath>
+  <imppath>..\..\..\derelict\derelict-gl3-1.0.19\source;..\..\..\derelict\derelict-sdl2-2.0.2\source;..\..\..\derelict\derelict-util-2.1.0\source</imppath>
   <fileImppath />
   <outdir>$(ConfigurationName)</outdir>
   <objdir>$(OutDir)</objdir>
@@ -89,7 +89,7 @@
   <cv2pdbOptions />
   <objfiles />
   <linkswitches />
-  <libfiles>..\..\..\derelict\derelict-gl3-1.0.18\lib\DerelictGL3.lib ..\..\..\derelict\derelict-sdl2-2.0.0\lib\DerelictSDL2.lib ..\..\..\derelict\derelict-util-2.0.6\lib\DerelictUtil.lib</libfiles>
+  <libfiles>..\..\..\derelict\derelict-gl3-1.0.19\lib\DerelictGL3.lib ..\..\..\derelict\derelict-sdl2-2.0.2\lib\DerelictSDL2.lib ..\..\..\derelict\derelict-util-2.1.0\lib\DerelictUtil.lib</libfiles>
   <libpaths />
   <deffile />
   <resfile />
@@ -155,7 +155,7 @@
   <cccmd>$(CC) -c</cccmd>
   <ccTransOpt>1</ccTransOpt>
   <program>$(DMDInstallDir)windows\bin\dmd.exe</program>
-  <imppath>..\..\..\derelict\derelict-gl3-1.0.18\source;..\..\..\derelict\derelict-sdl2-2.0.0\source;..\..\..\derelict\derelict-util-2.0.6\source</imppath>
+  <imppath>..\..\..\derelict\derelict-gl3-1.0.19\source;..\..\..\derelict\derelict-sdl2-2.0.2\source;..\..\..\derelict\derelict-util-2.1.0\source</imppath>
   <fileImppath />
   <outdir>$(ConfigurationName)</outdir>
   <objdir>$(OutDir)</objdir>
@@ -191,7 +191,7 @@
   <cv2pdbOptions />
   <objfiles />
   <linkswitches />
-  <libfiles>..\..\..\derelict\derelict-gl3-1.0.18\lib\DerelictGL3.lib ..\..\..\derelict\derelict-sdl2-2.0.0\lib\DerelictSDL2.lib ..\..\..\derelict\derelict-util-2.0.6\lib\DerelictUtil.lib</libfiles>
+  <libfiles>..\..\..\derelict\derelict-gl3-1.0.19\lib\DerelictGL3.lib ..\..\..\derelict\derelict-sdl2-2.0.2\lib\DerelictSDL2.lib ..\..\..\derelict\derelict-util-2.1.0\lib\DerelictUtil.lib</libfiles>
   <libpaths />
   <deffile />
   <resfile />

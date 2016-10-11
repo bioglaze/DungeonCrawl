@@ -245,8 +245,15 @@ public class Game
     private long playerMoveTicks = 0;
     private long enemyMoveTicks = 0;
     private PlayerLastMoveDirection lastMoveDir = PlayerLastMoveDirection.None;
-    long moveTime = 333553789;
-    //private immutable long moveTime = 3335537 / 4;
+	
+	version( OSX )
+	{
+		long moveTime = 333553789;
+	}
+	version( Windows )
+	{
+		private immutable long moveTime = 3335537 / 4;
+	}
 }
 
 void main()
