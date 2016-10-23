@@ -5,13 +5,20 @@ import std.algorithm;
 import std.stdio;
 import Vec3;
 
-enum FacingDirection
+public enum FacingDirection
 {
     North = 0, East, South, West
 }
 
-class Player
+public enum Weapon
 {
+    Sword
+}
+
+public class Player
+{
+    public Weapon GetWeapon() const { return Weapon.Sword; }
+    
     public void TeleportTo( int[] position )
     {
         levelPosition = position;
@@ -116,6 +123,11 @@ class Player
         }
     }
 
+    public FacingDirection GetFacingDirection() const
+    {
+        return facingDirection;
+    }
+    
     public int GetHealth() const
     {
         return health;

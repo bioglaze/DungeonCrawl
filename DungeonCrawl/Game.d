@@ -19,6 +19,11 @@ private enum PlayerLastMoveDirection
     None, Forward, Backward
 }
 
+private enum PlayerLastRotateDirection
+{
+    None, Left, Right
+}
+
 public class Game
 {
     public void Init( Renderer renderer )
@@ -73,27 +78,36 @@ public class Game
                 }
 
                 lastMoveDir = PlayerLastMoveDirection.None;
+                lastRotateDir = PlayerLastRotateDirection.None;
             }
             else if (SDLWindow.KeyboardKey.A in keys && !(SDLWindow.KeyboardKey.A in lastFrameKeys))
             {
                 Level.Monster* monster = levels[ currentLevel ].GetMonsterInFrontOfPlayer( player );
-                //player.Attack();
+                if (monster != null)
+                {
+                    monster.TakeDamage( player.GetWeapon() );
+                }
             }
             else if (SDLWindow.KeyboardKey.Left in keys && !(SDLWindow.KeyboardKey.Left in lastFrameKeys))
             {
                 player.TurnLeft();
                 lastMoveDir = PlayerLastMoveDirection.None;
+                lastRotateDir = PlayerLastRotateDirection.Left;
+                playerRotateTicks = MonoTime.currTime.ticks;
             }
             else if (SDLWindow.KeyboardKey.Right in keys && !(SDLWindow.KeyboardKey.Right in lastFrameKeys))
             {
                 player.TurnRight();
                 lastMoveDir = PlayerLastMoveDirection.None;
+                lastRotateDir = PlayerLastRotateDirection.Right;
+                playerRotateTicks = MonoTime.currTime.ticks;
             }
             else if (SDLWindow.KeyboardKey.Up in keys && !(SDLWindow.KeyboardKey.Up in lastFrameKeys) &&
                      levels[ currentLevel ].CanWalkForward( player ) )
             {
                 player.WalkForward();
                 lastMoveDir = PlayerLastMoveDirection.Forward;
+                lastRotateDir = PlayerLastRotateDirection.None;
                 ++gameTurn;
             }
             else if (SDLWindow.KeyboardKey.Down in keys && !(SDLWindow.KeyboardKey.Down in lastFrameKeys) &&
@@ -101,6 +115,7 @@ public class Game
             {
                 player.WalkBackward();
                 lastMoveDir = PlayerLastMoveDirection.Backward;
+                lastRotateDir = PlayerLastRotateDirection.None;
                 ++gameTurn;
             }
             
@@ -160,13 +175,13 @@ public class Game
         }
         else if (mode == Mode.Ingame)
         {
-            Vec3 pp = CalculateAnimatedPlayerPosition();
-            
-            renderer.SetCamera( pp, player.GetWorldDirection() );
+            Vec3 playerPos = CalculateAnimatedPlayerPosition();
+            Vec3 playerDir = CalculateAnimatedPlayerRotation();
+            renderer.SetCamera( playerPos, playerDir );
             levels[ currentLevel ].Draw( renderer );
 
             textures.white.Bind();
-            Vec3 swordPosition = pp - player.GetWorldDirection() * 10;
+            Vec3 swordPosition = playerPos - playerDir * 10;
             swordPosition.y -= 5;
             renderer.SetMVP( swordPosition, 0, 0.7f );
             renderer.DrawVAO( meshes.sword.GetVAO(), meshes.sword.GetElementCount() * 3, [ 1, 1, 1 ] );
@@ -231,6 +246,38 @@ public class Game
         return Vec3.Vec3( worldX, 0, worldZ );
     }
 
+    private Vec3 CalculateAnimatedPlayerRotation()
+    {
+        long lerp = MonoTime.currTime.ticks - playerRotateTicks;
+
+        float rotY = 0;
+        
+        if (lastRotateDir == PlayerLastRotateDirection.Left && lerp < moveTime)
+        {
+            if (player.GetFacingDirection() == FacingDirection.East)
+            {
+                rotY = cast(float)lerp / moveTime;
+            }
+            if (player.GetFacingDirection() == FacingDirection.West)
+            {
+                rotY = -cast(float)lerp / moveTime;
+            }
+        }
+        else if (lastRotateDir == PlayerLastRotateDirection.Right && lerp < moveTime)
+        {
+            if (player.GetFacingDirection() == FacingDirection.East)
+            {
+                rotY = -cast(float)lerp / moveTime;
+            }
+            if (player.GetFacingDirection() == FacingDirection.West)
+            {
+                rotY = cast(float)lerp / moveTime;
+            }
+        }
+
+        return player.GetWorldDirection() + Vec3.Vec3( 0, 0, rotY );
+    }
+    
     private enum Mode { Menu, Ingame, Help }
     
     private Mode mode = Mode.Menu;
@@ -243,12 +290,18 @@ public class Game
     private bool[ SDLWindow.KeyboardKey ] lastFrameKeys;
     private int gameTurn = 0, oldGameTurn = 0;
     private long playerMoveTicks = 0;
+    private long playerRotateTicks = 0;
     private long enemyMoveTicks = 0;
     private PlayerLastMoveDirection lastMoveDir = PlayerLastMoveDirection.None;
-	
+    private PlayerLastRotateDirection lastRotateDir = PlayerLastRotateDirection.None;
+
+    version( Linux )
+    {
+		private immutable long moveTime = 333553789;
+    }
 	version( OSX )
 	{
-		long moveTime = 333553789;
+		private immutable long moveTime = 333553789;
 	}
 	version( Windows )
 	{

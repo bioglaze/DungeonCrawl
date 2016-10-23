@@ -23,10 +23,23 @@ public struct Textures
     Texture white;
 }
 
+private int CalculateDamage( Player.Weapon weapon )
+{
+    return 1;
+}
+
 public struct Monster
 {
-    int[ 2 ] levelPosition;
-    bool isAlive = true;
+    public int[ 2 ] levelPosition;
+    public bool isAlive = true;
+    public int health = 3;
+    public int healthMax = 3;
+    
+    void TakeDamage( Player.Weapon weapon )
+    {
+        health -= CalculateDamage( weapon );
+        isAlive = health > 0;
+    }
 }
 
 private enum BlockType
@@ -81,7 +94,7 @@ public class Level
             if (monsters[ m ].levelPosition[ 0 ] == playerForward[ 0 ] &&
                 monsters[ m ].levelPosition[ 1 ] == playerForward[ 1 ])
             {
-                writeln("monster in front of player");
+                return &monsters[ m ];
             }
         }
 
@@ -130,7 +143,7 @@ public class Level
         {
             if (monsters[ i ].isAlive)
             {
-                const int moveDirection = uniform( 0, 4 );
+                const int moveDirection = uniform( 0, 6 );
 
                 if (moveDirection == 0 && monsters[ i ].levelPosition[ 0 ] > 0)
                 {
@@ -184,7 +197,8 @@ public class Level
             {
                 renderer.SetMVP( Vec3.Vec3( monsters[ i ].levelPosition[ 0 ] * dimension * 2, -5,
                                             monsters[ i ].levelPosition[ 1 ] * dimension * 2 ), 0, 1.5f );
-                renderer.DrawVAO( meshes.monster1.GetVAO(), meshes.monster1.GetElementCount() * 3, [ 1, 1, 1 ] );
+                float color = monsters[ i ].health / cast(float)monsters[ i ].healthMax;
+                renderer.DrawVAO( meshes.monster1.GetVAO(), meshes.monster1.GetElementCount() * 3, [ 1, color, color ] );
             }
         }
 
