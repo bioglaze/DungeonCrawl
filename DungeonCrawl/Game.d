@@ -14,6 +14,9 @@ import Player;
 import Vec3;
 import Mesh;
 
+immutable int width = 640;
+immutable int height = 480;
+
 private enum PlayerLastMoveDirection
 {
     None, Forward, Backward
@@ -22,6 +25,28 @@ private enum PlayerLastMoveDirection
 private enum PlayerLastRotateDirection
 {
     None, Left, Right
+}
+
+private struct DamageEffect
+{
+    public void Start()
+    {
+        startTimeMs = MonoTime.currTime.ticks;
+    }
+
+    public float GetOpacity()
+    {
+        long elapsedMs = MonoTime.currTime.ticks - startTimeMs;
+        if (elapsedMs > durationMs)
+        {
+            return 0;
+        }
+        return 0;
+        //return elapsedMs / cast( float )durationMs;
+    }
+    
+    private long startTimeMs;
+    private immutable long durationMs = 1000;
 }
 
 public class Game
@@ -33,7 +58,8 @@ public class Game
         textures.tex = new Texture( "assets/wall1.tga" );
         textures.health = new Texture( "assets/health.tga" );
         textures.white = new Texture( "assets/white.tga" );
-
+        textures.damage = new Texture( "assets/damage.tga" );
+        
         meshes.sword = new Mesh( "assets/sword.obj", renderer );
         meshes.health = new Mesh( "assets/health.obj", renderer );
         meshes.monster1 = new Mesh( "assets/monster1.obj", renderer );
@@ -82,6 +108,8 @@ public class Game
             }
             else if (SDLWindow.KeyboardKey.A in keys && !(SDLWindow.KeyboardKey.A in lastFrameKeys))
             {
+                damageEffect.Start();
+                
                 Level.Monster* monster = levels[ currentLevel ].GetMonsterInFrontOfPlayer( player );
                 if (monster != null)
                 {
@@ -180,11 +208,13 @@ public class Game
             renderer.SetCamera( playerPos, playerDir );
             levels[ currentLevel ].Draw( renderer );
 
+            renderer.DisableDepthTest();
+            
             textures.white.Bind();
             Vec3 swordPosition = playerPos - playerDir * 10;
             swordPosition.y -= 5;
             renderer.SetMVP( swordPosition, 0, 0.7f );
-            renderer.DrawVAO( meshes.sword.GetVAO(), meshes.sword.GetElementCount() * 3, [ 1, 1, 1 ] );
+            renderer.DrawVAO( meshes.sword.GetVAO(), meshes.sword.GetElementCount() * 3, [ 1, 1, 1, 1 ] );
 
             renderer.EnableAlphaBlending();
             
@@ -192,12 +222,16 @@ public class Game
             {
                 const float r = player.GetHealth() > i ? 1.0f : 0.0f;
                 
-                renderer.DrawTexture( heart, 20 + 74 * i, 20, 64, 64, [ r, r, r ] );
+                renderer.DrawTexture( heart, 20 + 74 * i, 20, 64, 64, [ r, r, r, 1 ] );
             }
+
+            writeln("width: ", width, ", height: ", height);
+            renderer.DrawTexture( textures.damage, 0, -40, width, height, [ 1, 1, 1, 0.5f/*damageEffect.GetOpacity()*/ ] );
 
             renderer.DrawText( std.format.format( "turn: %d, score: %d, dlevel %d", gameTurn, 70, currentLevel ), 150, 20 );
 
             renderer.DisableAlphaBlending();
+            renderer.EnableDepthTest();
         }
     }
 
@@ -294,7 +328,8 @@ public class Game
     private long enemyMoveTicks = 0;
     private PlayerLastMoveDirection lastMoveDir = PlayerLastMoveDirection.None;
     private PlayerLastRotateDirection lastRotateDir = PlayerLastRotateDirection.None;
-
+    private DamageEffect damageEffect;
+    
     version( Linux )
     {
 		private immutable long moveTime = 333553789;
@@ -311,9 +346,6 @@ public class Game
 
 void main()
 {
-    immutable int width = 640;
-    immutable int height = 480;
-
     auto window = new SDLWindow( width, height );
     auto renderer = new Renderer( width, height );
     auto game = new Game();

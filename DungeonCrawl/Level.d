@@ -21,6 +21,7 @@ public struct Textures
     Texture tex;
     Texture health;
     Texture white;
+    Texture damage;
 }
 
 private int CalculateDamage( Player.Weapon weapon )
@@ -169,11 +170,11 @@ public class Level
     {
         textures.tex.Bind();
         renderer.SetMVP( Vec3.Vec3( 1, 1, 1 ), 0, 1 );
-        renderer.DrawVAO( vaoID, elementCount * 3, [ 1, 1, 1 ] );
+        renderer.DrawVAO( vaoID, elementCount * 3, [ 1, 1, 1, 1 ] );
 
         // Draws the ceiling. Wasteful, but there aren't a huge amount of tris in the level data.
         renderer.SetMVP( Vec3.Vec3( 1, 40, 1 ), 0, 1 );
-        renderer.DrawVAO( vaoID, elementCount * 3, [ 1, 1, 1 ] );
+        renderer.DrawVAO( vaoID, elementCount * 3, [ 1, 1, 1, 1 ] );
 
         textures.health.Bind();
 
@@ -185,7 +186,7 @@ public class Level
                 ++rotY;
                 renderer.SetMVP( Vec3.Vec3( healthPickups[ i ].levelPosition[ 0 ] * dimension * 2, 0,
                                             healthPickups[ i ].levelPosition[ 1 ] * dimension * 2 ), rotY, 1 );
-                renderer.DrawVAO( meshes.health.GetVAO(), meshes.health.GetElementCount() * 3, [ 1, 1, 1 ] );
+                renderer.DrawVAO( meshes.health.GetVAO(), meshes.health.GetElementCount() * 3, [ 1, 1, 1, 1 ] );
             }
         }
 
@@ -198,7 +199,7 @@ public class Level
                 renderer.SetMVP( Vec3.Vec3( monsters[ i ].levelPosition[ 0 ] * dimension * 2, -5,
                                             monsters[ i ].levelPosition[ 1 ] * dimension * 2 ), 0, 1.5f );
                 float color = monsters[ i ].health / cast(float)monsters[ i ].healthMax;
-                renderer.DrawVAO( meshes.monster1.GetVAO(), meshes.monster1.GetElementCount() * 3, [ 1, color, color ] );
+                renderer.DrawVAO( meshes.monster1.GetVAO(), meshes.monster1.GetElementCount() * 3, [ 1, color, color, 1 ] );
             }
         }
 
@@ -208,13 +209,13 @@ public class Level
         {
             renderer.SetMVP( Vec3.Vec3( stairwayUpPosition[ 0 ] * dimension * 2, 0,
                                         stairwayUpPosition[ 1 ] * dimension * 2 ), 0, 8 );
-            renderer.DrawVAO( meshes.stairway.GetVAO(), meshes.stairway.GetElementCount() * 3, [ 1, 1, 1 ] );
+            renderer.DrawVAO( meshes.stairway.GetVAO(), meshes.stairway.GetElementCount() * 3, [ 1, 1, 1, 1 ] );
         }
         if (hasStairwayDown)
         {
             renderer.SetMVP( Vec3.Vec3( stairwayDownPosition[ 0 ] * dimension * 2, 0,
                                         stairwayDownPosition[ 1 ] * dimension * 2 ), 0, 8 );
-            renderer.DrawVAO( meshes.stairway.GetVAO(), meshes.stairway.GetElementCount() * 3, [ 1, 0, 0 ] );
+            renderer.DrawVAO( meshes.stairway.GetVAO(), meshes.stairway.GetElementCount() * 3, [ 1, 0, 0, 1 ] );
         }
     }
 

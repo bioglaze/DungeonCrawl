@@ -48,9 +48,9 @@ class Renderer
         orthoMat.MakeProjection( 0, screenWidth, screenHeight, 0, -1, 1 );
         perspectiveMat.MakeProjection( 45, screenWidth / cast(float)screenHeight, 1, 300 );
 
-        uiShader = new Shader( "assets/shader.vert", "assets/shader.frag" );
-        uiShader.Use();
-        uiShader.SetInt( "sTexture", 0 );
+        shader = new Shader( "assets/shader.vert", "assets/shader.frag" );
+        shader.Use();
+        shader.SetInt( "sTexture", 0 );
 
         font = new Font( "assets/font.bin" );
         fontTex = new Texture( "assets/font.tga" );
@@ -79,9 +79,10 @@ class Renderer
         glClear( GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT );
     }
 
-    public void DrawVAO( uint vaoID, int elementCount, float[ 3 ] tintColor )
+    public void DrawVAO( uint vaoID, int elementCount, float[ 4 ] tintColor )
     {
-        uiShader.SetFloat3( "tintColor", tintColor[ 0 ], tintColor[ 1 ], tintColor[ 2 ] );
+        CheckGLError( "Before DrawVAO" );
+        shader.SetFloat4( "tintColor", tintColor[ 0 ], tintColor[ 1 ], tintColor[ 2 ], tintColor[ 3 ] );
         glBindVertexArray( vaoID );
         glDrawElements( GL_TRIANGLES, elementCount, GL_UNSIGNED_SHORT, cast(GLvoid*)0 );
         CheckGLError( "After DrawVAO" );
@@ -131,15 +132,13 @@ class Renderer
 
         fontTex.Bind();
 
-        uiShader.Use();
+        shader.Use();
         Matrix4x4 mvp;
         mvp.MakeIdentity();
-        mvp.Translate( Vec3.Vec3( x, y, 0 ) );
         Matrix4x4.Multiply( mvp, orthoMat, mvp );
-        uiShader.SetMatrix44( "mvp", mvp.m );
-        uiShader.SetFloat3( "tintColor", 1, 1, 1 );
-
-        DrawVAO( textVAO, textFaceLength * 3, [ 1, 1, 1 ] );
+        shader.SetMatrix44( "mvp", mvp.m );
+        
+        DrawVAO( textVAO, textFaceLength * 3, [ 1, 1, 1, 1 ] );
     }
 
     public void EnableAlphaBlending()
@@ -152,8 +151,18 @@ class Renderer
     {
         glDisable( GL_BLEND );
     }
+
+    public void EnableDepthTest()
+    {
+        glEnable( GL_DEPTH_TEST );
+    }
+
+    public void DisableDepthTest()
+    {
+        glDisable( GL_DEPTH_TEST );
+    }
     
-    public void DrawTexture( Texture texture, int x, int y, int xScale, int yScale, float[ 3 ] tintColor )
+    public void DrawTexture( Texture texture, int x, int y, int xScale, int yScale, float[ 4 ] tintColor )
     {
         texture.Bind();
 
@@ -161,14 +170,12 @@ class Renderer
         mvp.MakeIdentity();
         mvp.Scale( xScale, yScale, 1 );
         mvp.Translate( Vec3.Vec3( x, y, 0 ) );
-
-        uiShader.Use();
         Matrix4x4.Multiply( mvp, orthoMat, mvp );
-        uiShader.SetMatrix44( "mvp", mvp.m );
-        uiShader.SetFloat3( "tintColor", tintColor[ 0 ], tintColor[ 1 ], tintColor[ 2 ] );
-
-        DrawVAO( quadVAO, 2 * 3, [ 1, 1, 1 ] );
-        uiShader.SetFloat3( "tintColor", 1, 1, 1 );
+        
+        shader.Use();
+        shader.SetMatrix44( "mvp", mvp.m );
+        DrawVAO( quadVAO, 2 * 3, tintColor );
+        shader.SetFloat4( "tintColor", 1, 1, 1, 1 );
     }
     
     public void SetMVP( Vec3 position, float rotY, float scale )
@@ -178,10 +185,13 @@ class Renderer
         view.Transpose();
 
         Matrix4x4 model;
-        //model.MakeIdentity();
+        model.MakeIdentity();
 
-        model.MakeRotationXYZ( 0, rotY, 0 );
+        Matrix4x4 rot;
+        rot.MakeRotationXYZ( 0, rotY, 0 );
+
         model.Scale( scale, scale, scale );
+        Matrix4x4.Multiply( model, rot, model );        
         model.Translate( position );
 
         Matrix4x4 mvp;
@@ -189,8 +199,8 @@ class Renderer
         Matrix4x4.Multiply( model, view, mv );
         Matrix4x4.Multiply( mv, perspectiveMat, mvp );
 
-        uiShader.Use();
-        uiShader.SetMatrix44( "mvp", mvp.m );
+        shader.Use();
+        shader.SetMatrix44( "mvp", mvp.m );
     }
 
     public void SetCamera( Vec3 aCameraPosition, Vec3 directionDeg )
@@ -204,7 +214,7 @@ class Renderer
     private GLuint textVBO;
     private GLuint textIBO;
     private int textFaceLength;
-    private Shader uiShader;
+    private Shader shader;
     private Font font;
     private Texture fontTex;
     private string cachedText;

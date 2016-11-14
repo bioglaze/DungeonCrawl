@@ -238,6 +238,7 @@ unittest
 unittest
 {
     Matrix4x4 matrix;
+    matrix.MakeIdentity();
     const float exceptedResult = 42;
     matrix.m[ 3 ] = exceptedResult;
     matrix.Transpose();

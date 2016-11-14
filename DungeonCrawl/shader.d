@@ -26,31 +26,66 @@ class Shader
     public void SetFloat( string name, float value )
     {
         immutable char* nameCstr = toStringz( name );
-        glUniform1f( glGetUniformLocation( program, nameCstr ), value );
+        auto loc = glGetUniformLocation( program, nameCstr );
+
+        if (loc != -1)
+        {
+            glUniform1f( loc, value );
+        }
     }
 
     public void SetInt( string name, int value )
     {
         immutable char* nameCstr = toStringz( name );
-        glUniform1i( glGetUniformLocation( program, nameCstr ), value );
+        auto loc = glGetUniformLocation( program, nameCstr );
+
+        if (loc != -1)
+        {
+            glUniform1i( loc, value );
+        }
     }
     
     public void SetFloat2( string name, float value1, float value2 )
     {
         immutable char* nameCstr = toStringz( name );
-        glUniform2f( glGetUniformLocation( program, nameCstr ), value1, value2 );
+        auto loc = glGetUniformLocation( program, nameCstr );
+
+        if (loc != -1)
+        {
+            glUniform2f( loc, value1, value2 );
+        }
     }
 
     public void SetFloat3( string name, float value1, float value2, float value3 )
     {
         immutable char* nameCstr = toStringz( name );
-        glUniform3f( glGetUniformLocation( program, nameCstr ), value1, value2, value3 );
+        auto loc = glGetUniformLocation( program, nameCstr );
+
+        if (loc != -1)
+        {
+            glUniform3f( loc, value1, value2, value3 );
+        }
+    }
+
+    public void SetFloat4( string name, float value1, float value2, float value3, float value4 )
+    {
+        immutable char* nameCstr = toStringz( name );
+        auto loc = glGetUniformLocation( program, nameCstr );
+        if (loc != -1)
+        {
+            glUniform4f( loc, value1, value2, value3, value4 );
+        }
     }
 
     public void SetMatrix44( string name, float[] matrix )
     {
         immutable char* nameCstr = toStringz( name );
-        glUniformMatrix4fv( glGetUniformLocation( program, nameCstr ), 1, GL_FALSE, matrix.ptr );
+        auto loc = glGetUniformLocation( program, nameCstr );
+
+        if (loc != -1)
+        {
+            glUniformMatrix4fv( loc, 1, GL_FALSE, matrix.ptr );
+        }
     }
 
     public void Use()
