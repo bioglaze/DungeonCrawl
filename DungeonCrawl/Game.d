@@ -27,6 +27,11 @@ private enum PlayerLastRotateDirection
     None, Left, Right
 }
 
+float lerp( float t01, float a, float b )
+{
+    return (1 - t01) * a + t01 * b;
+}
+
 private struct DamageEffect
 {
     public void Start()
@@ -37,16 +42,18 @@ private struct DamageEffect
     public float GetOpacity()
     {
         long elapsedMs = MonoTime.currTime.ticks - startTimeMs;
+
         if (elapsedMs > durationMs)
         {
             return 0;
         }
-        return 0;
-        //return elapsedMs / cast( float )durationMs;
+
+        float res = lerp( elapsedMs / cast( float )durationMs, 1, 0 );
+        return res;
     }
     
     private long startTimeMs;
-    private immutable long durationMs = 1000;
+    private immutable long durationMs = 200000000;
 }
 
 public class Game
@@ -107,9 +114,7 @@ public class Game
                 lastRotateDir = PlayerLastRotateDirection.None;
             }
             else if (SDLWindow.KeyboardKey.A in keys && !(SDLWindow.KeyboardKey.A in lastFrameKeys))
-            {
-                damageEffect.Start();
-                
+            {                
                 Level.Monster* monster = levels[ currentLevel ].GetMonsterInFrontOfPlayer( player );
                 if (monster != null)
                 {
@@ -204,16 +209,20 @@ public class Game
         else if (mode == Mode.Ingame)
         {
             Vec3 playerPos = CalculateAnimatedPlayerPosition();
-            Vec3 playerDir = CalculateAnimatedPlayerRotation();
-            renderer.SetCamera( playerPos, playerDir );
-            levels[ currentLevel ].Draw( renderer );
+            float playerRotY = CalculateAnimatedPlayerRotation();
+            Matrix4x4 rot;
+            rot.MakeRotationXYZ( 0, playerRotY, 0 );
+            Vec3 rotatedDir;
+            Matrix4x4.TransformPoint( player.GetWorldDirection(), rot, rotatedDir );
+            renderer.SetCamera( playerPos, rotatedDir );
+            levels[ currentLevel ].Draw( renderer, playerRotY );
 
             renderer.DisableDepthTest();
             
             textures.white.Bind();
-            Vec3 swordPosition = playerPos - playerDir * 10;
+            Vec3 swordPosition = playerPos - player.GetWorldDirection() * 10;
             swordPosition.y -= 5;
-            renderer.SetMVP( swordPosition, 0, 0.7f );
+            renderer.SetMVP( swordPosition, playerRotY, 0.7f );
             renderer.DrawVAO( meshes.sword.GetVAO(), meshes.sword.GetElementCount() * 3, [ 1, 1, 1, 1 ] );
 
             renderer.EnableAlphaBlending();
@@ -225,8 +234,7 @@ public class Game
                 renderer.DrawTexture( heart, 20 + 74 * i, 20, 64, 64, [ r, r, r, 1 ] );
             }
 
-            writeln("width: ", width, ", height: ", height);
-            renderer.DrawTexture( textures.damage, 0, -40, width, height, [ 1, 1, 1, 0.5f/*damageEffect.GetOpacity()*/ ] );
+            renderer.DrawTexture( textures.damage, 0, -200, width, height + 200, [ 1, 1, 1, damageEffect.GetOpacity() ] );
 
             renderer.DrawText( std.format.format( "turn: %d, score: %d, dlevel %d", gameTurn, 70, currentLevel ), 150, 20 );
 
@@ -280,36 +288,22 @@ public class Game
         return Vec3.Vec3( worldX, 0, worldZ );
     }
 
-    private Vec3 CalculateAnimatedPlayerRotation()
+    private float CalculateAnimatedPlayerRotation()
     {
         long lerp = MonoTime.currTime.ticks - playerRotateTicks;
-
+        lerp /= 2;
         float rotY = 0;
         
         if (lastRotateDir == PlayerLastRotateDirection.Left && lerp < moveTime)
         {
-            if (player.GetFacingDirection() == FacingDirection.East)
-            {
-                rotY = cast(float)lerp / moveTime;
-            }
-            if (player.GetFacingDirection() == FacingDirection.West)
-            {
-                rotY = -cast(float)lerp / moveTime;
-            }
+            rotY = 90 -(cast(float)lerp / moveTime) * 90;
         }
         else if (lastRotateDir == PlayerLastRotateDirection.Right && lerp < moveTime)
         {
-            if (player.GetFacingDirection() == FacingDirection.East)
-            {
-                rotY = -cast(float)lerp / moveTime;
-            }
-            if (player.GetFacingDirection() == FacingDirection.West)
-            {
-                rotY = cast(float)lerp / moveTime;
-            }
+            rotY = -90 + (cast(float)lerp / moveTime) * 90;
         }
 
-        return player.GetWorldDirection() + Vec3.Vec3( 0, 0, rotY );
+        return rotY;
     }
     
     private enum Mode { Menu, Ingame, Help }

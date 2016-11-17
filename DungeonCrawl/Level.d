@@ -166,7 +166,7 @@ public class Level
         }
     }
     
-    public void Draw( Renderer renderer )
+    public void Draw( Renderer renderer, float playerRotY )
     {
         textures.tex.Bind();
         renderer.SetMVP( Vec3.Vec3( 1, 1, 1 ), 0, 1 );

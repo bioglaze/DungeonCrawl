@@ -23,6 +23,13 @@ void Multiply( Matrix4x4 a, Matrix4x4 b, out Matrix4x4 result )
     result.CheckForNaN();
 }
 
+void TransformPoint( Vec3 vec, Matrix4x4 mat, out Vec3 vOut )
+{
+    vOut.x = mat.m[0] * vec.x + mat.m[ 4 ] * vec.y + mat.m[ 8] * vec.z + mat.m[12];
+    vOut.y = mat.m[1] * vec.x + mat.m[ 5 ] * vec.y + mat.m[ 9] * vec.z + mat.m[13];
+    vOut.z = mat.m[2] * vec.x + mat.m[ 6 ] * vec.y + mat.m[10] * vec.z + mat.m[14];
+}
+
 struct Matrix4x4
 {
     string toString() const
