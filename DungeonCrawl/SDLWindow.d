@@ -2,6 +2,7 @@ module SDLWindow;
 
 import derelict.sdl2.sdl;
 import derelict.opengl3.gl3;
+import derelict.util.exception;
 import std.stdio: writeln;
 import core.stdc.stdlib: exit;
 import std.string;
@@ -39,6 +40,20 @@ class SDLWindow
         
         win = SDL_CreateWindow("Dungeon Crawler", SDL_WINDOWPOS_CENTERED,
             SDL_WINDOWPOS_CENTERED, screenWidth, screenHeight, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+
+        ShouldThrow missingSymFunc( string symName )
+        {
+            if (symName == "glGetSubroutineUniformLocation")
+                return ShouldThrow.No;
+            
+            if (symName == "glVertexAttribL1d")
+                return ShouldThrow.No;
+
+            return ShouldThrow.Yes;
+        }
+
+        DerelictGL3.missingSymbolCallback = &missingSymFunc;
+
         DerelictGL3.load();
         const auto context = SDL_GL_CreateContext( win );
         

@@ -48,12 +48,12 @@ class Renderer
         orthoMat.MakeProjection( 0, screenWidth, screenHeight, 0, -1, 1 );
         perspectiveMat.MakeProjection( 45, screenWidth / cast(float)screenHeight, 1, 300 );
 
-        shader = new Shader( "assets/shader.vert", "assets/shader.frag" );
+        shader = new Shader( "DungeonCrawl/assets/shader.vert", "DungeonCrawl/assets/shader.frag" );
         shader.Use();
         shader.SetInt( "sTexture", 0 );
 
-        font = new Font( "assets/font.bin" );
-        fontTex = new Texture( "assets/font.tga" );
+        font = new Font( "DungeonCrawl/assets/font.bin" );
+        fontTex = new Texture( "DungeonCrawl/assets/font.tga" );
 
         glEnable( GL_DEPTH_TEST );
         glEnable( GL_CULL_FACE );
@@ -133,8 +133,11 @@ class Renderer
         fontTex.Bind();
 
         shader.Use();
+
         Matrix4x4 mvp;
         mvp.MakeIdentity();
+        //mvp.Scale( xScale, yScale, 1 );
+        mvp.Translate( Vec3.Vec3( x, y, 0 ) );
         Matrix4x4.Multiply( mvp, orthoMat, mvp );
         shader.SetMatrix44( "mvp", mvp.m );
         

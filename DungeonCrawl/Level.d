@@ -50,31 +50,123 @@ private enum BlockType
     Wall2,
 }
 
+immutable int blockCount = 4;
+
+byte[ 16 ][ blockCount ] block = [
+                         [ 1, 0, 1, 1,
+                           0, 0, 0, 1,
+                           1, 0, 0, 1,
+                           1, 0, 1, 1 ], // 0
+                         
+                         [ 1, 0, 1, 1,
+                           1, 0, 0, 1,
+                           1, 0, 0, 1,
+                           1, 0, 1, 1 ], // 1
+                         
+                         [ 1, 1, 1, 1,
+                           1, 0, 0, 1,
+                           1, 0, 1, 1,
+                           1, 0, 1, 1 ], // 2
+                         
+                         [ 1, 1, 1, 1,
+                           1, 0, 0, 0,
+                           1, 0, 0, 1,
+                           1, 1, 1, 1 ], // 3
+                         
+                         ];
+
+private struct Room
+{
+    bool exitUp;
+    bool exitDown;
+    bool exitLeft;
+    bool exitRight;
+}
+
+Room[ blockCount ] rooms;
+
+// Returns block index into block array or -1 if there is no fitting block
+private int GetFittingBlock( int leftRoomIndex, int upRoomIndex )
+{
+    int tries = 0;
+
+    while (tries < 20)
+    {
+        int candidateIndex = uniform( 0, blockCount - 1 );
+
+        if (upRoomIndex == -1)
+        {
+            return 2;
+        }
+        if (leftRoomIndex == -1)
+        {
+            return 2;
+        }
+        
+        if ((rooms[ leftRoomIndex ].exitRight && rooms[ candidateIndex ].exitLeft) ||
+            (rooms[ upRoomIndex ].exitDown && rooms[ candidateIndex ].exitUp))
+        {
+            return candidateIndex;
+        }
+    }
+
+    return -1;
+}
+
 public class Level
 {
     this( Renderer renderer, Meshes aMeshes, Textures aTextures, bool aHasStairwayUp, bool aHasStairwayDown )
     {
+        rooms[ 0 ].exitUp = true;
+        rooms[ 0 ].exitDown = true;
+        rooms[ 0 ].exitLeft = true;
+        rooms[ 0 ].exitRight = false;
+
+        rooms[ 1 ].exitUp = true;
+        rooms[ 1 ].exitDown = true;
+        rooms[ 1 ].exitLeft = false;
+        rooms[ 1 ].exitRight = false;
+
+        rooms[ 2 ].exitUp = false;
+        rooms[ 2 ].exitDown = true;
+        rooms[ 2 ].exitLeft = false;
+        rooms[ 2 ].exitRight = false;
+
+        rooms[ 3 ].exitUp = false;
+        rooms[ 3 ].exitDown = false;
+        rooms[ 3 ].exitLeft = false;
+        rooms[ 3 ].exitRight = true;
+        
         hasStairwayUp = aHasStairwayUp;
         hasStairwayDown = aHasStairwayDown;
         
         meshes = aMeshes;
         textures = aTextures;
         
-        //blocks[ 2 * dimension + 4 ] = BlockType.Wall1;
-        //blocks[ 4 * dimension + 2 ] = BlockType.Wall1;
-        blocks[ 1 * dimension + 3 ] = BlockType.Wall1;
+        //blocks[ 1 * dimension + 3 ] = BlockType.Wall1;
         // Fills the edges
-        for (int i = 0; i < dimension; ++i)
+        /*for (int i = 0; i < dimension; ++i)
         {
             blocks[ i ] = BlockType.Wall1;
             blocks[ dimension * dimension - i - 1 ] = BlockType.Wall1;
             blocks[ dimension * i ] = BlockType.Wall1;
             blocks[ dimension * i + dimension - 1 ] = BlockType.Wall1;
-        }
+        }*/
 
+        GenerateBlocks();
         GenerateGeometry( renderer );
         GeneratePickups();
         GenerateMonsters();        
+    }
+
+    private bool CanTravelBetweenStairs()
+    {
+        if (!hasStairwayDown)
+        {
+            return true;
+        }
+
+        return true;        
     }
 
     public int[] GetStairwayDownPosition()
@@ -238,8 +330,12 @@ public class Level
     {    
         int placedHealthPickupCounter = 0;
 
-        while (placedHealthPickupCounter < healthPickups.length)
+        int tries = 0;
+        
+        while (placedHealthPickupCounter < healthPickups.length && tries < 20)
         {
+            ++tries;
+            
             const int posCandidateX = uniform( 1, dimension - 2 );
             const int posCandidateY = uniform( 1, dimension - 2 );
 
@@ -253,8 +349,12 @@ public class Level
         bool placedStairwayUp = false;
         bool placedStairwayDown = false;
 
-        while (!placedStairwayUp || !placedStairwayDown)
+        tries = 0;
+        
+        while ((!placedStairwayUp || !placedStairwayDown) && tries < 20)
         {
+            ++tries;
+            
             const int posCandidateUpX = uniform( 1, dimension / 2 );
             const int posCandidateUpZ = uniform( 1, dimension / 2 );
 
@@ -284,10 +384,14 @@ public class Level
     {    
         int placedMonsterCounter = 0;
 
-        while (placedMonsterCounter < monsters.length)
+        int tries = 0;
+        
+        while (placedMonsterCounter < monsters.length && tries < 20)
         {
-            int posCandidateX = uniform( 1, dimension - 2 );
-            int posCandidateY = uniform( 1, dimension - 2 );
+            ++tries;
+            
+            immutable int posCandidateX = uniform( 1, dimension - 2 );
+            immutable int posCandidateY = uniform( 1, dimension - 2 );
 
             if (blocks[ posCandidateY * dimension + posCandidateX ] == BlockType.None)
             {
@@ -295,6 +399,88 @@ public class Level
                 ++placedMonsterCounter;
             }
         }
+    }
+
+    private void GenerateBlocks()
+    {
+        for (int i = 0; i < dimension * dimension; ++i)
+        {
+            blocks[ i ] = BlockType.Wall1;
+        }
+        
+        int tries = 0;
+            
+        int[] blockIndices = new int[ (dimension / 4) * (dimension / 4) ];
+
+        while (tries < 40)
+        {    
+            for (int y = 0; y < dimension / 4; ++y)
+            {
+                for (int x = 0; x < dimension / 4; ++x)
+                {
+                    int leftRoom = x > 0 ? blockIndices[ y * (dimension / 4) + x - 1 ] : -1;
+                    int upRoom = y > 0 ? blockIndices[ (y - 1) * (dimension / 4) + x ] : -1;
+
+                    int blockIndex = GetFittingBlock( leftRoom, upRoom );
+
+                    if (y == dimension / 4 - 1)
+                    {
+                        blockIndex = 3;
+                    }
+
+                    blockIndices[ y * (dimension / 4) + x ] = blockIndex;
+                }
+            }
+
+            bool success = true;
+            
+            for (int i = 0; i < blockIndices.length; ++i)
+            {
+                if (blockIndices[ i ] == -1)
+                {
+                    success = false;
+                }
+            }
+
+            if (success)
+            {
+                break;
+            }
+            
+            ++tries;
+        }
+
+        // Converts rooms to blocks
+        for (int y = 0; y < dimension; y += 4)
+        {
+            for (int x = 0; x < dimension; x += 4)
+            {
+                for (int inY = 0; inY < 4; ++inY)
+                {
+                    for (int inX = 0; inX < 4; ++inX)
+                    {
+                        int blockIndex = (y + inY) * dimension + x + inX;
+                        int innerIndex = inY * 4 + inX;
+                        int innerBlockIndex = (y / 4) * (dimension / 4) + x / 4;
+                        int b = blockIndices[ innerBlockIndex ];
+                        blocks[ blockIndex ] = (block[ b ][ innerIndex ] == 0) ? BlockType.None : BlockType.Wall1;
+                    }
+                }
+            }
+        }
+        
+        writeln("level:");
+        for (int y = 0; y < dimension; ++y)
+        {
+            for (int x = 0; x < dimension; ++x)
+            {
+                write( blocks[ y * dimension + x ] != BlockType.None ? "0" : "_" );
+            }
+            
+            writeln();
+        }
+        //blocks[ 1 * dimension + 3 ] = BlockType.Wall1;
+
     }
     
     private void GenerateGeometry( Renderer renderer )
@@ -388,7 +574,10 @@ public class Level
 
     private Textures textures;
     private Meshes meshes;
-    private immutable int dimension = 10;
+
+    private immutable int dimension = 20;
+    static assert( dimension % 4 == 0 );
+    
     private BlockType[ dimension * dimension ] blocks = BlockType.None;
     private uint vaoID;
     private int elementCount;

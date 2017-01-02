@@ -4,13 +4,9 @@
 ![Screenshot](/screenshot.jpg)
 
 ## Build
-Depends on Derelict libraries derelict-gl3, derelict-util, and derelict-sdl2.
-They are assumed to be in derelict folder next to DungeonCrawl root folder and can be obtained/built
-with the following steps: http://derelictorg.github.io/compiling.html
+To generate VisualD solution, run `dub generate visuald`.
 
-DungeonCrawl\VisualStudio\DungeonCrawl.sln is a Visual Studio 2015 solution configured for 32-bit Windows.
-
-build.sh can be used to compile on command-line.
+`dub build`
 
 ## License
 The game is licensed under MIT.

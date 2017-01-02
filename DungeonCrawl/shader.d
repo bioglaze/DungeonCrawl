@@ -30,7 +30,7 @@ class Shader
 
         if (loc != -1)
         {
-            glUniform1f( loc, value );
+            glProgramUniform1f( program, loc, value );
         }
     }
 
@@ -41,7 +41,7 @@ class Shader
 
         if (loc != -1)
         {
-            glUniform1i( loc, value );
+            glProgramUniform1i( program, loc, value );
         }
     }
     
@@ -52,7 +52,7 @@ class Shader
 
         if (loc != -1)
         {
-            glUniform2f( loc, value1, value2 );
+            glProgramUniform2f( program, loc, value1, value2 );
         }
     }
 
@@ -63,7 +63,7 @@ class Shader
 
         if (loc != -1)
         {
-            glUniform3f( loc, value1, value2, value3 );
+            glProgramUniform3f( program, loc, value1, value2, value3 );
         }
     }
 
@@ -73,7 +73,7 @@ class Shader
         auto loc = glGetUniformLocation( program, nameCstr );
         if (loc != -1)
         {
-            glUniform4f( loc, value1, value2, value3, value4 );
+            glProgramUniform4f( program, loc, value1, value2, value3, value4 );
         }
     }
 
@@ -84,7 +84,7 @@ class Shader
 
         if (loc != -1)
         {
-            glUniformMatrix4fv( loc, 1, GL_FALSE, matrix.ptr );
+            glProgramUniformMatrix4fv( program, loc, 1, GL_FALSE, matrix.ptr );
         }
     }
 

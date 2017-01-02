@@ -41,7 +41,7 @@ private struct DamageEffect
 
     public float GetOpacity()
     {
-        long elapsedMs = MonoTime.currTime.ticks - startTimeMs;
+        immutable long elapsedMs = MonoTime.currTime.ticks - startTimeMs;
 
         if (elapsedMs > durationMs)
         {
@@ -60,17 +60,17 @@ public class Game
 {
     public void Init( Renderer renderer )
     {        
-        heart = new Texture( "assets/heart.tga" );
+        heart = new Texture( "DungeonCrawl/assets/heart.tga" );
 
-        textures.tex = new Texture( "assets/wall1.tga" );
-        textures.health = new Texture( "assets/health.tga" );
-        textures.white = new Texture( "assets/white.tga" );
-        textures.damage = new Texture( "assets/damage.tga" );
+        textures.tex = new Texture( "DungeonCrawl/assets/wall1.tga" );
+        textures.health = new Texture( "DungeonCrawl/assets/health.tga" );
+        textures.white = new Texture( "DungeonCrawl/assets/white.tga" );
+        textures.damage = new Texture( "DungeonCrawl/assets/damage.tga" );
         
-        meshes.sword = new Mesh( "assets/sword.obj", renderer );
-        meshes.health = new Mesh( "assets/health.obj", renderer );
-        meshes.monster1 = new Mesh( "assets/monster1.obj", renderer );
-        meshes.stairway = new Mesh( "assets/stairway.obj", renderer );
+        meshes.sword = new Mesh( "DungeonCrawl/assets/sword.obj", renderer );
+        meshes.health = new Mesh( "DungeonCrawl/assets/health.obj", renderer );
+        meshes.monster1 = new Mesh( "DungeonCrawl/assets/monster1.obj", renderer );
+        meshes.stairway = new Mesh( "DungeonCrawl/assets/stairway.obj", renderer );
 
         for (int i = 0; i < levels.length; ++i)
         {
@@ -209,7 +209,7 @@ public class Game
         else if (mode == Mode.Ingame)
         {
             Vec3 playerPos = CalculateAnimatedPlayerPosition();
-            float playerRotY = CalculateAnimatedPlayerRotation();
+            immutable float playerRotY = CalculateAnimatedPlayerRotation();
             Matrix4x4 rot;
             rot.MakeRotationXYZ( 0, playerRotY, 0 );
             Vec3 rotatedDir;
@@ -220,7 +220,7 @@ public class Game
             renderer.DisableDepthTest();
             
             textures.white.Bind();
-            Vec3 swordPosition = playerPos - player.GetWorldDirection() * 10;
+            Vec3 swordPosition = playerPos - rotatedDir/*player.GetWorldDirection()*/ * 10;
             swordPosition.y -= 5;
             renderer.SetMVP( swordPosition, playerRotY, 0.7f );
             renderer.DrawVAO( meshes.sword.GetVAO(), meshes.sword.GetElementCount() * 3, [ 1, 1, 1, 1 ] );
@@ -245,7 +245,7 @@ public class Game
 
     private Vec3 CalculateAnimatedPlayerPosition()
     {
-        long lerp = MonoTime.currTime.ticks - playerMoveTicks;
+        immutable long lerp = MonoTime.currTime.ticks - playerMoveTicks;
 
         int[ 2 ] playerPosition = player.GetLevelPosition();
 

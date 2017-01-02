@@ -1,0 +1,14 @@
+{
+    "name": "dungeoncrawler",
+    "targetType": "executable",
+    "description": "DungeonCrawl",
+    "authors": ["Timo Wiren"],
+    "homepage": "http://twiren.kapsi.fi",
+    "license": "MIT",
+    "sourcePaths": ["DungeonCrawl"],
+    "dependencies": {
+   	 "derelict-sdl2": ">=2.0.0",
+   	 "derelict-gl3": ">=1.0.18"
+    }
+}
+
