@@ -309,7 +309,7 @@ public class Game
     private enum Mode { Menu, Ingame, Help }
     
     private Mode mode = Mode.Menu;
-    private Level[ 3 ] levels;
+    private Level[ 1 ] levels;
     private int currentLevel = 0;
     private Player player = new Player();
     private Texture heart;

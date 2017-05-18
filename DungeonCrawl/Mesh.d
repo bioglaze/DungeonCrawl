@@ -215,6 +215,21 @@ class Mesh
 
             indices ~= face;
         }
+
+        // Print
+	/*for (int i = 0; i < indices.length; ++i)
+	{
+		writeln( indices[ i ].a, ", ", indices[ i ].b, ", ", indices[ i ].c, ", " );
+	}
+
+	for (int i = 0; i < interleavedVertices.length; ++i)
+	{
+		writeln(  interleavedVertices[ i ].pos[ 0 ], ", ",
+		          interleavedVertices[ i ].pos[ 1 ], ", ",
+			  interleavedVertices[ i ].pos[ 2 ], ", ",
+			  interleavedVertices[ i ].uv[ 0 ], ", ",
+			  interleavedVertices[ i ].uv[ 1 ] );
+	}*/
     }
 
     public uint GetVAO() const
