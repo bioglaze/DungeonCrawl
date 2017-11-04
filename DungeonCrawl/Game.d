@@ -114,7 +114,9 @@ public class Game
                 lastRotateDir = PlayerLastRotateDirection.None;
             }
             else if (SDLWindow.KeyboardKey.A in keys && !(SDLWindow.KeyboardKey.A in lastFrameKeys))
-            {                
+            {
+                swordOffset = 1;
+                
                 Level.Monster* monster = levels[ currentLevel ].GetMonsterInFrontOfPlayer( player );
                 if (monster != null)
                 {
@@ -194,7 +196,7 @@ public class Game
         lastFrameKeys = keys;
     }
 
-    public void Render( Renderer renderer )
+    public void Render( Renderer renderer, double deltaTimeMs )
     {
         renderer.ClearScreen();
 
@@ -218,10 +220,17 @@ public class Game
             levels[ currentLevel ].Draw( renderer, playerRotY );
 
             renderer.DisableDepthTest();
+
+            swordOffset -= deltaTimeMs;
+            if (swordOffset < 0)
+            {
+                swordOffset = 0;
+            }
             
             textures.white.Bind();
             Vec3 swordPosition = playerPos - rotatedDir/*player.GetWorldDirection()*/ * 10;
             swordPosition.y -= 5;
+            swordPosition.y += swordOffset;
             renderer.SetMVP( swordPosition, playerRotY, 0.7f );
             renderer.DrawVAO( meshes.sword.GetVAO(), meshes.sword.GetElementCount() * 3, [ 1, 1, 1, 1 ] );
 
@@ -323,8 +332,9 @@ public class Game
     private PlayerLastMoveDirection lastMoveDir = PlayerLastMoveDirection.None;
     private PlayerLastRotateDirection lastRotateDir = PlayerLastRotateDirection.None;
     private DamageEffect damageEffect;
+    private float swordOffset = 0;
     
-    version( Linux )
+    version( linux )
     {
 		private immutable long moveTime = 333553789;
     }
@@ -345,11 +355,17 @@ void main()
     auto game = new Game();
     game.Init( renderer );
 
+    long lastTick = 0;
+    
     while (true)
     {
+
         bool[ SDLWindow.KeyboardKey ] keys = window.ProcessInput();
         game.Simulate( keys );
-        game.Render( renderer );
+        long deltaTicks = MonoTime.currTime.ticks - lastTick;
+        double deltaMs = deltaTicks / 1000000.0;
+        game.Render( renderer, deltaMs );
         window.SwapBuffers();
+        lastTick = MonoTime.currTime.ticks;
     }
 }
