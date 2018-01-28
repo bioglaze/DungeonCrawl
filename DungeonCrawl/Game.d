@@ -363,7 +363,15 @@ void main()
         bool[ SDLWindow.KeyboardKey ] keys = window.ProcessInput();
         game.Simulate( keys );
         long deltaTicks = MonoTime.currTime.ticks - lastTick;
-        double deltaMs = deltaTicks / 1000000.0;
+        version( Windows )
+        {
+            double deltaMs = deltaTicks / 1000.0;
+        }
+        else
+        {
+            double deltaMs = deltaTicks / 1000000.0;
+        }
+
         game.Render( renderer, deltaMs );
         window.SwapBuffers();
         lastTick = MonoTime.currTime.ticks;
