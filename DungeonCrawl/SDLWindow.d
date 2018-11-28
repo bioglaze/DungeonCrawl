@@ -1,7 +1,7 @@
 module SDLWindow;
 
 import derelict.sdl2.sdl;
-import derelict.opengl3.gl3;
+import derelict.opengl;
 import derelict.util.exception;
 import std.stdio: writeln;
 import core.stdc.stdlib: exit;

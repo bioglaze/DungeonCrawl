@@ -1,6 +1,6 @@
 module Texture;
 
-import derelict.opengl3.gl3;
+import derelict.opengl;
 import std.stdio;
 import Renderer;
 

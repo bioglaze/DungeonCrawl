@@ -1,7 +1,7 @@
 module Renderer;
 
 import std.stdio;
-import derelict.opengl3.gl3;
+import derelict.opengl;
 import Matrix4x4;
 import Vec3;
 import shader;
