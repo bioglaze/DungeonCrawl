@@ -2,11 +2,11 @@ module Renderer;
 
 import std.stdio;
 import derelict.opengl;
-import Matrix4x4;
-import Vec3;
-import shader;
 import Font;
+import Matrix4x4;
+import shader;
 import Texture;
+import Vec3;
 
 public align(1) struct Vertex
 {

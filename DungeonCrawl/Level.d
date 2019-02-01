@@ -1,12 +1,12 @@
 module Level;
+static import std.stdio;
+import std.stdio;
+import std.random: uniform;
 import Mesh;
 import Player;
 import Renderer;
 import Texture;
 import Vec3;
-static import std.stdio;
-import std.stdio;
-import std.random: uniform;
 
 public struct Meshes
 {

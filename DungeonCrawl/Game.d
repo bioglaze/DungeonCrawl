@@ -5,14 +5,14 @@ import std.typecons;
 import std.format;
 import core.stdc.stdlib: exit;
 import core.time;
+import Level;
 import Matrix4x4;
+import Mesh;
+import Player;
 import Renderer;
 import SDLWindow;
 import Texture;
-import Level;
-import Player;
 import Vec3;
-import Mesh;
 
 immutable int width = 640;
 immutable int height = 480;
