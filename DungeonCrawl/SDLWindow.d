@@ -7,6 +7,8 @@ import std.stdio: writeln;
 import core.stdc.stdlib: exit;
 import std.string;
 
+// Bugs: Health pick-up doesn't work?
+
 public enum KeyboardKey
 {
     Space,
