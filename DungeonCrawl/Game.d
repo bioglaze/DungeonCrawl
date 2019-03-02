@@ -187,7 +187,7 @@ public class Game
         }
         else if (mode == Mode.Help)
         {
-            if (SDLWindow.KeyboardKey.Escape in keys)
+            if (SDLWindow.KeyboardKey.Q in keys)
             {
                 mode = Mode.Menu;
             }
@@ -206,7 +206,7 @@ public class Game
         }
         if (mode == Mode.Help)
         {
-            renderer.DrawText( "arrows - move\na - attack\nspace - rest, use stairs", 60, 70 );
+            renderer.DrawText( "arrows - move\na - attack\nspace - rest, use stairs\nq - back to menu", 60, 70 );
         }
         else if (mode == Mode.Ingame)
         {

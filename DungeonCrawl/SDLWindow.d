@@ -20,6 +20,7 @@ public enum KeyboardKey
     S,
     H,
     A,
+    Q,
 }
 
 class SDLWindow
@@ -114,7 +115,12 @@ class SDLWindow
         {
             outKeys[ KeyboardKey.A ] = true;
         }
-        
+
+        if (keyState[ SDL_SCANCODE_Q ] == 1)
+        {
+            outKeys[ KeyboardKey.Q ] = true;
+        }
+
         SDL_Event e;
         
         while (SDL_PollEvent( &e ))
