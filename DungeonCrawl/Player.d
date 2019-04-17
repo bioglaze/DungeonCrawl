@@ -42,6 +42,8 @@ public class Player
         {
             --levelPosition[ 0 ];
         }
+
+        writeln("player pos: ", levelPosition[ 0 ], ", ", levelPosition[ 1 ] );
     }
 
     public void WalkBackward()
@@ -62,6 +64,8 @@ public class Player
         {
             ++levelPosition[ 0 ];
         }
+
+        writeln("player pos: ", levelPosition[ 0 ], ", ", levelPosition[ 1 ] );
     }
 
     public void TurnRight()

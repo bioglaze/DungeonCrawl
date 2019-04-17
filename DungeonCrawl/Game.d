@@ -89,6 +89,13 @@ public class Game
         
         if (mode == Mode.Ingame)
         {
+            if (levels[ currentLevel ].HasHealthInPosition( player.GetLevelPosition() ) )
+            {
+                writeln("player picks up health");
+                player.EatFood( 1 );
+                levels[ currentLevel ].RemoveHealth( player.GetLevelPosition() );
+            }
+            
             if (SDLWindow.KeyboardKey.Escape in keys)
             {
                 exit( 0 );

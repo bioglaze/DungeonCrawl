@@ -324,8 +324,8 @@ public class Level
             {
                 static float rotY = 0;
                 ++rotY;
-                renderer.SetMVP( Vec3.Vec3( healthPickups[ i ].levelPosition[ 0 ] * dimension * 2, 0,
-                                            healthPickups[ i ].levelPosition[ 1 ] * dimension * 2 ), rotY, 1 );
+                renderer.SetMVP( Vec3.Vec3( healthPickups[ i ].levelPosition[ 0 ] * dimension * 2 - dimension, 0,
+                                            healthPickups[ i ].levelPosition[ 1 ] * dimension * 2 - dimension ), rotY, 1 );
                 renderer.DrawVAO( meshes.health.GetVAO(), meshes.health.GetElementCount() * 3, [ 1, 1, 1, 1 ] );
             }
         }
@@ -336,8 +336,8 @@ public class Level
         {
             if (monsters[ i ].isAlive)
             {
-                renderer.SetMVP( Vec3.Vec3( monsters[ i ].levelPosition[ 0 ] * dimension * 2, -5,
-                                            monsters[ i ].levelPosition[ 1 ] * dimension * 2 ), 0, 1.5f );
+                renderer.SetMVP( Vec3.Vec3( monsters[ i ].levelPosition[ 0 ] * dimension * 2 - dimension, -5,
+                                            monsters[ i ].levelPosition[ 1 ] * dimension * 2 - dimension ), 0, 1.5f );
                 float color = monsters[ i ].health / cast(float)monsters[ i ].healthMax;
                 renderer.DrawVAO( meshes.monster1.GetVAO(), meshes.monster1.GetElementCount() * 3, [ 1, color, color, 1 ] );
             }
@@ -347,14 +347,14 @@ public class Level
 
         if (hasStairwayUp)
         {
-            renderer.SetMVP( Vec3.Vec3( stairwayUpPosition[ 0 ] * dimension * 2, 0,
-                                        stairwayUpPosition[ 1 ] * dimension * 2 ), 0, 8 );
+            renderer.SetMVP( Vec3.Vec3( stairwayUpPosition[ 0 ] * dimension * 2 - dimension, 0,
+                                        stairwayUpPosition[ 1 ] * dimension * 2 - dimension ), 0, 8 );
             renderer.DrawVAO( meshes.stairway.GetVAO(), meshes.stairway.GetElementCount() * 3, [ 1, 1, 1, 1 ] );
         }
         if (hasStairwayDown)
         {
-            renderer.SetMVP( Vec3.Vec3( stairwayDownPosition[ 0 ] * dimension * 2, 0,
-                                        stairwayDownPosition[ 1 ] * dimension * 2 ), 0, 8 );
+            renderer.SetMVP( Vec3.Vec3( stairwayDownPosition[ 0 ] * dimension * 2 - dimension, 0,
+                                        stairwayDownPosition[ 1 ] * dimension * 2 -dimension ), 0, 8 );
             renderer.DrawVAO( meshes.stairway.GetVAO(), meshes.stairway.GetElementCount() * 3, [ 1, 0, 0, 1 ] );
         }
     }
@@ -375,8 +375,11 @@ public class Level
         assert( elementCount > 0, "level geometry must be generated before placing pickups" );
     }
     body
-    {    
-        int placedHealthPickupCounter = 0;
+    {
+        // Place one pickup directly in front of the player to test pickup.
+        healthPickups[ 0 ].levelPosition = [ 1, 2 ];
+
+        int placedHealthPickupCounter = 1;
 
         int tries = 0;
         
