@@ -250,7 +250,7 @@ public class Game
                 renderer.DrawTexture( heart, 20 + 74 * i, 20, 64, 64, [ r, r, r, 1 ] );
             }
 
-            renderer.DrawTexture( textures.damage, 0, -200, width, height + 200, [ 1, 1, 1, damageEffect.GetOpacity() ] );
+            renderer.DrawTexture( textures.damage, width / 2 - 64, height / 2 - 64, 128, 128, [ 1, 1, 1, 1/*damageEffect.GetOpacity()*/ ] );
 
             renderer.DrawText( std.format.format( "turn: %d, score: %d, dlevel %d", gameTurn, 70, currentLevel ), 150, 20 );
 

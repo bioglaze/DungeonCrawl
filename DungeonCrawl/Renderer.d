@@ -116,7 +116,7 @@ class Renderer
 
         CheckGLError( "GenerateVAO end" );
     }
-
+    
     public void DrawText( string text, float x, float y )
     {        
         if (text != cachedText)
