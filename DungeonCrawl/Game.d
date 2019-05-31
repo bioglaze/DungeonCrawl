@@ -91,7 +91,6 @@ public class Game
         {
             if (levels[ currentLevel ].HasHealthInPosition( player.GetLevelPosition() ) )
             {
-                writeln("player picks up health");
                 player.EatFood( 1 );
                 levels[ currentLevel ].RemoveHealth( player.GetLevelPosition() );
             }
@@ -129,6 +128,8 @@ public class Game
                 {
                     monster.TakeDamage( player.GetWeapon() );
                 }
+                
+                hitTicks = MonoTime.currTime.ticks;
             }
             else if (SDLWindow.KeyboardKey.Left in keys && !(SDLWindow.KeyboardKey.Left in lastFrameKeys))
             {
@@ -203,6 +204,15 @@ public class Game
         lastFrameKeys = keys;
     }
 
+    private void PlayParticles( Renderer renderer )
+    {
+        immutable long durationMs = 200000000;
+        immutable long lerp = MonoTime.currTime.ticks - hitTicks;
+        immutable float f = cast(float)lerp / durationMs;
+        immutable int scale = cast( int )(128.0f * f);
+        renderer.DrawTexture( textures.damage, width / 2 - 64, height / 2 - 64, scale, scale, [ 1, 1, 1, 1 - f / 2 ] );
+    }
+    
     public void Render( Renderer renderer, double deltaTimeMs )
     {
         renderer.ClearScreen();
@@ -250,7 +260,7 @@ public class Game
                 renderer.DrawTexture( heart, 20 + 74 * i, 20, 64, 64, [ r, r, r, 1 ] );
             }
 
-            renderer.DrawTexture( textures.damage, width / 2 - 64, height / 2 - 64, 128, 128, [ 1, 1, 1, 1/*damageEffect.GetOpacity()*/ ] );
+            PlayParticles( renderer );
 
             renderer.DrawText( std.format.format( "turn: %d, score: %d, dlevel %d", gameTurn, 70, currentLevel ), 150, 20 );
 
@@ -336,6 +346,7 @@ public class Game
     private long playerMoveTicks = 0;
     private long playerRotateTicks = 0;
     private long enemyMoveTicks = 0;
+    private long hitTicks = 0;
     private PlayerLastMoveDirection lastMoveDir = PlayerLastMoveDirection.None;
     private PlayerLastRotateDirection lastRotateDir = PlayerLastRotateDirection.None;
     private DamageEffect damageEffect;
