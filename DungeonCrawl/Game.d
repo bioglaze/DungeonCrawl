@@ -260,8 +260,11 @@ public class Game
                 renderer.DrawTexture( heart, 20 + 74 * i, 20, 64, 64, [ r, r, r, 1 ] );
             }
 
-            PlayParticles( renderer );
-
+            if (!levels[ currentLevel ].CanWalkForward( player ))
+            {
+                PlayParticles( renderer );
+            }
+            
             renderer.DrawText( std.format.format( "turn: %d, score: %d, dlevel %d", gameTurn, 70, currentLevel ), 150, 20 );
 
             renderer.DisableAlphaBlending();
