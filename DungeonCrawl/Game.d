@@ -66,6 +66,7 @@ public class Game
         textures.health = new Texture( "DungeonCrawl/assets/health.tga" );
         textures.white = new Texture( "DungeonCrawl/assets/white.tga" );
         textures.damage = new Texture( "DungeonCrawl/assets/damage.tga" );
+        textures.floor = new Texture( "DungeonCrawl/assets/floor.tga" );
         
         meshes.sword = new Mesh( "DungeonCrawl/assets/sword.obj", renderer );
         meshes.health = new Mesh( "DungeonCrawl/assets/health.obj", renderer );
@@ -130,6 +131,9 @@ public class Game
                 }
                 
                 hitTicks = MonoTime.currTime.ticks;
+                lastMoveDir = PlayerLastMoveDirection.None;
+                lastRotateDir = PlayerLastRotateDirection.None;
+                ++gameTurn;
             }
             else if (SDLWindow.KeyboardKey.Left in keys && !(SDLWindow.KeyboardKey.Left in lastFrameKeys))
             {

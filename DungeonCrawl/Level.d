@@ -22,6 +22,7 @@ public struct Textures
     Texture health;
     Texture white;
     Texture damage;
+    Texture floor;
 }
 
 private int CalculateDamage( Player.Weapon weapon )
@@ -237,7 +238,18 @@ public class Level
     public bool CanWalkForward( Player player ) const
     {
         auto playerForward = player.GetForwardPosition();
-        return blocks[ playerForward[ 1 ] * dimension + playerForward[ 0 ] ] == BlockType.None;
+        bool isEnemyThere = false;
+        
+        for (int m = 0; m < monsters.length; ++m)
+        {
+            if (monsters[ m ].levelPosition[ 0 ] == playerForward[ 0 ] &&
+                monsters[ m ].levelPosition[ 1 ] == playerForward[ 1 ])
+            {
+              isEnemyThere = true;
+            }
+        }
+        
+        return !isEnemyThere && blocks[ playerForward[ 1 ] * dimension + playerForward[ 0 ] ] == BlockType.None;
     }
 
     public bool CanWalkBackward( Player player ) const
@@ -313,6 +325,7 @@ public class Level
         renderer.DrawVAO( vaoID, elementCount * 3, [ 1, 1, 1, 1 ] );
 
         // Draws the ceiling. Wasteful, but there aren't a huge amount of tris in the level data.
+        textures.floor.Bind();
         renderer.SetMVP( Vec3.Vec3( 1, 40, 1 ), 0, 1 );
         renderer.DrawVAO( vaoID, elementCount * 3, [ 1, 1, 1, 1 ] );
 
@@ -521,7 +534,6 @@ public class Level
             writeln();
         }
         //blocks[ 1 * dimension + 3 ] = BlockType.Wall1;
-
     }
     
     private void GenerateGeometry( Renderer renderer )

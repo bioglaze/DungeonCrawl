@@ -5,7 +5,7 @@ import std.stdio;
 import Renderer;
 
 // Reads a true-color, uncompressed TGA
-private void ReadTGA( string path, out int width, out int height, out byte[] pixelData )
+private void ReadTGA( string path, out int width, out int height, out byte[] pixelData, out int pixelDepth )
 {
     try
     {
@@ -27,7 +27,7 @@ private void ReadTGA( string path, out int width, out int height, out byte[] pix
 
         byte[ 5 ] colorSpec;
         f.rawRead( colorSpec );
-
+        
         byte[ 4 ] specBegin;
         short[ 2 ] specDim;
         f.rawRead( specBegin );
@@ -37,7 +37,8 @@ private void ReadTGA( string path, out int width, out int height, out byte[] pix
 
         byte[ 2 ] specEnd;
         f.rawRead( specEnd );
-
+        pixelDepth = specEnd[ 0 ];
+        
         if (idLength[ 0 ] > 0)
         {
             byte[] imageId = new byte[ idLength[ 0 ] ];
@@ -58,11 +59,13 @@ class Texture
     this( string path )
     {
         byte[] pixelData;
-        ReadTGA( path, width, height, pixelData );
+        int pixelDepth;
+        ReadTGA( path, width, height, pixelData, pixelDepth );
         
         glGenTextures( 1, &handle );
         glBindTexture( GL_TEXTURE_2D, handle );
-        glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_BGRA, GL_UNSIGNED_BYTE, pixelData.ptr );
+        glTexImage2D( GL_TEXTURE_2D, 0, pixelDepth == 24 ? GL_RGB8 : GL_RGBA8, width, height, 0,
+                      pixelDepth == 24 ? GL_BGR : GL_BGRA, GL_UNSIGNED_BYTE, pixelData.ptr );
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
