@@ -243,7 +243,8 @@ public class Level
         for (int m = 0; m < monsters.length; ++m)
         {
             if (monsters[ m ].levelPosition[ 0 ] == playerForward[ 0 ] &&
-                monsters[ m ].levelPosition[ 1 ] == playerForward[ 1 ])
+                monsters[ m ].levelPosition[ 1 ] == playerForward[ 1 ] &&
+                monsters[ m ].isAlive)
             {
               isEnemyThere = true;
             }
@@ -449,7 +450,11 @@ public class Level
         int placedMonsterCounter = 0;
 
         int tries = 0;
-        
+
+        // TODO: remove after testing
+        monsters[ placedMonsterCounter ].levelPosition = [ 1, 1 ];
+        ++placedMonsterCounter;
+
         while (placedMonsterCounter < monsters.length && tries < 20)
         {
             ++tries;
