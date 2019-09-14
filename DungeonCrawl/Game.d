@@ -32,6 +32,12 @@ float lerp( float t01, float a, float b )
     return (1 - t01) * a + t01 * b;
 }
 
+private struct Particle
+{
+    public Vec3 position;
+    public Vec3 velocity;
+}
+
 private struct DamageEffect
 {
     public void Start()
@@ -214,7 +220,14 @@ public class Game
         immutable long lerp = MonoTime.currTime.ticks - hitTicks;
         immutable float f = cast(float)lerp / durationMs;
         immutable int scale = cast( int )(128.0f * f);
-        renderer.DrawTexture( textures.damage, width / 2 - 64, height / 2 - 64, scale, scale, [ 1, 1, 1, 1 - f / 2 ] );
+
+        particles[ 0 ].position.x = width / 2 - 64;
+        particles[ 0 ].position.y = height / 2 - 64;
+        
+        for (int i = 0; i < 1; ++i)
+        {
+            renderer.DrawTexture( textures.damage, cast(int)particles[ 0 ].position.x, cast(int)particles[ 0 ].position.y, scale, scale, [ 1, 1, 1, 1 - f / 2 ] );
+        }
     }
     
     public void Render( Renderer renderer, double deltaTimeMs )
@@ -358,6 +371,7 @@ public class Game
     private PlayerLastRotateDirection lastRotateDir = PlayerLastRotateDirection.None;
     private DamageEffect damageEffect;
     private float swordOffset = 0;
+    private Particle[ 100 ] particles;
     
     version( linux )
     {
@@ -384,7 +398,6 @@ void main()
     
     while (true)
     {
-
         bool[ SDLWindow.KeyboardKey ] keys = window.ProcessInput();
         game.Simulate( keys );
         long deltaTicks = MonoTime.currTime.ticks - lastTick;
