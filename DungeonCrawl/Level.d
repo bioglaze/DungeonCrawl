@@ -287,7 +287,7 @@ public class Level
     {
         for (int i = 0; i < monsters.length; ++i)
         {
-            if (monsters[ i ].isAlive)
+            /*if (monsters[ i ].isAlive)
             {
                 const int moveDirection = uniform( 0, 6 );
 
@@ -296,26 +296,30 @@ public class Level
                             (monsters[ i ].levelPosition[ 0 ] - 1) ] == BlockType.None)
                 {
                     --monsters[ i ].levelPosition[ 0 ];
+                    writeln("move 0");
                 }
                 else if (moveDirection == 1 && monsters[ i ].levelPosition[ 0 ] < dimension - 1 &&
                          blocks[ monsters[ i ].levelPosition[ 1 ] * dimension +
                                  (monsters[ i ].levelPosition[ 0 ] + 1) ] == BlockType.None)
                 {
                     ++monsters[ i ].levelPosition[ 0 ];
+                    writeln("move 1");
                 }
                 else if (moveDirection == 2 && monsters[ i ].levelPosition[ 1 ] > 0 &&
                          blocks[ (monsters[ i ].levelPosition[ 1 ] - 1) * dimension +
                                   monsters[ i ].levelPosition[ 0 ] ] == BlockType.None)
                 {
                     --monsters[ i ].levelPosition[ 1 ];
+                    writeln("move 2");
                 }
                 else if (moveDirection == 3 && monsters[ i ].levelPosition[ 1 ] < dimension - 1 &&
                          blocks[ (monsters[ i ].levelPosition[ 1 ] + 1) * dimension +
                                   monsters[ i ].levelPosition[ 0 ] ] == BlockType.None)
                 {
                     ++monsters[ i ].levelPosition[ 1 ];
+                    writeln("move 3");
                 }
-            }
+                }*/
         }
     }
     
@@ -339,7 +343,7 @@ public class Level
                 static float rotY = 0;
                 ++rotY;
                 renderer.SetMVP( Vec3.Vec3( healthPickups[ i ].levelPosition[ 0 ] * dimension * 2 - dimension, 0,
-                                            healthPickups[ i ].levelPosition[ 1 ] * dimension * 2 - dimension ), rotY, 1 );
+                                            healthPickups[ i ].levelPosition[ 1 ] * dimension * 2 - dimension * 2 ), rotY, 1 );
                 renderer.DrawVAO( meshes.health.GetVAO(), meshes.health.GetElementCount() * 3, [ 1, 1, 1, 1 ] );
             }
         }
@@ -351,7 +355,7 @@ public class Level
             if (monsters[ i ].isAlive)
             {
                 renderer.SetMVP( Vec3.Vec3( monsters[ i ].levelPosition[ 0 ] * dimension * 2 - dimension, -5,
-                                            monsters[ i ].levelPosition[ 1 ] * dimension * 2 - dimension ), 0, 1.5f );
+                                            monsters[ i ].levelPosition[ 1 ] * dimension * 2 - dimension * 2 ), 0, 1.5f );
                 float color = monsters[ i ].health / cast(float)monsters[ i ].healthMax;
                 renderer.DrawVAO( meshes.monster1.GetVAO(), meshes.monster1.GetElementCount() * 3, [ 1, color, color, 1 ] );
             }
@@ -362,13 +366,13 @@ public class Level
         if (hasStairwayUp)
         {
             renderer.SetMVP( Vec3.Vec3( stairwayUpPosition[ 0 ] * dimension * 2 - dimension, 0,
-                                        stairwayUpPosition[ 1 ] * dimension * 2 - dimension ), 0, 8 );
+                                        stairwayUpPosition[ 1 ] * dimension * 2 - dimension * 2 ), 0, 8 );
             renderer.DrawVAO( meshes.stairway.GetVAO(), meshes.stairway.GetElementCount() * 3, [ 1, 1, 1, 1 ] );
         }
         if (hasStairwayDown)
         {
             renderer.SetMVP( Vec3.Vec3( stairwayDownPosition[ 0 ] * dimension * 2 - dimension, 0,
-                                        stairwayDownPosition[ 1 ] * dimension * 2 -dimension ), 0, 8 );
+                                        stairwayDownPosition[ 1 ] * dimension * 2 - dimension * 2), 0, 8 );
             renderer.DrawVAO( meshes.stairway.GetVAO(), meshes.stairway.GetElementCount() * 3, [ 1, 0, 0, 1 ] );
         }
     }
@@ -452,7 +456,7 @@ public class Level
         int tries = 0;
 
         // TODO: remove after testing
-        monsters[ placedMonsterCounter ].levelPosition = [ 1, 1 ];
+        monsters[ placedMonsterCounter ].levelPosition = [ 1, 2 ];
         ++placedMonsterCounter;
 
         while (placedMonsterCounter < monsters.length && tries < 20)
