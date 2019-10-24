@@ -11,6 +11,6 @@ void main()
     //fragColor = vec4( 1.0f, 0.0f, 0.0f, 1.0f );
     vec2 uv = vUV;
     uv.y = 1.0 - uv.y;
-    fragColor = texture( sTexture, uv ) * tintColor;
+    fragColor = texture( sTexture, uv ) * tintColor * gl_FragCoord.w * 20;
 }
 
