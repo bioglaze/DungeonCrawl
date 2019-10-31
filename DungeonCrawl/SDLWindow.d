@@ -29,7 +29,7 @@ class SDLWindow
     {	
         DerelictSDL2.load();
         
-        if (SDL_Init( SDL_INIT_VIDEO ) < 0)
+        if (SDL_Init( SDL_INIT_VIDEO | SDL_INIT_AUDIO ) < 0)
         {
             const(char)* message = SDL_GetError();
             writeln( "Failed to initialize SDL: ", message );

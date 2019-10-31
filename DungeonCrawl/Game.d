@@ -11,6 +11,7 @@ import Mesh;
 import Player;
 import Renderer;
 import SDLWindow;
+import derelict.sdl2.sdl;
 import Texture;
 import Vec3;
 
@@ -83,6 +84,15 @@ public class Game
         {
             levels[ i ] = new Level( renderer, meshes, textures, i != 0, i != levels.length - 1 );
         }
+
+        SDL_AudioSpec wavSpec;
+        Uint32 wavLength;
+        Uint8* wavBuffer;
+ 
+        SDL_LoadWAV( "DungeonCrawl/assets/click.wav", &wavSpec, &wavBuffer, &wavLength );
+        SDL_AudioDeviceID deviceId = SDL_OpenAudioDevice( null, 0, &wavSpec, null, 0 );
+        int success = SDL_QueueAudio( deviceId, wavBuffer, wavLength );
+        SDL_PauseAudioDevice( deviceId, 0 );
     }
 
     public void Simulate( bool[ SDLWindow.KeyboardKey ] keys )
