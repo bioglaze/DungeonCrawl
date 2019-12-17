@@ -103,9 +103,10 @@ public class Game
 
     public void Simulate( bool[ SDLWindow.KeyboardKey ] keys )
     {
-        const long lerp = MonoTime.currTime.ticks - playerMoveTicks;
+        const long lerp = MonoTime.currTime.ticks - playerMoveTicks;        
+        const bool isPlayerRotating = ((MonoTime.currTime.ticks - playerRotateTicks) / 100000) < 8000;
 
-        if (lerp < moveTime)
+        if (lerp < moveTime || isPlayerRotating)
         {
             return;
         }        
