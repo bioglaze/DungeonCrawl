@@ -1,8 +1,8 @@
 /**
   DungeonCrawl by Timo Wirén
-  Modified: 2019-12-03
+  Modified: 2019-12-17
 
-  Tested on dmd 2.088.1, Lubuntu 19.10, MacBook Pro 2010, Core 2 Duo 2.4 GHz, GeForce GT 320 M, Nouveau Mesa 19.2.1
+  Tested on dmd 2.089.1, Lubuntu 19.10, MacBook Pro 2010, Core 2 Duo 2.4 GHz, GeForce GT 320 M, Nouveau Mesa 19.2.1
  */
 module Game;
 
@@ -21,8 +21,8 @@ import derelict.sdl2.sdl;
 import Texture;
 import Vec3;
 
-immutable int width = 640;
-immutable int height = 480;
+immutable int width = 960;
+immutable int height = 540;
 
 private enum PlayerLastMoveDirection
 {
