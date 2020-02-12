@@ -90,14 +90,10 @@ public class Game
         {
             levels[ i ] = new Level( renderer, meshes, textures, i != 0, i != levels.length - 1 );
         }
-
-        SDL_AudioSpec wavSpec;
-        Uint32 wavLength;
-        Uint8* wavBuffer;
  
-        SDL_LoadWAV( "DungeonCrawl/assets/click.wav", &wavSpec, &wavBuffer, &wavLength );
-        SDL_AudioDeviceID deviceId = SDL_OpenAudioDevice( null, 0, &wavSpec, null, 0 );
-        int success = SDL_QueueAudio( deviceId, wavBuffer, wavLength );
+        SDL_LoadWAV( "DungeonCrawl/assets/click.wav", &wavClickSpec, &wavClickBuffer, &wavClickLength );
+        SDL_AudioDeviceID deviceId = SDL_OpenAudioDevice( null, 0, &wavClickSpec, null, 0 );
+        int success = SDL_QueueAudio( deviceId, wavClickBuffer, wavClickLength );
         SDL_PauseAudioDevice( deviceId, 0 );
     }
 
@@ -389,19 +385,22 @@ public class Game
     private DamageEffect damageEffect;
     private float swordOffset = 0;
     private Particle[ 100 ] particles;
+    private SDL_AudioSpec wavClickSpec;
+    private Uint32 wavClickLength;
+    private Uint8* wavClickBuffer;
     
     version( linux )
     {
-		private immutable long moveTime = 333553789;
+        private immutable long moveTime = 333553789;
     }
-	version( OSX )
-	{
-		private immutable long moveTime = 333553789;
-	}
-	version( Windows )
-	{
-		private immutable long moveTime = 3335537 / 4;
-	}
+    version( OSX )
+    {
+        private immutable long moveTime = 333553789;
+    }
+    version( Windows )
+    {
+        private immutable long moveTime = 3335537 / 4;
+    }
 }
 
 void main()
