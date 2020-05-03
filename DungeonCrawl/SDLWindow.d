@@ -1,8 +1,7 @@
 module SDLWindow;
 
-import derelict.sdl2.sdl;
-import derelict.opengl;
-import derelict.util.exception;
+import bindbc.sdl;
+import bindbc.opengl;
 import std.stdio: writeln;
 import core.stdc.stdlib: exit;
 import std.string;
@@ -27,7 +26,19 @@ class SDLWindow
 {
     this( int screenWidth, int screenHeight )
     {	
-        DerelictSDL2.load();
+        SDLSupport ret = loadSDL();
+
+        if (ret != sdlSupport)
+        {
+            if (ret == SDLSupport.noLibrary)
+            {
+                throw new Error( "Could not load SDL library!" );
+            }
+            else if (ret == SDLSupport.badLibrary)
+            {
+                throw new Error( "Bad SDL library!" );
+            }
+        }
         
         if (SDL_Init( SDL_INIT_VIDEO | SDL_INIT_AUDIO ) < 0)
         {
@@ -44,7 +55,7 @@ class SDLWindow
         win = SDL_CreateWindow("Dungeon Crawler", SDL_WINDOWPOS_CENTERED,
             SDL_WINDOWPOS_CENTERED, screenWidth, screenHeight, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
 
-        ShouldThrow missingSymFunc( string symName )
+        /*ShouldThrow missingSymFunc( string symName )
         {
             if (symName == "glGetSubroutineUniformLocation")
                 return ShouldThrow.No;
@@ -56,17 +67,19 @@ class SDLWindow
         }
 
         DerelictGL3.missingSymbolCallback = &missingSymFunc;
-
-        DerelictGL3.load();
+*/
+        
         const auto context = SDL_GL_CreateContext( win );
         
         if (!context)
         {
             throw new Error( "Failed to create GL context!" );
         }
-        
+
+        GLSupport re = loadOpenGL();
+
         // If you get an unresolved symbol message here, try selecting "continue" or "ignore" in Visual Studio debugger.
-        DerelictGL3.reload();
+        //DerelictGL3.reload();
         
         SDL_GL_SetSwapInterval( 1 );
     }

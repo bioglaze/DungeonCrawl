@@ -1,6 +1,6 @@
 /**
   DungeonCrawl by Timo Wirén
-  Modified: 2019-12-17
+  Modified: 2020-05-03
 
   Tested on dmd 2.089.1, Lubuntu 19.10, MacBook Pro 2010, Core 2 Duo 2.4 GHz, GeForce GT 320 M, Nouveau Mesa 19.2.1
  */
@@ -17,7 +17,7 @@ import Mesh;
 import Player;
 import Renderer;
 import SDLWindow;
-import derelict.sdl2.sdl;
+import bindbc.sdl;
 import Texture;
 import Vec3;
 
@@ -93,7 +93,7 @@ public class Game
  
         SDL_LoadWAV( "DungeonCrawl/assets/click.wav", &wavClickSpec, &wavClickBuffer, &wavClickLength );
         SDL_AudioDeviceID deviceId = SDL_OpenAudioDevice( null, 0, &wavClickSpec, null, 0 );
-        int success = SDL_QueueAudio( deviceId, wavClickBuffer, wavClickLength );
+        //int success = SDL_QueueAudio( deviceId, wavClickBuffer, wavClickLength );
         SDL_PauseAudioDevice( deviceId, 0 );
     }
 

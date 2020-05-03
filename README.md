@@ -10,4 +10,4 @@ To generate VisualD solution, run `dub generate visuald`.
 
 ## License
 The game is licensed under MIT.
-Derelict libraries use Boost Software License.
+BindBC libraries use Boost Software License.

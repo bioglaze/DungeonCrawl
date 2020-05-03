@@ -1,7 +1,7 @@
 module Renderer;
 
 import std.stdio;
-import derelict.opengl;
+import bindbc.opengl;
 import Font;
 import Matrix4x4;
 import shader;

@@ -1,6 +1,6 @@
 module Texture;
 
-import derelict.opengl;
+import bindbc.opengl;
 import std.stdio;
 import Renderer;
 

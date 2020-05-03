@@ -7,8 +7,11 @@
     "license": "MIT",
     "sourcePaths": ["DungeonCrawl"],
     "dependencies": {
-   	 "derelict-sdl2": ">=2.0.0",
-   	 "derelict-gl3": ">=1.0.18"
-    }
+   	 "bindbc-sdl": "~>0.1.0",
+   	 "bindbc-opengl": "~>0.1.0"
+    },
+    "versions": [
+        "GL_33"
+    ]
 }
 

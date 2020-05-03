@@ -4,7 +4,7 @@ import std.exception;
 import std.file;
 import std.stdio;
 import std.string;
-import derelict.opengl;
+import bindbc.opengl;
 
 class Shader
 {
@@ -30,7 +30,8 @@ class Shader
 
         if (loc != -1)
         {
-            glProgramUniform1f( program, loc, value );
+            //glProgramUniform1f( program, loc, value );
+            glUniform1f( loc, value );
         }
     }
 
@@ -41,7 +42,8 @@ class Shader
 
         if (loc != -1)
         {
-            glProgramUniform1i( program, loc, value );
+            //glProgramUniform1i( program, loc, value );
+            glUniform1i( loc, value );
         }
     }
     
@@ -52,7 +54,8 @@ class Shader
 
         if (loc != -1)
         {
-            glProgramUniform2f( program, loc, value1, value2 );
+            //glProgramUniform2f( program, loc, value1, value2 );
+            glUniform2f( loc, value1, value2 );
         }
     }
 
@@ -63,7 +66,8 @@ class Shader
 
         if (loc != -1)
         {
-            glProgramUniform3f( program, loc, value1, value2, value3 );
+            //glProgramUniform3f( program, loc, value1, value2, value3 );
+            glUniform3f( loc, value1, value2, value3 );
         }
     }
 
@@ -73,7 +77,8 @@ class Shader
         auto loc = glGetUniformLocation( program, nameCstr );
         if (loc != -1)
         {
-            glProgramUniform4f( program, loc, value1, value2, value3, value4 );
+            //glProgramUniform4f( program, loc, value1, value2, value3, value4 );
+            glUniform4f( loc, value1, value2, value3, value4 );
         }
     }
 
@@ -84,7 +89,8 @@ class Shader
 
         if (loc != -1)
         {
-            glProgramUniformMatrix4fv( program, loc, 1, GL_FALSE, matrix.ptr );
+            //glProgramUniformMatrix4fv( program, loc, 1, GL_FALSE, matrix.ptr );
+            glUniformMatrix4fv( loc, 1, GL_FALSE, matrix.ptr );
         }
     }
 
