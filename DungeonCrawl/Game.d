@@ -64,7 +64,7 @@ private struct DamageEffect
         float res = lerp( elapsedMs / cast( float )durationMs, 1, 0 );
         return res;
     }
-    
+
     private long startTimeMs;
     private immutable long durationMs = 200000000;
 }
@@ -72,7 +72,7 @@ private struct DamageEffect
 public class Game
 {
     public void Init( Renderer renderer )
-    {        
+    {
         heart = new Texture( "DungeonCrawl/assets/heart.tga" );
 
         textures.tex = new Texture( "DungeonCrawl/assets/wall1.tga" );
@@ -80,7 +80,7 @@ public class Game
         textures.white = new Texture( "DungeonCrawl/assets/white.tga" );
         textures.damage = new Texture( "DungeonCrawl/assets/damage.tga" );
         textures.floor = new Texture( "DungeonCrawl/assets/floor.tga" );
-        
+
         meshes.sword = new Mesh( "DungeonCrawl/assets/sword.obj", renderer );
         meshes.health = new Mesh( "DungeonCrawl/assets/health.obj", renderer );
         meshes.monster1 = new Mesh( "DungeonCrawl/assets/monster1.obj", renderer );
@@ -90,7 +90,7 @@ public class Game
         {
             levels[ i ] = new Level( renderer, meshes, textures, i != 0, i != levels.length - 1 );
         }
- 
+
         SDL_LoadWAV( "DungeonCrawl/assets/click.wav", &wavClickSpec, &wavClickBuffer, &wavClickLength );
         SDL_AudioDeviceID deviceId = SDL_OpenAudioDevice( null, 0, &wavClickSpec, null, 0 );
         //int success = SDL_QueueAudio( deviceId, wavClickBuffer, wavClickLength );
@@ -99,14 +99,14 @@ public class Game
 
     public void Simulate( bool[ SDLWindow.KeyboardKey ] keys )
     {
-        const long lerp = MonoTime.currTime.ticks - playerMoveTicks;        
-        const bool isPlayerRotating = ((MonoTime.currTime.ticks - playerRotateTicks) / 100000) < 8000;
+        const long lerp = MonoTime.currTime.ticks - playerMoveTicks;
+        const bool isPlayerRotating = ((MonoTime.currTime.ticks - playerRotateTicks) / rotDem) < rotComp;
 
         if (lerp < moveTime || isPlayerRotating)
         {
             return;
-        }        
-        
+        }
+
         if (mode == Mode.Ingame)
         {
             if (levels[ currentLevel ].HasHealthInPosition( player.GetLevelPosition() ) )
@@ -114,7 +114,7 @@ public class Game
                 player.EatFood( 1 );
                 levels[ currentLevel ].RemoveHealth( player.GetLevelPosition() );
             }
-            
+
             if (SDLWindow.KeyboardKey.Escape in keys)
             {
                 exit( 0 );
@@ -142,13 +142,13 @@ public class Game
             else if (SDLWindow.KeyboardKey.A in keys && !(SDLWindow.KeyboardKey.A in lastFrameKeys))
             {
                 swordOffset = 1;
-                
+
                 Level.Monster* monster = levels[ currentLevel ].GetMonsterInFrontOfPlayer( player );
                 if (monster != null)
                 {
                     monster.TakeDamage( player.GetWeapon() );
                 }
-                
+
                 hitTicks = MonoTime.currTime.ticks;
                 lastMoveDir = PlayerLastMoveDirection.None;
                 lastRotateDir = PlayerLastRotateDirection.None;
@@ -184,7 +184,7 @@ public class Game
                 lastRotateDir = PlayerLastRotateDirection.None;
                 ++gameTurn;
             }
-            
+
             if (oldGameTurn != gameTurn && MonoTime.currTime.ticks - enemyMoveTicks > moveTime)
             {
                 if (levels[ currentLevel ].HasHealthInPosition( player.GetLevelPosition() ) &&
@@ -223,26 +223,26 @@ public class Game
                 mode = Mode.Menu;
             }
         }
-        
+
         lastFrameKeys = keys;
     }
 
     private void PlayParticles( Renderer renderer )
     {
-        immutable long durationMs = 200000000;
         immutable long lerp = MonoTime.currTime.ticks - hitTicks;
-        immutable float f = cast(float)lerp / durationMs;
+        immutable float f = cast(float)lerp / particleDurationMs;
         immutable int scale = cast( int )(128.0f * f);
+        //writeln("hitTicks: ", hitTicks, ", lerp: ", lerp, ", f: ", f, ", scale: ", scale );
 
         particles[ 0 ].position.x = width / 2 - 64;
         particles[ 0 ].position.y = height / 2 - 64;
-        
+
         for (int i = 0; i < 1; ++i)
         {
             renderer.DrawTexture( textures.damage, cast(int)particles[ 0 ].position.x, cast(int)particles[ 0 ].position.y, scale, scale, [ 1, 1, 1, 1 - f / 2 ] );
         }
     }
-    
+
     public void Render( Renderer renderer, double deltaTimeMs )
     {
         renderer.ClearScreen();
@@ -273,7 +273,7 @@ public class Game
             {
                 swordOffset = 0;
             }
-            
+
             textures.white.Bind();
             Vec3 swordPosition = playerPos - rotatedDir/*player.GetWorldDirection()*/ * 10;
             swordPosition.y -= 5;
@@ -282,11 +282,11 @@ public class Game
             renderer.DrawVAO( meshes.sword.GetVAO(), meshes.sword.GetElementCount() * 3, [ 1, 1, 1, 1 ] );
 
             renderer.EnableAlphaBlending();
-            
+
             for (int i = 0; i < player.GetMaxHealth(); ++i)
             {
                 const float r = player.GetHealth() > i ? 1.0f : 0.0f;
-                
+
                 renderer.DrawTexture( heart, 20 + 74 * i, 20, 64, 64, [ r, r, r, 1 ] );
             }
 
@@ -294,7 +294,7 @@ public class Game
             {
                 PlayParticles( renderer );
             }
-            
+
             renderer.DrawText( std.format.format( "turn: %d, score: %d, dlevel %d", gameTurn, 70, currentLevel ), 150, 20 );
 
             renderer.DisableAlphaBlending();
@@ -352,7 +352,7 @@ public class Game
         long lerp = MonoTime.currTime.ticks - playerRotateTicks;
         lerp /= 2;
         float rotY = 0;
-        
+
         if (lastRotateDir == PlayerLastRotateDirection.Left && lerp < moveTime)
         {
             rotY = 90 -(cast(float)lerp / moveTime) * 90;
@@ -364,9 +364,9 @@ public class Game
 
         return rotY;
     }
-    
+
     private enum Mode { Menu, Ingame, Help }
-    
+
     private Mode mode = Mode.Menu;
     private Level[ 1 ] levels;
     private int currentLevel = 0;
@@ -388,18 +388,27 @@ public class Game
     private SDL_AudioSpec wavClickSpec;
     private Uint32 wavClickLength;
     private Uint8* wavClickBuffer;
-    
+
     version( linux )
     {
         private immutable long moveTime = 333553789;
+        private immutable long particleDurationMs = 200000000;
+        private immutable long rotDem = 100000;
+        private immutable long rotComp = 8000;
     }
     version( OSX )
     {
         private immutable long moveTime = 333553789;
+        private immutable long particleDurationMs = 200000000;
+        private immutable long rotDem = 100000;
+        private immutable long rotComp = 8000;
     }
     version( Windows )
     {
         private immutable long moveTime = 3335537 / 4;
+        private immutable long particleDurationMs = 2000000;
+        private immutable long rotDem = 1000;
+        private immutable long rotComp = 6000;
     }
 }
 
@@ -411,7 +420,7 @@ void main()
     game.Init( renderer );
 
     long lastTick = 0;
-    
+
     while (true)
     {
         bool[ SDLWindow.KeyboardKey ] keys = window.ProcessInput();
