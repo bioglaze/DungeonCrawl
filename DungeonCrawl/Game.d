@@ -172,6 +172,7 @@ public class Game
                      levels[ currentLevel ].CanWalkForward( player ) )
             {
                 player.WalkForward();
+                levels[ currentLevel ].DebugPrintMonsters();
                 lastMoveDir = PlayerLastMoveDirection.Forward;
                 lastRotateDir = PlayerLastRotateDirection.None;
                 ++gameTurn;
@@ -231,15 +232,15 @@ public class Game
     {
         immutable long lerp = MonoTime.currTime.ticks - hitTicks;
         immutable float f = cast(float)lerp / particleDurationMs;
-        immutable int scale = cast( int )(128.0f * f);
-        //writeln("hitTicks: ", hitTicks, ", lerp: ", lerp, ", f: ", f, ", scale: ", scale );
+        immutable int dimension = cast( int )(128.0f * f);
+        //writeln("hitTicks: ", hitTicks, ", lerp: ", lerp, ", f: ", f, ", dimension: ", dimension );
 
-        particles[ 0 ].position.x = width / 2 - 64;
-        particles[ 0 ].position.y = height / 2 - 64;
+        particles[ 0 ].position.x = (width / 2 - 64) - dimension / 2;
+        particles[ 0 ].position.y = (height / 2 - 64) - dimension / 2;
 
         for (int i = 0; i < 1; ++i)
         {
-            renderer.DrawTexture( textures.damage, cast(int)particles[ 0 ].position.x, cast(int)particles[ 0 ].position.y, scale, scale, [ 1, 1, 1, 1 - f / 2 ] );
+            renderer.DrawTexture( textures.damage, cast(int)particles[ 0 ].position.x, cast(int)particles[ 0 ].position.y, dimension, dimension, [ 1, 1, 1, 1 - f / 2 ] );
         }
     }
 

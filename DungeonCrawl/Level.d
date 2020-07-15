@@ -322,6 +322,14 @@ public class Level
                 }*/
         }
     }
+
+    public void DebugPrintMonsters()
+    {
+        for (int i = 0; i < monsters.length; ++i)
+        {
+            writeln( "monster ", i, " alive: ", monsters[ i ].isAlive, ", pos ", monsters[ i ].levelPosition[ 0 ], ", ", monsters[ i ].levelPosition[ 1 ] );
+        }
+    }
     
     public void Draw( Renderer renderer, float playerRotY )
     {
@@ -352,7 +360,7 @@ public class Level
 
         for (int i = 0; i < monsters.length; ++i)
         {
-            if (monsters[ i ].isAlive)
+            //if (monsters[ i ].isAlive)
             {
                 renderer.SetMVP( Vec3.Vec3( monsters[ i ].levelPosition[ 0 ] * dimension * 2 - dimension, -5,
                                             monsters[ i ].levelPosition[ 1 ] * dimension * 2 - dimension * 2 ), 0, 1.5f );
@@ -457,6 +465,8 @@ public class Level
 
         // TODO: remove after testing
         monsters[ placedMonsterCounter ].levelPosition = [ 1, 2 ];
+        ++placedMonsterCounter;
+        monsters[ placedMonsterCounter ].levelPosition = [ 1, 3 ];
         ++placedMonsterCounter;
 
         while (placedMonsterCounter < monsters.length && tries < 20)
