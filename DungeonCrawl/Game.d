@@ -288,7 +288,7 @@ public class Game
             {
                 const float r = player.GetHealth() > i ? 1.0f : 0.0f;
 
-                renderer.DrawTexture( heart, 20 + 74 * i, 20, 64, 64, [ r, r, r, 1 ] );
+                renderer.DrawTexture( heart, 20 + 74 * i, 20, 64, 64, [ r, 0, 0, 1 ] );
             }
 
             if (!levels[ currentLevel ].CanWalkForward( player ))
