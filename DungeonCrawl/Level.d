@@ -287,7 +287,7 @@ public class Level
     {
         for (int i = 0; i < monsters.length; ++i)
         {
-            /*if (monsters[ i ].isAlive)
+            if (monsters[ i ].isAlive)
             {
                 const int moveDirection = uniform( 0, 6 );
 
@@ -319,7 +319,7 @@ public class Level
                     ++monsters[ i ].levelPosition[ 1 ];
                     writeln("move 3");
                 }
-                }*/
+            }
         }
     }
 
@@ -360,7 +360,7 @@ public class Level
 
         for (int i = 0; i < monsters.length; ++i)
         {
-            //if (monsters[ i ].isAlive)
+            if (monsters[ i ].isAlive)
             {
                 renderer.SetMVP( Vec3.Vec3( monsters[ i ].levelPosition[ 0 ] * dimension * 2 - dimension, -5,
                                             monsters[ i ].levelPosition[ 1 ] * dimension * 2 - dimension * 2 ), 0, 1.5f );
