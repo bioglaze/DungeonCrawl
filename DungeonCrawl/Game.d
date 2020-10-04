@@ -1,8 +1,10 @@
 /**
   DungeonCrawl by Timo Wirén
-  Modified: 2020-05-03
+  Modified: 2020-10-04
 
   Tested on dmd 2.089.1, Lubuntu 19.10, MacBook Pro 2010, Core 2 Duo 2.4 GHz, GeForce GT 320 M, Nouveau Mesa 19.2.1
+
+  Bug: Monster visual position does not match gameplay position, player can hit it if it's one square off.
  */
 module Game;
 
@@ -199,7 +201,7 @@ public class Game
                 enemyMoveTicks = MonoTime.currTime.ticks;
                 oldGameTurn = gameTurn;
                 //writeln("lerp: ", lerp, ", playerMove: ", playerMoveTicks);
-                levels[ currentLevel ].Simulate();
+                levels[ currentLevel ].Simulate( player.GetLevelPosition() );
             }
         }
         else if (mode == Mode.Menu)

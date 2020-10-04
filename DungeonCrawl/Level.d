@@ -283,13 +283,15 @@ public class Level
         }
     }
 
-    public void Simulate()
+    public void Simulate( int[] playerPosition )
     {
         for (int i = 0; i < monsters.length; ++i)
         {
             if (monsters[ i ].isAlive)
             {
                 const int moveDirection = uniform( 0, 6 );
+                int oldPos0 = monsters[ i ].levelPosition[ 0 ];
+                int oldPos1 = monsters[ i ].levelPosition[ 1 ];
 
                 if (moveDirection == 0 && monsters[ i ].levelPosition[ 0 ] > 0 &&
                     blocks[ monsters[ i ].levelPosition[ 1 ] * dimension +
@@ -318,6 +320,12 @@ public class Level
                 {
                     ++monsters[ i ].levelPosition[ 1 ];
                     writeln("move 3");
+                }
+
+                if (monsters[ i ].levelPosition[ 0 ] == playerPosition[ 0 ] && monsters[ i ].levelPosition[ 1 ] == playerPosition[ 1 ])
+                {
+                    monsters[ i ].levelPosition[ 0 ] = oldPos0;
+                    monsters[ i ].levelPosition[ 1 ] = oldPos1;
                 }
             }
         }
