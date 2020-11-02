@@ -370,8 +370,14 @@ public class Level
         {
             if (monsters[ i ].isAlive)
             {
-                renderer.SetMVP( Vec3.Vec3( monsters[ i ].levelPosition[ 0 ] * dimension * 2 - dimension, -5,
-                                            monsters[ i ].levelPosition[ 1 ] * dimension * 2 - dimension * 2 ), 0, 1.5f );
+                float x = monsters[ i ].levelPosition[ 0 ] * dimension * 1 - dimension * 2 + dimension * 3 - 20;
+                float z = monsters[ i ].levelPosition[ 1 ] * dimension * 1 - dimension * 2 + dimension * 3 - 20;
+                //float z = monsters[ i ].levelPosition[ 1 ] * dimension * 2 - dimension * 2;
+                
+                //writeln( "monster ", i, " alive: ", monsters[ i ].isAlive, ", level pos ", monsters[ i ].levelPosition[ 0 ], ", ", monsters[ i ].levelPosition[ 1 ],
+                //         ", visual pos: ", x, ", ", z, ", dimension: ", dimension );
+
+                renderer.SetMVP( Vec3.Vec3( x, -5, z ), 0, 1.0f );
                 float color = monsters[ i ].health / cast(float)monsters[ i ].healthMax;
                 renderer.DrawVAO( meshes.monster1.GetVAO(), meshes.monster1.GetElementCount() * 3, [ 1, color, color, 1 ] );
             }
@@ -474,7 +480,7 @@ public class Level
         // TODO: remove after testing
         monsters[ placedMonsterCounter ].levelPosition = [ 1, 2 ];
         ++placedMonsterCounter;
-        monsters[ placedMonsterCounter ].levelPosition = [ 1, 3 ];
+        monsters[ placedMonsterCounter ].levelPosition = [ 2, 2 ];
         ++placedMonsterCounter;
 
         while (placedMonsterCounter < monsters.length && tries < 20)
