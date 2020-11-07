@@ -3,8 +3,6 @@
   Modified: 2020-10-04
 
   Tested on dmd 2.089.1, Lubuntu 19.10, MacBook Pro 2010, Core 2 Duo 2.4 GHz, GeForce GT 320 M, Nouveau Mesa 19.2.1
-
-  Bug: Monster visual position does not match gameplay position, player can hit it if it's one square off.
  */
 module Game;
 
@@ -242,7 +240,7 @@ public class Game
 
         for (int i = 0; i < 1; ++i)
         {
-            renderer.DrawTexture( textures.damage, cast(int)particles[ 0 ].position.x, cast(int)particles[ 0 ].position.y, dimension, dimension, [ 1, 1, 1, 1 - f / 2 ] );
+            renderer.DrawTexture( textures.damage, cast(int)particles[ i ].position.x, cast(int)particles[ i ].position.y, dimension, dimension, [ 1, 1, 1, 1 - f / 2 ] );
         }
     }
 
