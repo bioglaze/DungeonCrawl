@@ -10,19 +10,19 @@ import Vec3;
 
 public struct Meshes
 {
-    Mesh sword;
-    Mesh health;
-    Mesh monster1;
-    Mesh stairway;
+    Mesh.Mesh sword;
+    Mesh.Mesh health;
+    Mesh.Mesh monster1;
+    Mesh.Mesh stairway;
 }
 
 public struct Textures
 {
-    Texture tex;
-    Texture health;
-    Texture white;
-    Texture damage;
-    Texture floor;
+    Texture.Texture tex;
+    Texture.Texture health;
+    Texture.Texture white;
+    Texture.Texture damage;
+    Texture.Texture floor;
 }
 
 private int CalculateDamage( Player.Weapon weapon )
@@ -36,7 +36,7 @@ public struct Monster
     public bool isAlive = true;
     public int health = 3;
     public int healthMax = 3;
-    
+
     void TakeDamage( Player.Weapon weapon )
     {
         health -= CalculateDamage( weapon );
@@ -151,7 +151,7 @@ private int GetFittingBlock( int row, int col, int[] blockIndices, int dimension
 
 public class Level
 {
-    this( Renderer renderer, Meshes aMeshes, Textures aTextures, bool aHasStairwayUp, bool aHasStairwayDown )
+    this( Renderer.Renderer renderer, Meshes aMeshes, Textures aTextures, bool aHasStairwayUp, bool aHasStairwayDown )
     {
         rooms[ 0 ].exitUp = true;
         rooms[ 0 ].exitDown = false;
@@ -190,14 +190,14 @@ public class Level
 
         hasStairwayUp = aHasStairwayUp;
         hasStairwayDown = aHasStairwayDown;
-        
+
         meshes = aMeshes;
         textures = aTextures;
-        
+
         GenerateBlocks();
         GenerateGeometry( renderer );
         GeneratePickups();
-        GenerateMonsters();        
+        GenerateMonsters();
     }
 
     private bool CanTravelBetweenStairs()
@@ -207,7 +207,7 @@ public class Level
             return true;
         }
 
-        return true;        
+        return true;
     }
 
     public int[] GetStairwayDownPosition()
@@ -220,7 +220,7 @@ public class Level
         return stairwayUpPosition;
     }
 
-    public Monster* GetMonsterInFrontOfPlayer( Player player )
+    public Monster* GetMonsterInFrontOfPlayer( Player.Player player )
     {
         auto playerForward = player.GetForwardPosition();
         for (int m = 0; m < monsters.length; ++m)
@@ -234,12 +234,12 @@ public class Level
 
         return null;
     }
-    
-    public bool CanWalkForward( Player player ) const
+
+    public bool CanWalkForward( Player.Player player ) const
     {
         auto playerForward = player.GetForwardPosition();
         bool isEnemyThere = false;
-        
+
         for (int m = 0; m < monsters.length; ++m)
         {
             if (monsters[ m ].levelPosition[ 0 ] == playerForward[ 0 ] &&
@@ -249,11 +249,11 @@ public class Level
               isEnemyThere = true;
             }
         }
-        
+
         return !isEnemyThere && blocks[ playerForward[ 1 ] * dimension + playerForward[ 0 ] ] == BlockType.None;
     }
 
-    public bool CanWalkBackward( Player player ) const
+    public bool CanWalkBackward( Player.Player player ) const
     {
         auto playerBackward = player.GetBackwardPosition();
         return blocks[ playerBackward[ 1 ] * dimension + playerBackward[ 0 ] ] == BlockType.None;
@@ -338,8 +338,8 @@ public class Level
             writeln( "monster ", i, " alive: ", monsters[ i ].isAlive, ", pos ", monsters[ i ].levelPosition[ 0 ], ", ", monsters[ i ].levelPosition[ 1 ] );
         }
     }
-    
-    public void Draw( Renderer renderer, float playerRotY )
+
+    public void Draw( Renderer.Renderer renderer, float playerRotY )
     {
         textures.tex.Bind();
         renderer.SetMVP( Vec3.Vec3( 1, 1, 1 ), 0, 1 );
@@ -373,7 +373,7 @@ public class Level
                 float x = monsters[ i ].levelPosition[ 0 ] * dimension * 1 - dimension * 2 + dimension * 3 - 20;
                 float z = monsters[ i ].levelPosition[ 1 ] * dimension * 1 - dimension * 2 + dimension * 3 - 20;
                 //float z = monsters[ i ].levelPosition[ 1 ] * dimension * 2 - dimension * 2;
-                
+
                 //writeln( "monster ", i, " alive: ", monsters[ i ].isAlive, ", level pos ", monsters[ i ].levelPosition[ 0 ], ", ", monsters[ i ].levelPosition[ 1 ],
                 //         ", visual pos: ", x, ", ", z, ", dimension: ", dimension );
 
@@ -414,7 +414,7 @@ public class Level
     {
         assert( elementCount > 0, "level geometry must be generated before placing pickups" );
     }
-    body
+    do
     {
         // Place one pickup directly in front of the player to test pickup.
         healthPickups[ 0 ].levelPosition = [ 1, 2 ];
@@ -422,11 +422,11 @@ public class Level
         int placedHealthPickupCounter = 1;
 
         int tries = 0;
-        
+
         while (placedHealthPickupCounter < healthPickups.length && tries < 20)
         {
             ++tries;
-            
+
             const int posCandidateX = uniform( 1, dimension - 2 );
             const int posCandidateY = uniform( 1, dimension - 2 );
 
@@ -441,11 +441,11 @@ public class Level
         bool placedStairwayDown = false;
 
         tries = 0;
-        
+
         while ((!placedStairwayUp || !placedStairwayDown) && tries < 20)
         {
             ++tries;
-            
+
             const int posCandidateUpX = uniform( 1, dimension / 2 );
             const int posCandidateUpZ = uniform( 1, dimension / 2 );
 
@@ -471,8 +471,8 @@ public class Level
     {
         assert( elementCount > 0, "level geometry must be generated before placing monsters" );
     }
-    body
-    {    
+    do
+    {
         int placedMonsterCounter = 0;
 
         int tries = 0;
@@ -486,7 +486,7 @@ public class Level
         while (placedMonsterCounter < monsters.length && tries < 20)
         {
             ++tries;
-            
+
             immutable int posCandidateX = uniform( 1, dimension - 2 );
             immutable int posCandidateY = uniform( 1, dimension - 2 );
 
@@ -504,12 +504,12 @@ public class Level
         {
             blocks[ i ] = BlockType.Wall1;
         }
-        
+
         int tries = 0;
         int[] blockIndices = new int[ (dimension / 5) * (dimension / 5) ];
 
         while (tries < 40)
-        {    
+        {
             for (int row = 0; row < dimension / 5; ++row)
             {
                 for (int col = 0; col < dimension / 5; ++col)
@@ -520,7 +520,7 @@ public class Level
             }
 
             bool success = true;
-            
+
             for (int i = 0; i < blockIndices.length; ++i)
             {
                 if (blockIndices[ i ] == -1)
@@ -533,7 +533,7 @@ public class Level
             {
                 break;
             }
-            
+
             ++tries;
         }
 
@@ -555,7 +555,7 @@ public class Level
                 }
             }
         }
-        
+
         writeln("level:");
         for (int y = 0; y < dimension; ++y)
         {
@@ -563,13 +563,13 @@ public class Level
             {
                 write( blocks[ y * dimension + x ] != BlockType.None ? "0" : "_" );
             }
-            
+
             writeln();
         }
         //blocks[ 1 * dimension + 3 ] = BlockType.Wall1;
     }
-    
-    private void GenerateGeometry( Renderer renderer )
+
+    private void GenerateGeometry( Renderer.Renderer renderer )
     {
         Renderer.Vertex[] vertices;
         Renderer.Face[] faces;
@@ -589,7 +589,7 @@ public class Level
             for (int c = 0; c < dimension; ++c)
             {
                 //if (blocks[ r * dimension + c ] != BlockType.None)
-                {                    
+                {
                     vertices[ vertexCounter++ ] = Renderer.Vertex([ 1.000000, -1.000000, 1.000000 ], [ 1.000000, 0.000000 ]);
                     vertices[ vertexCounter++ ] = Renderer.Vertex([ -1.000000, -1.000000, -1.000000 ], [ 0.000000, 1.000000 ]);
                     vertices[ vertexCounter++ ] = Renderer.Vertex([ 1.000000, -1.000000, -1.000000 ], [ 0.000000, 0.000000 ]);
@@ -649,8 +649,8 @@ public class Level
                     {
                         faces[ faceCounter - f - 1 ].a += vertexCounter - vertexCount;
                         faces[ faceCounter - f - 1 ].b += vertexCounter - vertexCount;
-                        faces[ faceCounter - f - 1 ].c += vertexCounter - vertexCount;                        
-                    }                    
+                        faces[ faceCounter - f - 1 ].c += vertexCounter - vertexCount;
+                    }
                 }
             }
         }
@@ -663,7 +663,7 @@ public class Level
 
     private immutable int dimension = 20;
     static assert( dimension % 5 == 0 );
-    
+
     private BlockType[ dimension * dimension ] blocks = BlockType.None;
     private uint vaoID;
     private int elementCount;
@@ -671,13 +671,13 @@ public class Level
     private int[ 2 ] stairwayDownPosition;
     private bool hasStairwayDown;
     private bool hasStairwayUp;
-    
+
     private struct HealthPickup
     {
         int[ 2 ] levelPosition;
         bool isActive = true;
     }
-    
+
     private HealthPickup[ 3 ] healthPickups;
     private Monster[ 3 ] monsters;
 }

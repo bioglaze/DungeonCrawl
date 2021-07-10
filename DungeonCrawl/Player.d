@@ -18,12 +18,12 @@ public enum Weapon
 public class Player
 {
     public Weapon GetWeapon() const { return Weapon.Sword; }
-    
+
     public void TeleportTo( int[] position )
     {
         levelPosition = position;
     }
-    
+
     public void WalkForward()
     {
         if (facingDirection == FacingDirection.North)
@@ -88,7 +88,7 @@ public class Player
     {
         return levelPosition;
     }
-    
+
     public Tuple!(int, int) GetForwardPosition()
     {
         final switch (facingDirection)
@@ -111,12 +111,12 @@ public class Player
         }
     }
 
-    public Vec3 GetWorldPosition() const
+    public Vec3.Vec3 GetWorldPosition() const
     {
         return Vec3.Vec3( levelPosition[ 0 ] * 20, 0, levelPosition[ 1 ] * 20 );
     }
 
-    public Vec3 GetWorldDirection() const
+    public Vec3.Vec3 GetWorldDirection() const
     {
         final switch (facingDirection)
         {
@@ -131,7 +131,7 @@ public class Player
     {
         return facingDirection;
     }
-    
+
     public int GetHealth() const
     {
         return health;
@@ -141,17 +141,17 @@ public class Player
     {
         return healthMax;
     }
-    
+
     public bool HasMaxHealth() const
     {
         return health == healthMax;
     }
-    
+
     public void EatFood( int healthGain )
     {
         health = min( health + healthGain, healthMax );
     }
-    
+
     private int[ 2 ] levelPosition = [ 1, 1 ];
     private FacingDirection facingDirection = FacingDirection.South;
     private int health = 1;

@@ -22,7 +22,7 @@ public align(1) struct Face
 public void CheckGLError( string info )
 {
     GLenum errorCode = GL_INVALID_ENUM;
-        
+
     while ((errorCode = glGetError()) != GL_NO_ERROR)
     {
         if (errorCode == 1282)
@@ -52,8 +52,8 @@ class Renderer
         shader.Use();
         shader.SetInt( "sTexture", 0 );
 
-        font = new Font( "DungeonCrawl/assets/font.bin" );
-        fontTex = new Texture( "DungeonCrawl/assets/font.tga" );
+        font = new Font.Font( "DungeonCrawl/assets/font.bin" );
+        fontTex = new Texture.Texture( "DungeonCrawl/assets/font.tga" );
 
         glEnable( GL_DEPTH_TEST );
         glEnable( GL_CULL_FACE );
@@ -71,9 +71,9 @@ class Renderer
         quad[ 5 ] = Vertex( [ 0, 1, 0 ], [ 0, 1 ] );
 
         Face[ 2 ] quadIndices = [ Face( 0, 1, 2 ), Face( 3, 5, 4 ) ];
-        GenerateVAO( quad, quadIndices, quadVAO );        
+        GenerateVAO( quad, quadIndices, quadVAO );
     }
-    
+
     public void ClearScreen()
     {
         glClear( GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT );
@@ -116,11 +116,11 @@ class Renderer
 
         CheckGLError( "GenerateVAO end" );
     }
-    
+
     public void DrawText( string text, float x, float y )
-    {        
+    {
         if (text != cachedText)
-        {     
+        {
             Vertex[] vertices;
             Face[] faces;
             font.GetGeometry( text, fontTex.GetWidth(), fontTex.GetHeight(), vertices, faces );
@@ -134,13 +134,13 @@ class Renderer
 
         shader.Use();
 
-        Matrix4x4 mvp;
+        Matrix4x4.Matrix4x4 mvp;
         mvp.MakeIdentity();
         //mvp.Scale( xScale, yScale, 1 );
         mvp.Translate( Vec3.Vec3( x, y, 0 ) );
         Matrix4x4.Multiply( mvp, orthoMat, mvp );
         shader.SetMatrix44( "mvp", mvp.m );
-        
+
         DrawVAO( textVAO, textFaceLength * 3, [ 1, 1, 1, 1 ] );
     }
 
@@ -164,41 +164,41 @@ class Renderer
     {
         glDisable( GL_DEPTH_TEST );
     }
-    
-    public void DrawTexture( Texture texture, int x, int y, int xScale, int yScale, float[ 4 ] tintColor )
+
+    public void DrawTexture( Texture.Texture texture, int x, int y, int xScale, int yScale, float[ 4 ] tintColor )
     {
         texture.Bind();
 
-        Matrix4x4 mvp;
+        Matrix4x4.Matrix4x4 mvp;
         mvp.MakeIdentity();
         mvp.Scale( xScale, yScale, 1 );
         mvp.Translate( Vec3.Vec3( x, y, 0 ) );
         Matrix4x4.Multiply( mvp, orthoMat, mvp );
-        
+
         shader.Use();
         shader.SetMatrix44( "mvp", mvp.m );
         DrawVAO( quadVAO, 2 * 3, tintColor );
         shader.SetFloat4( "tintColor", 1, 1, 1, 1 );
     }
-    
-    public void SetMVP( Vec3 position, float rotY, float scale )
+
+    public void SetMVP( Vec3.Vec3 position, float rotY, float scale )
     {
-        Matrix4x4 view;
+        Matrix4x4.Matrix4x4 view;
         view.MakeLookAt( cameraPosition, cameraPosition + cameraDirectionDeg * 50, Vec3.Vec3( 0, 1, 0 ) );
         view.Transpose();
 
-        Matrix4x4 model;
+        Matrix4x4.Matrix4x4 model;
         model.MakeIdentity();
 
-        Matrix4x4 rot;
+        Matrix4x4.Matrix4x4 rot;
         rot.MakeRotationXYZ( 0, rotY, 0 );
 
         model.Scale( scale, scale, scale );
-        Matrix4x4.Multiply( model, rot, model );        
+        Matrix4x4.Multiply( model, rot, model );
         model.Translate( position );
 
-        Matrix4x4 mvp;
-        Matrix4x4 mv;
+        Matrix4x4.Matrix4x4 mvp;
+        Matrix4x4.Matrix4x4 mv;
         Matrix4x4.Multiply( model, view, mv );
         Matrix4x4.Multiply( mv, perspectiveMat, mvp );
 
@@ -206,7 +206,7 @@ class Renderer
         shader.SetMatrix44( "mvp", mvp.m );
     }
 
-    public void SetCamera( Vec3 aCameraPosition, Vec3 directionDeg )
+    public void SetCamera( Vec3.Vec3 aCameraPosition, Vec3.Vec3 directionDeg )
     {
         cameraPosition = aCameraPosition;
         cameraDirectionDeg = directionDeg;
@@ -218,13 +218,13 @@ class Renderer
     private GLuint textIBO;
     private int textFaceLength;
     private Shader shader;
-    private Font font;
-    private Texture fontTex;
+    private Font.Font font;
+    private Texture.Texture fontTex;
     private string cachedText;
-    private Matrix4x4 orthoMat;
-    private Matrix4x4 perspectiveMat;
-    private Vec3 cameraPosition;
-    private Vec3 cameraDirectionDeg;
+    private Matrix4x4.Matrix4x4 orthoMat;
+    private Matrix4x4.Matrix4x4 perspectiveMat;
+    private Vec3.Vec3 cameraPosition;
+    private Vec3.Vec3 cameraDirectionDeg;
 }
 
 

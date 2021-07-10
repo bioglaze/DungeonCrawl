@@ -1,8 +1,8 @@
 /**
   DungeonCrawl by Timo Wirén
-  Modified: 2020-10-04
+  Modified: 2021-07-10
 
-  Tested on dmd 2.089.1, Lubuntu 19.10, MacBook Pro 2010, Core 2 Duo 2.4 GHz, GeForce GT 320 M, Nouveau Mesa 19.2.1
+  Tested on dmd 2.097.0, Lubuntu 19.10, MacBook Pro 2010, Core 2 Duo 2.4 GHz, GeForce GT 320 M, Nouveau Mesa 19.2.1
  */
 module Game;
 
@@ -41,8 +41,8 @@ float lerp( float t01, float a, float b )
 
 private struct Particle
 {
-    public Vec3 position;
-    public Vec3 velocity;
+    public Vec3.Vec3 position;
+    public Vec3.Vec3 velocity;
 }
 
 private struct DamageEffect
@@ -71,24 +71,24 @@ private struct DamageEffect
 
 public class Game
 {
-    public void Init( Renderer renderer )
+    public void Init( Renderer.Renderer renderer )
     {
-        heart = new Texture( "DungeonCrawl/assets/heart.tga" );
+        heart = new Texture.Texture( "DungeonCrawl/assets/heart.tga" );
 
-        textures.tex = new Texture( "DungeonCrawl/assets/wall1.tga" );
-        textures.health = new Texture( "DungeonCrawl/assets/health.tga" );
-        textures.white = new Texture( "DungeonCrawl/assets/white.tga" );
-        textures.damage = new Texture( "DungeonCrawl/assets/damage.tga" );
-        textures.floor = new Texture( "DungeonCrawl/assets/floor.tga" );
+        textures.tex = new Texture.Texture( "DungeonCrawl/assets/wall1.tga" );
+        textures.health = new Texture.Texture( "DungeonCrawl/assets/health.tga" );
+        textures.white = new Texture.Texture( "DungeonCrawl/assets/white.tga" );
+        textures.damage = new Texture.Texture( "DungeonCrawl/assets/damage.tga" );
+        textures.floor = new Texture.Texture( "DungeonCrawl/assets/floor.tga" );
 
-        meshes.sword = new Mesh( "DungeonCrawl/assets/sword.obj", renderer );
-        meshes.health = new Mesh( "DungeonCrawl/assets/health.obj", renderer );
-        meshes.monster1 = new Mesh( "DungeonCrawl/assets/monster1.obj", renderer );
-        meshes.stairway = new Mesh( "DungeonCrawl/assets/stairway.obj", renderer );
+        meshes.sword = new Mesh.Mesh( "DungeonCrawl/assets/sword.obj", renderer );
+        meshes.health = new Mesh.Mesh( "DungeonCrawl/assets/health.obj", renderer );
+        meshes.monster1 = new Mesh.Mesh( "DungeonCrawl/assets/monster1.obj", renderer );
+        meshes.stairway = new Mesh.Mesh( "DungeonCrawl/assets/stairway.obj", renderer );
 
         for (int i = 0; i < levels.length; ++i)
         {
-            levels[ i ] = new Level( renderer, meshes, textures, i != 0, i != levels.length - 1 );
+            levels[ i ] = new Level.Level( renderer, meshes, textures, i != 0, i != levels.length - 1 );
         }
 
         SDL_LoadWAV( "DungeonCrawl/assets/click.wav", &wavClickSpec, &wavClickBuffer, &wavClickLength );
@@ -228,7 +228,7 @@ public class Game
         lastFrameKeys = keys;
     }
 
-    private void PlayParticles( Renderer renderer )
+    private void PlayParticles( Renderer.Renderer renderer )
     {
         immutable long lerp = MonoTime.currTime.ticks - hitTicks;
         immutable float f = cast(float)lerp / particleDurationMs;
@@ -244,7 +244,7 @@ public class Game
         }
     }
 
-    public void Render( Renderer renderer, double deltaTimeMs )
+    public void Render( Renderer.Renderer renderer, double deltaTimeMs )
     {
         renderer.ClearScreen();
 
@@ -258,11 +258,11 @@ public class Game
         }
         else if (mode == Mode.Ingame)
         {
-            Vec3 playerPos = CalculateAnimatedPlayerPosition();
+            Vec3.Vec3 playerPos = CalculateAnimatedPlayerPosition();
             immutable float playerRotY = CalculateAnimatedPlayerRotation();
-            Matrix4x4 rot;
+            Matrix4x4.Matrix4x4 rot;
             rot.MakeRotationXYZ( 0, playerRotY, 0 );
-            Vec3 rotatedDir;
+            Vec3.Vec3 rotatedDir;
             Matrix4x4.TransformPoint( player.GetWorldDirection(), rot, rotatedDir );
             renderer.SetCamera( playerPos, rotatedDir );
             levels[ currentLevel ].Draw( renderer, playerRotY );
@@ -276,7 +276,7 @@ public class Game
             }
 
             textures.white.Bind();
-            Vec3 swordPosition = playerPos - rotatedDir/*player.GetWorldDirection()*/ * 10;
+            Vec3.Vec3 swordPosition = playerPos - rotatedDir/*player.GetWorldDirection()*/ * 10;
             swordPosition.y -= 5;
             swordPosition.y += swordOffset;
             renderer.SetMVP( swordPosition, playerRotY, 0.7f );
@@ -303,7 +303,7 @@ public class Game
         }
     }
 
-    private Vec3 CalculateAnimatedPlayerPosition()
+    private Vec3.Vec3 CalculateAnimatedPlayerPosition()
     {
         immutable long lerp = MonoTime.currTime.ticks - playerMoveTicks;
 
@@ -369,10 +369,10 @@ public class Game
     private enum Mode { Menu, Ingame, Help }
 
     private Mode mode = Mode.Menu;
-    private Level[ 1 ] levels;
+    private Level.Level[ 1 ] levels;
     private int currentLevel = 0;
-    private Player player = new Player();
-    private Texture heart;
+    private Player.Player player = new Player.Player();
+    private Texture.Texture heart;
     private Level.Textures textures;
     private Level.Meshes meshes;
     private bool[ SDLWindow.KeyboardKey ] lastFrameKeys;
@@ -415,8 +415,8 @@ public class Game
 
 void main()
 {
-    auto window = new SDLWindow( width, height );
-    auto renderer = new Renderer( width, height );
+    auto window = new SDLWindow.SDLWindow( width, height );
+    auto renderer = new Renderer.Renderer( width, height );
     auto game = new Game();
     game.Init( renderer );
 

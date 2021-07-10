@@ -23,7 +23,7 @@ void Multiply( Matrix4x4 a, Matrix4x4 b, out Matrix4x4 result )
     result.CheckForNaN();
 }
 
-void TransformPoint( Vec3 vec, Matrix4x4 mat, out Vec3 vOut )
+void TransformPoint( Vec3.Vec3 vec, Matrix4x4 mat, out Vec3.Vec3 vOut )
 {
     vOut.x = mat.m[0] * vec.x + mat.m[ 4 ] * vec.y + mat.m[ 8] * vec.z + mat.m[12];
     vOut.y = mat.m[1] * vec.x + mat.m[ 5 ] * vec.y + mat.m[ 9] * vec.z + mat.m[13];
@@ -37,7 +37,7 @@ struct Matrix4x4
         return format( "%f, %f, %f, %f\n%f, %f, %f, %f\n%f, %f, %f, %f\n%f, %f, %f, %f\n",
             m[ 0 ], m[ 1 ], m[ 2 ], m[ 3 ], m[ 4 ], m[ 5 ], m[ 6 ], m[ 7 ],
             m[ 8 ], m[ 9 ], m[ 10 ], m[ 11 ], m[ 12 ], m[ 13 ], m[ 14 ], m[ 15 ] );
-            
+
     }
 
     void CheckForNaN() const
@@ -68,7 +68,7 @@ struct Matrix4x4
         const float cx = cos( xDeg * deg2rad );
         const float cy = cos( yDeg * deg2rad );
         const float cz = cos( zDeg * deg2rad );
-        
+
         m[ 0 ] = cy * cz;
         m[ 1 ] = cz * sx * sy - cx * sz;
         m[ 2 ] = cx * cz * sy + sx * sz;
@@ -86,7 +86,7 @@ struct Matrix4x4
         m[14 ] = 0;
         m[15 ] = 1;
 
-        CheckForNaN();   
+        CheckForNaN();
     }
 
     void MakeProjection( float left, float right, float bottom, float top, float nearDepth, float farDepth )
@@ -94,7 +94,7 @@ struct Matrix4x4
         const float tx = -((right + left) / (right - left));
         const float ty = -((top + bottom) / (top - bottom));
         const float tz = -((farDepth + nearDepth) / (farDepth - nearDepth));
-		
+
         m =
         [
             2.0f / (right - left), 0.0f, 0.0f, 0.0f,
@@ -105,7 +105,7 @@ struct Matrix4x4
 
         CheckForNaN();
     }
-	
+
     void MakeProjection( float fovDegrees, float aspect, float nearDepth, float farDepth )
     {
         const float top = tan( fovDegrees * PI / 360.0f ) * nearDepth;
@@ -132,15 +132,15 @@ struct Matrix4x4
         CheckForNaN();
     }
 
-    void MakeLookAt( Vec3 eye, Vec3 center, Vec3 up )
+    void MakeLookAt( Vec3.Vec3 eye, Vec3.Vec3 center, Vec3.Vec3 up )
     {
         Vec3.Vec3 zAxis = Vec3.Vec3( center.x - eye.x, center.y - eye.y, center.z - eye.z );
         Normalize( zAxis );
 
-        Vec3 xAxis = Cross( up, zAxis );
+        Vec3.Vec3 xAxis = Cross( up, zAxis );
         Normalize( xAxis );
 
-        Vec3 yAxis = Cross( zAxis, xAxis );
+        Vec3.Vec3 yAxis = Cross( zAxis, xAxis );
 
         m[  0 ] = xAxis.x; m[  1 ] = xAxis.y; m[  2 ] = xAxis.z; m[  3 ] = -Vec3.Dot( xAxis, eye );
         m[  4 ] = yAxis.x; m[  5 ] = yAxis.y; m[  6 ] = yAxis.z; m[  7 ] = -Vec3.Dot( yAxis, eye );
@@ -154,15 +154,15 @@ struct Matrix4x4
     {
         Matrix4x4 scale;
         scale.MakeIdentity();
-        
+
         scale.m[  0 ] = x;
         scale.m[  5 ] = y;
         scale.m[ 10 ] = z;
 
         Multiply( this, scale, this );
     }
-    
-    void Translate( Vec3 v )
+
+    void Translate( Vec3.Vec3 v )
     {
         Matrix4x4 translateMatrix;
         translateMatrix.MakeIdentity();
@@ -183,7 +183,7 @@ struct Matrix4x4
     void Transpose()
     {
         float[ 16 ] tmp;
-        
+
         tmp[  0 ] = m[  0 ];
         tmp[  1 ] = m[  4 ];
         tmp[  2 ] = m[  8 ];
@@ -220,22 +220,22 @@ unittest
 {
     Matrix4x4 matrix1;
     matrix1.m = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 ];
-    
+
     Matrix4x4 matrix2;
     matrix2.m = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 ];
-    
+
     Matrix4x4 result;
     Multiply( matrix1, matrix2, result );
-    
+
     Matrix4x4 expectedResult;
-    expectedResult.m = 
-    [ 
+    expectedResult.m =
+    [
         90, 100, 110, 120,
             202, 228, 254, 280,
             314, 356, 398, 440,
             426, 484, 542, 600
     ];
-    
+
     for (int i = 0; i < 16; ++i)
     {
         assert( abs( result.m[ i ] - expectedResult.m[ i ] ) < 0.0001f, "Matrix4x4 Multiply failed" );
@@ -249,7 +249,7 @@ unittest
     const float exceptedResult = 42;
     matrix.m[ 3 ] = exceptedResult;
     matrix.Transpose();
-    
+
     assert( matrix.m[ 3 * 4 ] == exceptedResult, "Matrix4x4 Transpose failed!" );
 }
 

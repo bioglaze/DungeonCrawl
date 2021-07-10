@@ -15,13 +15,13 @@ struct ObjFace
 
 class Mesh
 {
-    this( string path, Renderer renderer )
+    this( string path, Renderer.Renderer renderer )
     {
-        Vec3[] vertices;
-        Vec3[] normals;
-        Vec3[] texcoords;
+        Vec3.Vec3[] vertices;
+        Vec3.Vec3[] normals;
+        Vec3.Vec3[] texcoords;
         ObjFace[] faces;
-        
+
         LoadObj( path, vertices, normals, texcoords, faces );
         Interleave( vertices, normals, texcoords, faces );
         renderer.GenerateVAO( interleavedVertices, indices, vao );
@@ -32,10 +32,10 @@ class Mesh
         vaoId = vao;
         faceCount = cast( uint )indices.length;
     }
-    
+
     // Tested only with models exported from Blender. File must contain one mesh only,
     // exported with triangulation, texcoords and normals.
-    private void LoadObj( string path, ref Vec3[] vertices, ref Vec3[] normals, ref Vec3[] texcoords, ref ObjFace[] faces )
+    private void LoadObj( string path, ref Vec3.Vec3[] vertices, ref Vec3.Vec3[] normals, ref Vec3.Vec3[] texcoords, ref ObjFace[] faces )
     {
         auto file = File( path, "r" );
 
@@ -48,10 +48,10 @@ class Mesh
         while (!file.eof())
         {
             string line = strip( file.readln() );
-            
+
             if (line.length > 1 && line[ 0 ] == 'v' && line[ 1 ] != 'n' && line[1] != 't')
             {
-                Vec3 vertex;
+                Vec3.Vec3 vertex;
                 string v;
                 uint items = formattedRead( line, "%s %f %f %f", &v, &vertex.x, &vertex.y, &vertex.z );
                 assert( items == 4, "parse error readin .obj file" );
@@ -59,7 +59,7 @@ class Mesh
             }
             else if (line.length > 0 && line[ 0..2 ] == "vn")
             {
-                Vec3 normal;
+                Vec3.Vec3 normal;
                 string v;
                 uint items = formattedRead( line, "%s %f %f %f", &v, &normal.x, &normal.y, &normal.z );
                 assert( items == 4, "parse error readin .obj file" );
@@ -67,7 +67,7 @@ class Mesh
             }
             else if (line.length > 0 && line[ 0..2 ] == "vt")
             {
-                Vec3 texcoord;
+                Vec3.Vec3 texcoord;
                 string v;
                 uint items = formattedRead( line, "%s %f %f", &v, &texcoord.x, &texcoord.y );
                 assert( items == 3, "parse error readin .obj file" );
@@ -80,7 +80,7 @@ class Mesh
         while (!file.eof())
         {
             string line = strip( file.readln() );
-            
+
             if (line.length > 0 && line[ 0 ] == 'f')
             {
                 ObjFace face;
@@ -106,7 +106,7 @@ class Mesh
         }
     }
 
-    private bool AlmostEquals( float[ 3 ] v1, Vec3 v2 ) const
+    private bool AlmostEquals( float[ 3 ] v1, Vec3.Vec3 v2 ) const
     {
         if (abs( v1[ 0 ] - v2.x ) > 0.0001f) { return false; }
         if (abs( v1[ 1 ] - v2.y ) > 0.0001f) { return false; }
@@ -114,22 +114,22 @@ class Mesh
         return true;
     }
 
-    private bool AlmostEquals( float[ 2 ] v1, Vec3 v2 ) const
+    private bool AlmostEquals( float[ 2 ] v1, Vec3.Vec3 v2 ) const
     {
         if (abs( v1[ 0 ] - v2.x ) > 0.0001f) { return false; }
         if (abs( v1[ 1 ] - v2.y ) > 0.0001f) { return false; }
         return true;
     }
-    
-    private void Interleave( ref Vec3[] vertices, ref Vec3[] normals, ref Vec3[] texcoords, ObjFace[] faces )
+
+    private void Interleave( ref Vec3.Vec3[] vertices, ref Vec3.Vec3[] normals, ref Vec3.Vec3[] texcoords, ObjFace[] faces )
     {
         Renderer.Face face;
 
         for (int f = 0; f < faces.length; ++f)
         {
-            Vec3 tvertex = vertices[ faces[ f ].v1 ];
-            Vec3 tnormal = normals[ faces[ f ].n1 ];
-            Vec3 ttcoord = texcoords[ faces[ f ].t1 ];
+            Vec3.Vec3 tvertex = vertices[ faces[ f ].v1 ];
+            Vec3.Vec3 tnormal = normals[ faces[ f ].n1 ];
+            Vec3.Vec3 ttcoord = texcoords[ faces[ f ].t1 ];
 
             // Searches vertex from vertex list and adds it if not found.
 
@@ -241,7 +241,7 @@ class Mesh
     {
         return cast( uint )indices.length;
     }
-    
+
     private Renderer.Vertex[] interleavedVertices;
     private Renderer.Face[] indices;
     private uint vao;

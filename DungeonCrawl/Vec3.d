@@ -1,5 +1,5 @@
 module Vec3;
-import std.math: abs, sqrt, approxEqual;
+import std.math: abs, sqrt, isClose;
 
 public Vec3 Cross( Vec3 v1, Vec3 v2 )
 {
@@ -10,7 +10,7 @@ public Vec3 Cross( Vec3 v1, Vec3 v2 )
 
 public float Dot( Vec3 v1, Vec3 v2 )
 {
-    return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z; 
+    return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
 }
 
 public void Normalize( ref Vec3 v )
@@ -29,7 +29,7 @@ public float Length( ref Vec3 v )
 
 private bool IsAlmost( Vec3 v1, Vec3 v2 )
 {
-    return approxEqual( v1.x, v2.x ) && approxEqual( v1.y, v2.y ) && approxEqual( v1.z, v2.z );
+    return isClose( v1.x, v2.x ) && isClose( v1.y, v2.y ) && isClose( v1.z, v2.z );
 }
 
 struct Vec3
